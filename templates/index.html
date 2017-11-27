@@ -1,4 +1,80 @@
 {% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
 {% block content %}
-  <h1>Index</h1>
+  <div class="row">
+    <div class="col-sm-8">
+      <h1>Testing Social Media Research Ethics Procedures</h1>
+
+      <p>
+        Principal Investigator: <a href="https://psych.princeton.edu/person/elizabeth-levy-paluck">Elizabeth Paluck</a>, Princeton University Department of Psychology, with <a href="https://twitter.com/natematias">J. Nathan Matias</a> and <a href="http://jonathanzong.com/">Jonathan Zong</a>.
+      </p>
+
+      <p>
+        What effects do people experience from having tweets removed for copyright reasons, and how can researchers study this issue ethically? Help us answer these questions by taking 15 minutes to answer our survey.
+      </p>
+
+      <p>
+        We are inviting you to take part in a research study. Before you decide to participate, it is important that you understand why the research is being done and what it will involve. Please read this information carefully. Ask us if anything is not clear or you need more information.
+      </p>
+
+      <h5>Purpose of the research</h5>
+      <p>
+        We are asking you to participate in our research because your tweets may have been removed for copyright reasons in the past, information that Twitter makes public on the <a href="http://lumendatabase.org">Lumen Database</a>. We plan to test new ways to support people like you, and we would like your feedback on the design, ethics, and privacy of our future study. This project is independent from Twitter and Lumen.
+      </p>
+
+      <h5>If you participate, what to expect</h5>
+      <p>
+        In this study, we ask you to imagine a situation where your tweets are removed by Twitter after a copyright complaint, and that we include your information in a study on the effects of online copyright enforcement.
+      </p>
+
+      <p>
+        Next, we will show you a website that allows people to manage the privacy of the information we collect for the study. We will ask for feedback on this website with a survey.
+      </p>
+
+      <h5>Benefits and risks</h5>
+      <p>
+        Your answers will help us improve how we manage the privacy of people who participate in our research. We will publish our findings when this study finishes. Follow our Twitter account to receive the results when we finish.
+      </p>
+
+      <h5>Confidentiality</h5>
+      <p>
+        All records from this study will be kept confidential. Only the research team will have access to your responses. Your responses will be kept private, and we will not include any personally-identifiable information in any publications.
+      </p>
+
+      <h5>Do you have further questions? Contact us:</h5>
+
+      <p>
+        <div>J. Nathan Matias</div>
+        <div><a href="mailto:jmatias@princeton.edu" target="_blank">jmatias@princeton.edu</a></div>
+        <div><a href="https://twitter.com/natematias" target="_blank">@natematias</a> on Twitter</div>
+      </p>
+
+      <p>
+        If you have questions about your rights as a research participant, or if problems arise which you do not feel you can discuss with the Investigator, please contact:
+      </p>
+
+      <p>
+        <div>Institutional Review Board (IRB)</div>
+        <div>Phone: (609) 258-8543</div>
+        <div>Email: <a href="mailto:irb@princeton.edu" target="_blank">irb@princeton.edu</a></div>
+      </p>
+
+      <div class="cta-wrap">
+        <p>
+          <strong>This research is only open to people who are 18 years or older.</strong> If you are eligible and you consent to participate, please begin the study by logging in with Twitter and granting us permission to observe public details about your Twitter account:
+        </p>
+
+        <div class="btn-twitter-wrap">
+          <div class="btn-twitter">
+            <a href="{{ url_for('login') }}">
+              <img src="{{ url_for('static', filename='twitter.png') }}" />
+              Sign in with Twitter
+            </a>
+          </div>
+        </div>
+      </div>
+  </div>
+</div>
 {% endblock %}

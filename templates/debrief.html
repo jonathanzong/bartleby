@@ -3,4 +3,8 @@
   <h1>Debrief</h1>
   <p>{{ user.id }}</p>
   <p>{{ user.screen_name }}</p>
+
+  {% if 'user' in session %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
 {% endblock %}

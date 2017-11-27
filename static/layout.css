@@ -1,0 +1,20 @@
+html {
+  box-sizing: border-box;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin-bottom: 60px;
+}
+
+a {
+  text-decoration: none;
+  color: #cc00ff;
+}
+
+p {
+  margin: 1.6em 0;
+}

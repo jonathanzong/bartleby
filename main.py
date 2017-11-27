@@ -23,7 +23,10 @@ def index():
 def debrief():
   if not is_logged_in():
     return redirect(url_for('index'))
-  return render_template('debrief.html', user=session['user'])
+  user = session['user']
+  # TODO: look up conditions for user by user.id,
+  #       conditionally render template
+  return render_template('debrief.html', user=user)
 
 @app.route('/login')
 def login():

@@ -1,0 +1,46 @@
+.cta-wrap {
+  margin: 1.6em 0;
+  padding: 1px 1.6em;
+  background: #e7e7e7;
+}
+
+.btn-twitter-wrap {
+  text-align: center;
+  margin: 1.6em 0;
+}
+
+.btn-twitter {
+  background-color: #55acee;
+  border-color: rgba(0,0,0,0.2);
+
+  padding: 6px 12px;
+  padding-left: 44px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+
+  position: relative;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  display: inline-block;
+}
+
+.btn-twitter a {
+  color: #fff;
+}
+
+.btn-twitter img {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 32px;
+  line-height: 34px;
+  border-right: 1px solid rgba(0,0,0,0.2);
+}
