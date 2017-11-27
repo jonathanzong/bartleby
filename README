@@ -1,0 +1,14 @@
+# dmca
+
+## running server
+
+```
+export FLASK_APP=main.py
+flask run
+```
+
+## running tests
+
+```
+python3 tests.py
+```
