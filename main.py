@@ -1,4 +1,4 @@
-import config
+import twitter_api_keys
 import tweepy
 
 from flask import Flask, session, request, redirect, url_for, render_template
