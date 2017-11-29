@@ -1,0 +1,23 @@
+[
+{"id":"12345",
+ "screen_name":"abcde",
+ "account_created_at": "2016-07-03 19:32:17",
+ "created_at": "NOW",
+ "lang":"en-US",
+ "user_state":1
+},
+{"id":"12346",
+ "screen_name":"abcdf",
+ "account_created_at": "2016-07-01 10:30:10",
+ "created_at": "NOW",
+ "lang":"en-US",
+ "user_state":1
+},
+{"id":"12347",
+ "screen_name":"abcdg",
+ "account_created_at": "2016-08-03 10:15:00",
+ "created_at": "NOW",
+ "lang":"en-GB",
+ "user_state":2
+}
+]
