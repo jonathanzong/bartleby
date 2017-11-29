@@ -1,0 +1,12 @@
+## AUTO-GENERATE ALEMBIC MIGRATION:
+# before running this command, you should run
+# export CS_ENV=all
+alembic revision --autogenerate -m "MESSAGE"
+
+## MIGRATING WITH ALEMBIC
+alembic upgrade head
+
+alembic upgrade +2
+
+alembic downgrade -1
+

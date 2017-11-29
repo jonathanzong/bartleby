@@ -1,5 +1,13 @@
 .DS_Store
+
+## APP-SPECIFIC FILES
 config.py
+alembic.ini
+*.swp
+config/development.json
+config/test.json
+config/production.json
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

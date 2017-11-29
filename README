@@ -1,5 +1,18 @@
 # dmca
 
+## setting up server
+
+mysqladmin -u root create debrief_study_test
+mysqladmin -u root create debrief_study_development
+mysqladmin -u root create debrief_study_production
+
+mysql -u root
+> CREATE USER USERNAME@localhost IDENTIFIED BY 'PASSWORD';
+GRANT ALL PRIVILEGES ON debrief_study_test.* TO 'USERNAME'@'localhost';
+GRANT ALL PRIVILEGES ON debrief_study_development.* TO 'USERNAME'@'localhost';
+GRANT ALL PRIVILEGES ON debrief_study_production.* TO 'USERNAME'@'localhost';
+flush privileges
+
 ## running server
 
 ```
