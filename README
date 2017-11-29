@@ -13,6 +13,10 @@ GRANT ALL PRIVILEGES ON debrief_study_development.* TO 'USERNAME'@'localhost';
 GRANT ALL PRIVILEGES ON debrief_study_production.* TO 'USERNAME'@'localhost';
 flush privileges
 
+## running migrations
+export CS_ENV=all
+alembic upgrade head
+
 ## running server
 
 ```
