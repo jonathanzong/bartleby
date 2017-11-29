@@ -8,7 +8,6 @@ config/development.json
 config/test.json
 config/production.json
 
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

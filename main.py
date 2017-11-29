@@ -1,4 +1,4 @@
-import config
+import twitter_api_keys
 import tweepy
 
 from flask import Flask, session, request, redirect, url_for, render_template
@@ -6,8 +6,8 @@ from flask import Flask, session, request, redirect, url_for, render_template
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
 
-consumer_key = config.TWITTER_CONSUMER_KEY
-consumer_secret = config.TWITTER_CONSUMER_SECRET
+consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
+consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
 
 def is_logged_in():
   # TODO
