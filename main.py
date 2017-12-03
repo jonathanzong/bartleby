@@ -30,7 +30,8 @@ def debrief():
 
 @app.route('/login')
 def login():
-  auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+  callback_url = url_for('oauth_authorized', _external=True)
+  auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
   try:
     redirect_url = auth.get_authorization_url()
     session['request_token'] = auth.request_token
