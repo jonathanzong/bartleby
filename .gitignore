@@ -1,4 +1,5 @@
 .DS_Store
+twitter_api_keys.py
 
 ## APP-SPECIFIC FILES
 config.py

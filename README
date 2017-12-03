@@ -11,7 +11,7 @@ mysql -u root
 GRANT ALL PRIVILEGES ON debrief_study_test.* TO 'USERNAME'@'localhost';
 GRANT ALL PRIVILEGES ON debrief_study_development.* TO 'USERNAME'@'localhost';
 GRANT ALL PRIVILEGES ON debrief_study_production.* TO 'USERNAME'@'localhost';
-flush privileges
+flush privileges;
 
 ## running migrations
 export CS_ENV=all
