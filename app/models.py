@@ -25,7 +25,7 @@ class TwitterUser(Base):
 
 class TwitterUserMetadata(Base):
     __tablename__ = 'twitter_user_metadata'
-    twitter_user_id             = Column(String(64), primary_key = True) # should be lowercase
+    twitter_user_id             = Column(String(64), primary_key = True)
     received_lumen_notice_at    = Column(DateTime)
     twitter_removed             = Column(Boolean)
     lumen_notice_id             = Column(String(64))
@@ -38,7 +38,7 @@ class TwitterUserMetadata(Base):
 
 class TwitterUserMessageAttempt(Base):
     __tablename__ = 'twitter_user_message_attempt'
-    id                  = Column(String(64), primary_key = True) # should be lowercase
+    id                  = Column(String(64), primary_key = True)
     created_at          = Column(DateTime)
     message_id          = Column(String(64))
     account_found       = Column(Boolean) #if we don't find the account, record the attempt and make other values except created_at and id to NONE
@@ -46,9 +46,19 @@ class TwitterUserMessageAttempt(Base):
 
 class Experiment(Base):
     __tablename__ = 'experiments'
-    id                  = Column(String(64), primary_key = True) # should be lowercase
+    id                  = Column(String(64), primary_key = True)
     name                = Column(String(64))
     account_found       = Column(Boolean)
     randomizations      = Column(LargeBinary)
+
+
+class ExperimentAction(Base):
+    __tablename__ = 'experiment_actions'
+    id                  = Column(String(64), primary_key = True)
+    experiment_id       = Column(String(64))
+    action_type         = Column(String(64))
+    created_at          = Column(DateTime)
+    twitter_user_id     = Column(String(64))
+    action_data         = Column(LargeBinary)
 
 
