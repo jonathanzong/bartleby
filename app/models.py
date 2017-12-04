@@ -22,6 +22,7 @@ class TwitterUser(Base):
     lang                = Column(String(32))
     user_state          = Column(Integer) # utils/common.py
 
+
 class TwitterUserMetadata(Base):
     __tablename__ = 'twitter_user_metadata'
     twitter_user_id             = Column(String(64), primary_key = True) # should be lowercase
@@ -41,3 +42,13 @@ class TwitterUserMessageAttempt(Base):
     created_at          = Column(DateTime)
     message_id          = Column(String(64))
     account_found       = Column(Boolean) #if we don't find the account, record the attempt and make other values except created_at and id to NONE
+
+
+class Experiment(Base):
+    __tablename__ = 'experiments'
+    id                  = Column(String(64), primary_key = True) # should be lowercase
+    name                = Column(String(64))
+    account_found       = Column(Boolean)
+    randomizations      = Column(LargeBinary)
+
+
