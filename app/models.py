@@ -62,3 +62,9 @@ class ExperimentAction(Base):
     action_data         = Column(LargeBinary)
 
 
+class TwitterUserSurveyResult(Base):
+    __tablename__ = 'twitter_user_survey_results'
+    twitter_user_id     = Column(String(64), primary_key = True)
+    created_at          = Column(DateTime)
+    survey_data         = Column(LargeBinary)
+
