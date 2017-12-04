@@ -1,2 +1,8 @@
-Flask==0.12.2
-tweepy==3.5.0
+Flask
+tweepy
+mysqlclient
+sqlalchemy
+alembic
+pytest
+simplejson
+mock
