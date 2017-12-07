@@ -34,7 +34,11 @@ def debrief():
   if not is_logged_in():
     return redirect(url_for('index'))
   user = session['user']
-  # TODO: if user has filled out survey, redirect to /complete
+
+  # if user has filled out survey, redirect to /complete
+  completed_survey = db_session.query(TwitterUserSurveyResult.twitter_user_id).filter_by(twitter_user_id=user['id']).scalar() is not None
+  if completed_survey:
+    return redirect('/complete')
 
   # TODO: look up conditions for user by user['id'],
   #       conditionally render template

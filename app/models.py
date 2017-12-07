@@ -57,7 +57,7 @@ class ExperimentAction(Base):
     id                  = Column(String(64), primary_key = True)
     experiment_id       = Column(String(64))
     action_type         = Column(String(64))
-    created_at          = Column(DateTime)
+    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
     twitter_user_id     = Column(String(64))
     action_data         = Column(LargeBinary)
 
