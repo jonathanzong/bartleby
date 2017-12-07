@@ -1,3 +1,11 @@
 .errors {
   color: red;
 }
+
+form ul {
+  padding-left: 15px;
+}
+
+form ul li {
+  list-style-type: none;
+}

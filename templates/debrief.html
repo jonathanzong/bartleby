@@ -11,6 +11,8 @@
     <a href="{{ url_for('logout') }}">log out</a>
   {% endif %}
 
+  <hr>
+
   <form method="POST" action="/debrief">
     {{ form.csrf_token }}
     {{ form.would_delete.label }} {{ form.would_delete }}
@@ -53,7 +55,9 @@
         <ul class="errors">{% for error in form.errors.improve_debrief %}<li>{{ error }}</li>{% endfor %}</ul>
     {% endif %}
 
-
-    <input type="submit" value="Submit">
+    <div>
+      <input type="submit" value="Submit">
+    </div>
   </form>
+  <script src="{{ url_for('static', filename='debrief.js') }}"></script>
 {% endblock %}
