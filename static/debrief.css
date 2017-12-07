@@ -3,9 +3,26 @@
 }
 
 form ul {
-  padding-left: 15px;
+  padding: 0;
+  /*font-size: 12px;*/
 }
 
 form ul li {
   list-style-type: none;
+}
+
+form textarea {
+  resize: none;
+  width: 100%;
+  min-height: 150px;
+  margin: 15px 0;
+}
+
+form .form-row {
+  margin: 30px auto;
+}
+
+form .form-row > label {
+  font-weight: bold;
+  font-size: 0.83em;
 }

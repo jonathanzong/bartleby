@@ -7,6 +7,9 @@ html {
 
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0.025em;
   margin-bottom: 60px;
 }
 
@@ -17,4 +20,8 @@ a {
 
 p {
   margin: 1.6em 0;
+}
+
+.container {
+  max-width: 750px;
 }
