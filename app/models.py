@@ -65,6 +65,6 @@ class ExperimentAction(Base):
 class TwitterUserSurveyResult(Base):
     __tablename__ = 'twitter_user_survey_results'
     twitter_user_id     = Column(String(64), primary_key = True)
-    created_at          = Column(DateTime)
+    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
     survey_data         = Column(LargeBinary)
 

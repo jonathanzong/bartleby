@@ -2,14 +2,23 @@ import twitter_api_keys
 import tweepy
 from app.forms import SurveyForm
 import json
+import os
 
 from flask import Flask, session, request, redirect, url_for, render_template
+
+from utils.common import DbEngine
+from app.models import *
 
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
 
 consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
 consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
+
+ENV = os.environ['CS_ENV'] = "development" # TODO
+
+CONFIG_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config")
+db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
 def is_logged_in():
   return 'user' in session
@@ -37,7 +46,10 @@ def debrief():
     del results_dict['csrf_token']
     results_dict['twitter_user_id'] = user['id']
 
-    print(json.dumps(results_dict))
+    res = TwitterUserSurveyResult(twitter_user_id=user['id'],
+                                  survey_data=json.dumps(results_dict).encode('utf-8'))
+    db_session.add(res)
+    db_session.commit()
     return redirect('/complete')
   return render_template('debrief.html', user=user, form=form)
 
