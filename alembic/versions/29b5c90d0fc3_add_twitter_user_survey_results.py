@@ -1,4 +1,4 @@
-"""Add experiment actions
+"""Add twitter user survey results
 
 Revision ID: 29b5c90d0fc3
 Revises: 796efd4b6ec8
