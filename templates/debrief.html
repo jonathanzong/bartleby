@@ -1,4 +1,7 @@
 {% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='debrief.css') }}">
+{% endblock %}
 {% block content %}
   <h1>Debrief</h1>
   <p>{{ user.id }}</p>
@@ -7,4 +10,50 @@
   {% if 'user' in session %}
     <a href="{{ url_for('logout') }}">log out</a>
   {% endif %}
+
+  <form method="POST" action="/debrief">
+    {{ form.csrf_token }}
+    {{ form.would_delete.label }} {{ form.would_delete }}
+    {% if form.errors.would_delete %}
+        <ul class="errors">{% for error in form.errors.would_delete %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {{ form.society_benefit.label }} {{ form.society_benefit }}
+    {% if form.errors.society_benefit %}
+        <ul class="errors">{% for error in form.errors.society_benefit %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {{ form.personal_benefit.label }} {{ form.personal_benefit }}
+    {% if form.errors.personal_benefit %}
+        <ul class="errors">{% for error in form.errors.personal_benefit %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {{ form.collection_surprised.label }} {{ form.collection_surprised }}
+    {% if form.errors.collection_surprised %}
+        <ul class="errors">{% for error in form.errors.collection_surprised %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {{ form.glad_in_study.label }} {{ form.glad_in_study }}
+    {% if form.errors.glad_in_study %}
+        <ul class="errors">{% for error in form.errors.glad_in_study %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {{ form.share_results.label }} {{ form.share_results }}
+    {% if form.errors.share_results %}
+        <ul class="errors">{% for error in form.errors.share_results %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {{ form.vote_study.label }} {{ form.vote_study }}
+    {% if form.errors.vote_study %}
+        <ul class="errors">{% for error in form.errors.would_delete %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+    {{ form.improve_debrief.label }} {{ form.improve_debrief }}
+    {% if form.errors.improve_debrief %}
+        <ul class="errors">{% for error in form.errors.improve_debrief %}<li>{{ error }}</li>{% endfor %}</ul>
+    {% endif %}
+
+
+    <input type="submit" value="Submit">
+  </form>
 {% endblock %}

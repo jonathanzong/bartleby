@@ -1,5 +1,7 @@
 import twitter_api_keys
 import tweepy
+from app.forms import SurveyForm
+import json
 
 from flask import Flask, session, request, redirect, url_for, render_template
 
@@ -10,7 +12,6 @@ consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
 consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
 
 def is_logged_in():
-  # TODO
   return 'user' in session
 
 @app.route('/')
@@ -19,14 +20,30 @@ def index():
     return redirect(url_for('debrief'))
   return render_template('index.html')
 
-@app.route('/debrief')
+@app.route('/debrief', methods=('GET', 'POST'))
 def debrief():
   if not is_logged_in():
     return redirect(url_for('index'))
   user = session['user']
-  # TODO: look up conditions for user by user.id,
+  # TODO: look up conditions for user by user['id'],
   #       conditionally render template
-  return render_template('debrief.html', user=user)
+
+  # handle form submission
+  form = SurveyForm()
+  if form.validate_on_submit():
+    results_dict = request.form.to_dict()
+    del results_dict['csrf_token']
+    results_dict['twitter_user_id'] = user['id']
+
+    print(json.dumps(results_dict))
+    return redirect('/complete')
+  return render_template('debrief.html', user=user, form=form)
+
+@app.route('/complete')
+def complete():
+  if not is_logged_in():
+    return redirect(url_for('index'))
+  return render_template('complete.html')
 
 @app.route('/login')
 def login():
@@ -41,9 +58,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-  # TODO: will store more things in the future
   del session['user']
-
   return redirect(url_for('index'))
 
 @app.route('/oauth_authorized')

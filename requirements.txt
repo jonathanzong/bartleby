@@ -6,3 +6,4 @@ alembic
 pytest
 simplejson
 mock
+Flask-WTF
