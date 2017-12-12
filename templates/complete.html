@@ -1,1 +1,5 @@
 <a href="/debrief">back to debrief</a>
+
+{% if 'user' in session %}
+  <a href="{{ url_for('logout') }}">log out</a>
+{% endif %}

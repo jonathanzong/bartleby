@@ -61,6 +61,11 @@ def debrief():
 def complete():
   if not is_logged_in():
     return redirect(url_for('index'))
+
+  completed_survey = db_session.query(TwitterUserSurveyResult.twitter_user_id).filter_by(twitter_user_id=user['id']).scalar() is not None
+  if not completed_survey:
+    return redirect('/debrief')
+
   return render_template('complete.html')
 
 @app.route('/login')
