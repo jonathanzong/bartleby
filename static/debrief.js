@@ -1,6 +1,7 @@
 var inputs = document.querySelectorAll("form input");
 var textareas = document.querySelectorAll("form textarea");
 
+// restore in-progress answers from localstorage
 function populateFromLocalstorage() {
   for (var i = 0, len = inputs.length; i < len; i++) {
     var val = localStorage.getItem(inputs[i].name);
@@ -25,6 +26,7 @@ function populateFromLocalstorage() {
 
 populateFromLocalstorage();
 
+// save in-progress answers in local storage
 function onChange (evt) {
   localStorage.setItem(this.name, this.value);
 }

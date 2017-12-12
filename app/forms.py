@@ -2,6 +2,9 @@ from flask_wtf import FlaskForm
 from wtforms import Form, TextAreaField, RadioField, validators
 
 class SurveyForm(FlaskForm):
+  click_recruitment    = RadioField('How likely would you be to click the link in the second tweet? ',
+                                    [validators.DataRequired()],
+                                    choices=[(x[0], x) for x in ['1 (definitely not)', '2 (probably not)', '3 (possibly)', '4 (probably)', '5 (definitely)']])
   would_delete         = RadioField('In the debriefing webpage, we gave you a chance to have your data deleted from the study. How likely would you be to click the button to delete your data?',
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (definitely not)', '2 (probably not)', '3 (possibly)', '4 (probably)', '5 (definitely)']])
