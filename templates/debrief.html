@@ -21,7 +21,15 @@
     </p>
 
     <p>
+      <img src="{{ url_for('static', filename='images/tweet-recruit.png') }}" />
+    </p>
+
+    <p>
       Whether or not you clicked on the above link, imagine you received a second tweet 3 months later, after dinnertime:
+    </p>
+
+    <p>
+      <img src="{{ url_for('static', filename='images/tweet-debrief.png') }}" />
     </p>
 
     <div class="form-row {% if form.errors.click_recruitment %}has-error{% endif%}">
@@ -178,6 +186,10 @@
 
       <p>
         During the study, you sent [X] tweets per day, [X] more than others on average. People sent [X] tweets with pictures and media per day; you sent [X] tweets per day, compared to an average of [X].
+      </p>
+
+      <p>
+        <img src="{{ url_for('static', filename='images/visualization.png') }}" />
       </p>
 
       <h5>Choosing To Remain in the Study or Opt Out</h5>
