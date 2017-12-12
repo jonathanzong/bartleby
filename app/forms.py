@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import Form, TextAreaField, RadioField, validators
+from wtforms import Form, TextAreaField, RadioField, BooleanField, validators
 
 class SurveyForm(FlaskForm):
+  opt_out              = BooleanField('Do not include my information in your research')
   click_recruitment    = RadioField('How likely would you be to click the link in the second tweet? ',
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (definitely not)', '2 (probably not)', '3 (possibly)', '4 (probably)', '5 (definitely)']])

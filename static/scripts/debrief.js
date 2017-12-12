@@ -5,15 +5,17 @@ var textareas = document.querySelectorAll("form textarea");
 function populateFromLocalstorage() {
   for (var i = 0, len = inputs.length; i < len; i++) {
     var val = localStorage.getItem(inputs[i].name);
-    if (val) {
-      switch(inputs[i].type) {
-        case 'radio':
-          if (inputs[i].value == val) {
-            inputs[i].checked = true;
-          }
-          break;
-        // TODO: if there are other input types
-      }
+    switch(inputs[i].type) {
+      case 'checkbox':
+        inputs[i].checked = val == 'true';
+        break;
+      case 'radio':
+      default:
+        if (inputs[i].value == val) {
+          inputs[i].checked = true;
+        }
+        break;
+      // TODO: if there are other input types
     }
   }
   for (var i = 0, len = textareas.length; i < len; i++) {
@@ -28,7 +30,16 @@ populateFromLocalstorage();
 
 // save in-progress answers in local storage
 function onChange (evt) {
-  localStorage.setItem(this.name, this.value);
+  switch(this.type) {
+    case 'checkbox':
+      localStorage.setItem(this.name, this.checked);
+      break;
+    case 'radio':
+    default:
+      localStorage.setItem(this.name, this.value);
+      break;
+    // TODO: if there are other input types
+  }
 }
 
 for (var i = 0, len = inputs.length; i < len; i++) {

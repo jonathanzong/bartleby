@@ -3,6 +3,7 @@ import tweepy
 from app.forms import SurveyForm
 import json
 import os
+import datetime
 
 from flask import Flask, session, request, redirect, url_for, render_template
 
@@ -61,6 +62,7 @@ def debrief():
 def complete():
   if not is_logged_in():
     return redirect(url_for('index'))
+  user = session['user']
 
   completed_survey = db_session.query(TwitterUserSurveyResult.twitter_user_id).filter_by(twitter_user_id=user['id']).scalar() is not None
   if not completed_survey:
@@ -98,8 +100,21 @@ def oauth_authorized():
     api = tweepy.API(auth)
     user = api.me()
 
+    today = datetime.datetime.now()
+    created = user.created_at
+    account_age = today.year - created.year - ((today.month, today.day) < (created.month, created.day))
+
     # TODO: store access_token?
-    session['user'] = {'id': user.id, 'screen_name': user.screen_name}
+    session['user'] = {
+      'id': user.id,
+      'screen_name': user.screen_name,
+      'default_profile_image': user.default_profile_image,
+      'statuses_count': user.statuses_count,
+      'verified': user.verified,
+      'created_at': user.created_at,
+      'lang': user.lang,
+      'account_age': account_age
+    }
 
     return redirect(url_for('debrief'))
   except tweepy.TweepError:
