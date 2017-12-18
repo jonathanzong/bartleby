@@ -81,12 +81,14 @@ def begin():
     twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     twitter_user_metadata.tweet_removed = (results_dict['tweet_removed'] == 'true')
 
-    # TODO assign a randomization based on results_dict['tweet_removed'] == 'true'
+    # assign a randomization based on whether tweet_removed
 
-    #if results_dict['tweet_removed'] == 'true':
-    #else:
-
-    #twitter_user_metadata.assignment_json =
+    if results_dict['tweet_removed'] == 'true':
+      randomization = db_session.query(Randomization).filter_by(stratum='Removed').filter_by(assigned=False).first()
+    else:
+      randomization = db_session.query(Randomization).filter_by(stratum='Not Removed').filter_by(assigned=False).first()
+    twitter_user_metadata.assignment_json = json.dumps(randomization.__dict__)
+    randomization.assigned = True
 
     db_session.commit()
 

@@ -46,11 +46,19 @@ class TwitterUserMessageAttempt(Base):
 
 class Experiment(Base):
     __tablename__ = 'experiments'
-    id                  = Column(String(64), primary_key = True)
-    name                = Column(String(64))
-    account_found       = Column(Boolean)
-    randomizations      = Column(LargeBinary)
+    id                           = Column(String(64), primary_key = True)
+    name                         = Column(String(64))
+    account_found                = Column(Boolean)
 
+class Randomization(Base):
+    __tablename__ = 'randomizations'
+    id                           = Column(Integer, primary_key = True)
+    randomization_id             = Column(String(64))
+    stratum                      = Column(String(64), index = True)
+    block_id                     = Column(String(64))
+    block_size                   = Column(Integer)
+    treatment                    = Column(Integer)
+    assigned                     = Column(Boolean)
 
 class ExperimentAction(Base):
     __tablename__ = 'experiment_actions'
