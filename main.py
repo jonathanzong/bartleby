@@ -25,30 +25,30 @@ def is_logged_in():
   return 'user' in session
 
 def insert_or_update_survey_result(user, results_dict):
-  user_has_entry = db_session.query(TwitterUserSurveyResult.twitter_user_id).filter_by(twitter_user_id=user['id']).scalar() is not None
-
-  if user_has_entry:
+  try:
     res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).one()
 
-    # merge response json with pre-existing entry from previous page
-    res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).one()
+    # merge response json with pre-existing entry
     data = json.loads(res.survey_data)
-    data = {**data, **results_dict}
-    res.survey_data = json.dumps(data).encode('utf-8')
+    results_dict = {**data, **results_dict}
+    res.survey_data = json.dumps(survey_data).encode('utf-8')
 
     db_session.merge(res)
-  else:
+    db_session.commit()
+  except NoResultFound:
     # create new entry
     res = TwitterUserSurveyResult(twitter_user_id=user['id'],
-                                survey_data=json.dumps(results_dict).encode('utf-8'))
+                                  survey_data=json.dumps(results_dict).encode('utf-8'))
     db_session.add(res)
-
-  db_session.commit()
+    db_session.commit()
 
 def has_completed_study(user):
-  return db_session.query(TwitterUserMetadata) \
+  try:
+    return db_session.query(TwitterUserMetadata) \
                    .filter_by(twitter_user_id=user['id']).one() \
                    .completed_study_at is not None
+  except NoResultFound:
+    return False
 
 @app.route('/')
 def index():
@@ -153,6 +153,16 @@ def complete():
   #   return redirect(url_for('debrief'))
 
   return render_template('06-complete.html')
+
+@app.route('/ineligible')
+def ineligible():
+  if not is_logged_in():
+    return redirect(url_for('index'))
+  user = session['user']
+
+  # TODO: if actually eligible, redirect to begin
+
+  return render_template('ineligible.html')
 
 @app.route('/login')
 def login():

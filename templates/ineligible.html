@@ -1,1 +1,23 @@
-Pug by Elena Rimeikaite from the Noun Project
+{% extends "layout.html" %}
+{% block content %}
+  <a href="{{ url_for('debrief') }}">back to debrief</a>
+
+  {% if 'user' in session %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+
+  <p>
+    Thanks for your interest to help us improve ethics procedures for research on social media. While we're not able to include you in this study, you may be eligible for future research.
+  </p>
+
+  <p>
+    If you want to stay up-to-date on our research, please follow <a href="https://twitter.com/natematias" target="_blank">@natematias</a>, <a href="https://twitter.com/ohnobackspace" target="_blank">@ohnobackspace</a>, <a href="https://twitter.com/betsylevyp" target="_blank">@betsylevyp</a>, and the Princeton Center for IT Policy at <a href="https://twitter.com/princetoncitp" target="_blank">@princetoncitp</a>. We plan to share the results of this study on Twitter as we have results.
+  </p>
+
+  <div>
+    <img src="{{ url_for('static', filename='images/puppy.svg') }}"/>
+    <p>
+      Pug by Elena Rimeikaite from the Noun Project
+    </p>
+  </div>
+{% endblock %}
