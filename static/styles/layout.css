@@ -26,6 +26,12 @@ img {
   max-width: 100%;
 }
 
-.container {
-  max-width: 750px;
+.small {
+  font-size: 0.8em;
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 750px;
+  }
 }

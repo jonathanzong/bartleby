@@ -1,14 +1,24 @@
 .tweet {
   border: 1px solid #657786;
   border-radius: 8px;
-  padding: 30px 40px 50px;
-  margin: 0 auto;
 
-  width: 642px;
+  margin: 0 -15px;
 
-  font-size: 27px;
-  line-height: 32px;
   letter-spacing: .01em;
+
+  padding: 15px 15px 20px;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+@media (min-width: 768px) {
+  .tweet {
+    padding: 30px 40px 50px;
+    width: 642px;
+    font-size: 21px;
+    line-height: 27px;
+    margin: 0 auto;
+  }
 }
 
 .tweet-link {

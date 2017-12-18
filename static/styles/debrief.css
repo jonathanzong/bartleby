@@ -18,3 +18,20 @@
   padding: 15px 0;
   background: white;
 }
+
+.debrief-interface .data-table .row {
+  padding-top: 0.4em;
+  padding-bottom: 0.4em;
+}
+
+.debrief-interface .data-table .row:nth-child(odd) {
+  background-color: white;
+}
+
+.debrief-interface .data-table .row:nth-child(even) {
+  background-color: #f7f7f7;
+}
+
+.debrief-interface .data-table .col-sm-3 {
+  font-style: italic;
+}
