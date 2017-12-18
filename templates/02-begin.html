@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
+{% endblock %}
+{% block content %}
+  <h1>Debrief</h1>
+  <p>{{ user.id }}</p>
+  <p>{{ user.screen_name }}</p>
+
+  {% if 'user' in session %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+
+  <hr>
+
+  <form method="POST" action="{{ url_for('begin') }}">
+    {{ form.csrf_token }}
+
+    <div class="form-row {% if form.errors.tweet_removed %}has-error{% endif%}">
+      {{ form.tweet_removed.label }} {{ form.tweet_removed }}
+      {% if form.errors.tweet_removed %}
+        <ul class="errors">
+          <li>Please choose an option.</li>
+        </ul>
+      {% endif %}
+    </div>
+
+    <div>
+      <input type="submit" value="Submit">
+    </div>
+  </form>
+  <script src="{{ url_for('static', filename='scripts/survey.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,49 @@
+.tweet {
+  border: 1px solid #657786;
+  border-radius: 8px;
+  padding: 30px 40px 50px;
+  margin: 0 auto;
+
+  width: 642px;
+
+  font-size: 27px;
+  line-height: 32px;
+  letter-spacing: .01em;
+}
+
+.tweet-link {
+  color: #55acee;
+}
+
+.tweet-meta {
+  margin-bottom: 15px;
+}
+
+.tweet-propic {
+  width: 48px;
+  height: 48px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background-color: #657786;
+  display: inline-block;
+}
+
+.tweet-from {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.tweet-from-name {
+  display: block;
+  color: #14171a;
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: bold;
+  max-width: 32ch;
+}
+
+.tweet-from-handle {
+  font-size: 14px;
+  line-height: 20px;
+  color: #657786;
+}

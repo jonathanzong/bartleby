@@ -1,0 +1,37 @@
+form ul {
+  padding: 0;
+  /*font-size: 12px;*/
+}
+
+form ul li {
+  list-style-type: none;
+}
+
+form textarea {
+  resize: none;
+  width: 100%;
+  min-height: 150px;
+  margin: 15px 0;
+}
+
+form .form-row {
+  margin-top: 30px;
+  padding: 0 15px;
+  border-left: 2px solid #aaa;
+}
+
+form .form-row > label {
+  font-weight: bold;
+  font-size: 0.83em;
+}
+
+form .has-error {
+  background: #ffeeee;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+form .errors {
+  color: red;
+  margin: 0;
+}

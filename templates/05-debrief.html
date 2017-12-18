@@ -1,11 +1,14 @@
 {% extends "layout.html" %}
 {% block head %}
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/debrief.css') }}">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
 {% endblock %}
 {% block content %}
   <h1>Debrief</h1>
   <p>{{ user.id }}</p>
   <p>{{ user.screen_name }}</p>
+
+  <a href="{{ url_for('begin') }}">back to begin</a>
 
   {% if 'user' in session %}
     <a href="{{ url_for('logout') }}">log out</a>
@@ -13,33 +16,8 @@
 
   <hr>
 
-  <form method="POST" action="/debrief">
+  <form method="POST" action="{{ url_for('debrief') }}">
     {{ form.csrf_token }}
-
-    <p>
-      Imagine that a tweet of yours was recently removed by Twitter, and you received a message from Twitter explaining that they removed it for copyright reasons. Next, imagine you received the following tweet several hours later.
-    </p>
-
-    <p>
-      <img src="{{ url_for('static', filename='images/tweet-recruit.png') }}" />
-    </p>
-
-    <p>
-      Whether or not you clicked on the above link, imagine you received a second tweet 3 months later, after dinnertime:
-    </p>
-
-    <p>
-      <img src="{{ url_for('static', filename='images/tweet-debrief.png') }}" />
-    </p>
-
-    <div class="form-row {% if form.errors.click_recruitment %}has-error{% endif%}">
-      {{ form.click_recruitment.label }} {{ form.click_recruitment }}
-      {% if form.errors.click_recruitment %}
-        <ul class="errors">
-          <li>Please choose an option.</li>
-        </ul>
-      {% endif %}
-    </div>
 
     <p>
       Now imagine you clicked the link. You would see the following page:
@@ -310,5 +288,5 @@
       <input type="submit" value="Submit">
     </div>
   </form>
-  <script src="{{ url_for('static', filename='scripts/debrief.js') }}"></script>
+  <script src="{{ url_for('static', filename='scripts/survey.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/tweet.css') }}">
+{% endblock %}
+{% block content %}
+  <h1>Hypothetical Scenario</h1>
+  <p>{{ user.id }}</p>
+  <p>{{ user.screen_name }}</p>
+
+  {% if 'user' in session %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+
+  <hr>
+
+  <p>
+    Imagine that a tweet of yours was recently removed by Twitter, and you received a message from Twitter explaining that they removed it for copyright reasons. Next, imagine you received the following tweet several hours later.
+  </p>
+
+  <div class="tweet">
+    <div class="tweet-meta">
+      <div class="tweet-propic">
+      </div>
+      <div class="tweet-from">
+        <div class="tweet-from-name">
+          DMCAInfo
+        </div>
+        <div class="tweet-from-handle">
+          @DmcaInfo
+        </div>
+      </div>
+    </div>
+    <span class="tweet-link">@participant_account</span> we noticed a tweet of yours may have been removed for copyright reasons. It's common, rarely goes to court, & rarely happens twice. Learn more 👉 <span class="tweet-link">[link]</span>
+  </div>
+
+  <p>
+    <a href="{{ url_for('tweet_debrief') }}">Next</a>
+  </p>
+
+{% endblock %}

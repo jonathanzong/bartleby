@@ -1,6 +1,5 @@
 import twitter_api_keys
 import tweepy
-from app.forms import SurveyForm
 import json
 import os
 import datetime
@@ -9,6 +8,7 @@ from flask import Flask, session, request, redirect, url_for, render_template
 
 from utils.common import DbEngine
 from app.models import *
+from app.forms import *
 
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
@@ -24,11 +24,98 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 def is_logged_in():
   return 'user' in session
 
+def insert_or_update_survey_result(user, results_dict):
+  user_has_entry = db_session.query(TwitterUserSurveyResult.twitter_user_id).filter_by(twitter_user_id=user['id']).scalar() is not None
+
+  if user_has_entry:
+    res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).one()
+
+    # merge response json with pre-existing entry from previous page
+    res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).one()
+    data = json.loads(res.survey_data)
+    data = {**data, **results_dict}
+    res.survey_data = json.dumps(data).encode('utf-8')
+
+    db_session.merge(res)
+  else:
+    # create new entry
+    res = TwitterUserSurveyResult(twitter_user_id=user['id'],
+                                survey_data=json.dumps(results_dict).encode('utf-8'))
+    db_session.add(res)
+
+  db_session.commit()
+
+def has_completed_study(user):
+  return db_session.query(TwitterUserMetadata) \
+                   .filter_by(twitter_user_id=user['id']).one() \
+                   .completed_study_at is not None
+
 @app.route('/')
 def index():
   if is_logged_in():
+    return redirect(url_for('begin'))
+  return render_template('01-index.html')
+
+@app.route('/begin', methods=('GET', 'POST'))
+def begin():
+  if not is_logged_in():
+    return redirect(url_for('index'))
+  user = session['user']
+
+  # TODO: if user has completed study, redirect to /complete
+
+  # if has_completed_study(user):
+  #   return redirect(url_for('complete'))
+
+  # handle form submission
+  form = TweetRemovedForm()
+  if form.validate_on_submit():
+    results_dict = request.form.to_dict()
+    del results_dict['csrf_token']
+    results_dict['twitter_user_id'] = user['id']
+
+    insert_or_update_survey_result(user, results_dict)
+
+    # TODO assign a randomization based on results_dict['tweet_removed'] == 'true'
+
+    return redirect(url_for('tweet_intervention'))
+  return render_template('02-begin.html', user=user, form=form)
+
+@app.route('/tweet-intervention')
+def tweet_intervention():
+  if not is_logged_in():
+    return redirect(url_for('index'))
+  user = session['user']
+
+  # TODO: if user has completed study, redirect to /complete
+
+  # if has_completed_study(user):
+  #   return redirect(url_for('complete'))
+
+  return render_template('03-tweet-intervention.html', user=user)
+
+@app.route('/tweet-debrief', methods=('GET', 'POST'))
+def tweet_debrief():
+  if not is_logged_in():
+    return redirect(url_for('index'))
+  user = session['user']
+
+  # TODO: if user has completed study, redirect to /complete
+
+  # if has_completed_study(user):
+  #   return redirect(url_for('complete'))
+
+  # handle form submission
+  form = WouldClickTweetForm()
+  if form.validate_on_submit():
+    results_dict = request.form.to_dict()
+    del results_dict['csrf_token']
+    results_dict['twitter_user_id'] = user['id']
+
+    insert_or_update_survey_result(user, results_dict)
+
     return redirect(url_for('debrief'))
-  return render_template('index.html')
+  return render_template('04-tweet-debrief.html', user=user, form=form)
 
 @app.route('/debrief', methods=('GET', 'POST'))
 def debrief():
@@ -36,10 +123,10 @@ def debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  # if user has filled out survey, redirect to /complete
-  completed_survey = db_session.query(TwitterUserSurveyResult.twitter_user_id).filter_by(twitter_user_id=user['id']).scalar() is not None
-  if completed_survey:
-    return redirect('/complete')
+  # TODO: if user has completed study, redirect to /complete
+
+  # if has_completed_study(user):
+  #   return redirect(url_for('complete'))
 
   # TODO: look up conditions for user by user['id'],
   #       conditionally render template
@@ -51,12 +138,10 @@ def debrief():
     del results_dict['csrf_token']
     results_dict['twitter_user_id'] = user['id']
 
-    res = TwitterUserSurveyResult(twitter_user_id=user['id'],
-                                  survey_data=json.dumps(results_dict).encode('utf-8'))
-    db_session.add(res)
-    db_session.commit()
-    return redirect('/complete')
-  return render_template('debrief.html', user=user, form=form)
+    insert_or_update_survey_result(user, results_dict)
+
+    return redirect(url_for('complete'))
+  return render_template('05-debrief.html', user=user, form=form)
 
 @app.route('/complete')
 def complete():
@@ -64,11 +149,10 @@ def complete():
     return redirect(url_for('index'))
   user = session['user']
 
-  completed_survey = db_session.query(TwitterUserSurveyResult.twitter_user_id).filter_by(twitter_user_id=user['id']).scalar() is not None
-  if not completed_survey:
-    return redirect('/debrief')
+  # if not has_completed_study():
+  #   return redirect(url_for('debrief'))
 
-  return render_template('complete.html')
+  return render_template('06-complete.html')
 
 @app.route('/login')
 def login():
@@ -116,6 +200,10 @@ def oauth_authorized():
       'account_age': account_age
     }
 
-    return redirect(url_for('debrief'))
+    return redirect(url_for('begin'))
   except tweepy.TweepError:
     return 'Error! Failed to get access token.'
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return redirect(url_for('index'))

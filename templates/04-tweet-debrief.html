@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/tweet.css') }}">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
+{% endblock %}
+{% block content %}
+  <h1>Debrief</h1>
+  <p>{{ user.id }}</p>
+  <p>{{ user.screen_name }}</p>
+
+  {% if 'user' in session %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+
+  <hr>
+
+  <form method="POST" action="{{ url_for('tweet_debrief') }}">
+    {{ form.csrf_token }}
+
+    <p>
+      Whether or not you clicked on the above link, imagine you received a second tweet 3 months later, after dinnertime:
+    </p>
+
+    <div class="tweet">
+      <div class="tweet-meta">
+        <div class="tweet-propic">
+        </div>
+        <div class="tweet-from">
+          <div class="tweet-from-name">
+            DMCAInfo
+          </div>
+          <div class="tweet-from-handle">
+            @DmcaInfo
+          </div>
+        </div>
+      </div>
+      <span class="tweet-link">@participant_account</span> Can law & privacy information help people whose tweets are removed for copyright reasons? You may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">[link]</span>
+    </div>
+
+    <div class="form-row {% if form.errors.click_tweet %}has-error{% endif%}">
+      {{ form.click_tweet.label }} {{ form.click_tweet }}
+      {% if form.errors.click_tweet %}
+        <ul class="errors">
+          <li>Please choose an option.</li>
+        </ul>
+      {% endif %}
+    </div>
+
+    <div>
+      <input type="submit" value="Submit">
+    </div>
+  </form>
+
+  <script src="{{ url_for('static', filename='scripts/survey.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+  <a href="{{ url_for('debrief') }}">back to debrief</a>
+
+  {% if 'user' in session %}
+    <a href="{{ url_for('logout') }}">log out</a>
+  {% endif %}
+
+  <div>
+    <img src="{{ url_for('static', filename='images/turtle.svg') }}"/>
+    <p>
+      Turtle created by Martyn Jasinski from the Noun Project
+    </p>
+  </div>
+{% endblock %}

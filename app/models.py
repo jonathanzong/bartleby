@@ -17,8 +17,8 @@ class TwitterUser(Base):
     __tablename__ = 'twitter_users'
     id                  = Column(String(64), primary_key = True) # should be lowercase
     screen_name         = Column(String(256), index = True) # if not found, # if not found, NOT_FOUND_TWITTER_USER_STR
-    created_at          = Column(DateTime)
-    account_created_at  = Column(DateTime, default=datetime.datetime.utcnow)
+    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
+    account_created_at  = Column(DateTime)
     lang                = Column(String(32))
     user_state          = Column(Integer) # utils/common.py
 
@@ -27,7 +27,7 @@ class TwitterUserMetadata(Base):
     __tablename__ = 'twitter_user_metadata'
     twitter_user_id             = Column(String(64), primary_key = True)
     received_lumen_notice_at    = Column(DateTime)
-    twitter_removed             = Column(Boolean)
+    tweet_removed               = Column(Boolean)
     lumen_notice_id             = Column(String(64))
     user_json                   = Column(LargeBinary)
     assignment_json             = Column(LargeBinary)
