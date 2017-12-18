@@ -17,9 +17,9 @@ class TwitterUser(Base):
     __tablename__ = 'twitter_users'
     id                  = Column(String(64), primary_key = True) # should be lowercase
     screen_name         = Column(String(256), index = True) # if not found, # if not found, NOT_FOUND_TWITTER_USER_STR
-    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
-    account_created_at  = Column(DateTime)
+    created_at          = Column(DateTime)
     lang                = Column(String(32))
+    record_created_at   = Column(DateTime, default=datetime.datetime.utcnow)
     user_state          = Column(Integer) # utils/common.py
 
 
@@ -32,7 +32,7 @@ class TwitterUserMetadata(Base):
     user_json                   = Column(LargeBinary)
     assignment_json             = Column(LargeBinary)
     experiment_id               = Column(String(64))
-    initial_login_at            = Column(DateTime)
+    initial_login_at            = Column(DateTime, default=datetime.datetime.utcnow)
     completed_study_at          = Column(DateTime)
 
 

@@ -25,29 +25,27 @@ def is_logged_in():
   return 'user' in session
 
 def insert_or_update_survey_result(user, results_dict):
-  try:
-    res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).one()
+    res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
 
-    # merge response json with pre-existing entry
-    data = json.loads(res.survey_data)
-    results_dict = {**data, **results_dict}
-    res.survey_data = json.dumps(survey_data).encode('utf-8')
+    if res is not None:
+      # load pre-existing response and merge in new answers
+      data = json.loads(res.survey_data)
+      results_dict = {**data, **results_dict}
+      res.survey_data = json.dumps(results_dict).encode('utf-8')
 
-    db_session.merge(res)
-    db_session.commit()
-  except NoResultFound:
-    # create new entry
-    res = TwitterUserSurveyResult(twitter_user_id=user['id'],
-                                  survey_data=json.dumps(results_dict).encode('utf-8'))
-    db_session.add(res)
-    db_session.commit()
+      db_session.commit()
+    else:
+      # create new entry
+      res = TwitterUserSurveyResult(twitter_user_id=user['id'],
+                                    survey_data=json.dumps(results_dict).encode('utf-8'))
+      db_session.add(res)
+      db_session.commit()
 
 def has_completed_study(user):
-  try:
-    return db_session.query(TwitterUserMetadata) \
-                   .filter_by(twitter_user_id=user['id']).one() \
-                   .completed_study_at is not None
-  except NoResultFound:
+  twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+  if twitter_user_metadata is not None:
+    return twitter_user_metadata.completed_study_at is not None
+  else:
     return False
 
 @app.route('/')
@@ -62,10 +60,8 @@ def begin():
     return redirect(url_for('index'))
   user = session['user']
 
-  # TODO: if user has completed study, redirect to /complete
-
-  # if has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if has_completed_study(user):
+    return redirect(url_for('complete'))
 
   # handle form submission
   form = TweetRemovedForm()
@@ -76,7 +72,17 @@ def begin():
 
     insert_or_update_survey_result(user, results_dict)
 
+    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    twitter_user_metadata.tweet_removed = (results_dict['tweet_removed'] == 'true')
+
     # TODO assign a randomization based on results_dict['tweet_removed'] == 'true'
+
+    #if results_dict['tweet_removed'] == 'true':
+    #else:
+
+    #twitter_user_metadata.assignment_json =
+
+    db_session.commit()
 
     return redirect(url_for('tweet_intervention'))
   return render_template('02-begin.html', user=user, form=form)
@@ -87,10 +93,8 @@ def tweet_intervention():
     return redirect(url_for('index'))
   user = session['user']
 
-  # TODO: if user has completed study, redirect to /complete
-
-  # if has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if has_completed_study(user):
+    return redirect(url_for('complete'))
 
   return render_template('03-tweet-intervention.html', user=user)
 
@@ -100,10 +104,8 @@ def tweet_debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  # TODO: if user has completed study, redirect to /complete
-
-  # if has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if has_completed_study(user):
+    return redirect(url_for('complete'))
 
   # handle form submission
   form = WouldClickTweetForm()
@@ -123,10 +125,8 @@ def debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  # TODO: if user has completed study, redirect to /complete
-
-  # if has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if has_completed_study(user):
+    return redirect(url_for('complete'))
 
   # TODO: look up conditions for user by user['id'],
   #       conditionally render template
@@ -149,8 +149,16 @@ def complete():
     return redirect(url_for('index'))
   user = session['user']
 
-  # if not has_completed_study():
-  #   return redirect(url_for('debrief'))
+  if not has_completed_study(user):
+    survey_result = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
+    if survey_result is not None:
+      # mark user complete
+      twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+      twitter_user_metadata.completed_study_at = datetime.datetime.now()
+      db_session.commit()
+    else:
+      # how did they even get here
+      return redirect(url_for('begin'))
 
   return render_template('06-complete.html')
 
@@ -205,10 +213,28 @@ def oauth_authorized():
       'default_profile_image': user.default_profile_image,
       'statuses_count': user.statuses_count,
       'verified': user.verified,
-      'created_at': user.created_at,
+      'created_at': user.created_at.isoformat(),
       'lang': user.lang,
       'account_age': account_age
     }
+    user = session['user']
+
+    # create user if not exists
+    maybe_twitter_user = db_session.query(TwitterUser).filter_by(id=user['id']).first()
+    if maybe_twitter_user is None:
+      twitter_user = TwitterUser(id=user['id'],
+                                 screen_name=user['screen_name'],
+                                 created_at=user['created_at'],
+                                 lang=user['lang'])
+      db_session.add(twitter_user)
+    maybe_twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    if maybe_twitter_user_metadata is None:
+      # TODO look for their lumen data, redirect them to ineligible if missing
+      twitter_user_metadata = TwitterUserMetadata(twitter_user_id=user['id'],
+                                                  user_json=json.dumps(user).encode('utf-8'))
+      db_session.add(twitter_user_metadata)
+    if maybe_twitter_user is None or maybe_twitter_user_metadata is None:
+      db_session.commit()
 
     return redirect(url_for('begin'))
   except tweepy.TweepError:
