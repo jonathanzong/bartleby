@@ -24,14 +24,20 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 def is_logged_in():
   return 'user' in session
 
+  def merge_two_dicts(x, y):
+    z = x.copy()   # start with x's keys and values
+    z.update(y)    # modifies z with y's keys and values & returns None
+    return z
+
 def insert_or_update_survey_result(user, results_dict):
     res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
 
     if res is not None:
       # load pre-existing response and merge in new answers
       data = json.loads(res.survey_data)
-      results_dict = {**data, **results_dict}
-      res.survey_data = json.dumps(results_dict).encode('utf-8')
+      merged_results = data.copy()
+      merged_results.update(results_dict)
+      res.survey_data = json.dumps(merged_results).encode('utf-8')
 
       db_session.commit()
     else:
