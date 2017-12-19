@@ -15,10 +15,8 @@ BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.
 ENV = os.environ['CS_ENV'] = "development" # TODO don't leave this
 
 class TwitterDMCADebriefExperimentController:
-  def __init__(self, experiment_name, db_session, r, log, required_keys):
+  def __init__(self, experiment_name, db_session, required_keys):
   self.db_session = db_session
-  self.log = log
-  self.r = r
   self.load_experiment_config(required_keys, experiment_name)
 
   def get_experiment_config(self, required_keys, experiment_name):
@@ -27,19 +25,19 @@ class TwitterDMCADebriefExperimentController:
       try:
         experiment_config_all = yaml.load(f)
       except yaml.YAMLError as exc:
-        self.log.error("{0}: Failure loading experiment yaml {1}".format(
-          self.__class__.__name__, experiment_file_path), str(exc))
+        # self.log.error("{0}: Failure loading experiment yaml {1}".format(
+          # self.__class__.__name__, experiment_file_path), str(exc))
         sys.exit(1)
     if(ENV not in experiment_config_all.keys()):
-      self.log.error("{0}: Cannot find experiment settings for {1} in {2}".format(
-        self.__class__.__name__, ENV, experiment_file_path))
+      # self.log.error("{0}: Cannot find experiment settings for {1} in {2}".format(
+      #   self.__class__.__name__, ENV, experiment_file_path))
       sys.exit(1)
 
     experiment_config = experiment_config_all[ENV]
     for key in required_keys:
       if key not in experiment_config.keys():
-        self.log.error("{0}: Value missing from {1}: {2}".format(
-          self.__class__.__name__, experiment_file_path, key))
+        # self.log.error("{0}: Value missing from {1}: {2}".format(
+        #   self.__class__.__name__, experiment_file_path, key))
         sys.exit(1)
     return experiment_config
 
@@ -47,7 +45,6 @@ class TwitterDMCADebriefExperimentController:
     experiment_config = self.get_experiment_config(required_keys, experiment_name)
     experiment = self.db_session.query(Experiment).filter(Experiment.name == experiment_name).first()
     if(experiment is None):
-
       condition_keys = []
 
       ## LOAD RANDOMIZED CONDITIONS (see CivilServant-Analysis)
@@ -78,3 +75,28 @@ class TwitterDMCADebriefExperimentController:
 
 
     self.experiment_name = experiment_name
+
+  def insert_or_update_survey_result(self, user, results_dict):
+    res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
+
+    if res is not None:
+      # load pre-existing response and merge in new answers
+      data = json.loads(res.survey_data)
+      merged_results = data.copy()
+      merged_results.update(results_dict)
+      res.survey_data = json.dumps(merged_results).encode('utf-8')
+
+      db_session.commit()
+    else:
+      # create new entry
+      res = TwitterUserSurveyResult(twitter_user_id=user['id'],
+                                    survey_data=json.dumps(results_dict).encode('utf-8'))
+      db_session.add(res)
+      db_session.commit()
+
+  def has_completed_study(self, user):
+    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    if twitter_user_metadata is not None:
+      return twitter_user_metadata.completed_study_at is not None
+    else:
+      return False

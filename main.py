@@ -21,38 +21,13 @@ ENV = os.environ['CS_ENV'] = "development" # TODO
 CONFIG_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config")
 db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
+sce = TwitterDMCADebriefExperimentController(
+    experiment_name='twitter_dmca_debrief_experiment',
+    db_session=db_session
+  )
+
 def is_logged_in():
   return 'user' in session
-
-def merge_two_dicts(x, y):
-  z = x.copy()   # start with x's keys and values
-  z.update(y)    # modifies z with y's keys and values & returns None
-  return z
-
-def insert_or_update_survey_result(user, results_dict):
-  res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
-
-  if res is not None:
-    # load pre-existing response and merge in new answers
-    data = json.loads(res.survey_data)
-    merged_results = data.copy()
-    merged_results.update(results_dict)
-    res.survey_data = json.dumps(merged_results).encode('utf-8')
-
-    db_session.commit()
-  else:
-    # create new entry
-    res = TwitterUserSurveyResult(twitter_user_id=user['id'],
-                                  survey_data=json.dumps(results_dict).encode('utf-8'))
-    db_session.add(res)
-    db_session.commit()
-
-def has_completed_study(user):
-  twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-  if twitter_user_metadata is not None:
-    return twitter_user_metadata.completed_study_at is not None
-  else:
-    return False
 
 @app.route('/')
 def index():
@@ -66,7 +41,7 @@ def begin():
     return redirect(url_for('index'))
   user = session['user']
 
-  if has_completed_study(user):
+  if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
   # handle form submission
@@ -76,7 +51,7 @@ def begin():
     del results_dict['csrf_token']
     results_dict['twitter_user_id'] = user['id']
 
-    insert_or_update_survey_result(user, results_dict)
+    sce.insert_or_update_survey_result(user, results_dict)
 
     twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     twitter_user_metadata.tweet_removed = (results_dict['tweet_removed'] == 'true')
@@ -100,7 +75,7 @@ def tweet_intervention():
     return redirect(url_for('index'))
   user = session['user']
 
-  if has_completed_study(user):
+  if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
   return render_template('03-tweet-intervention.html', user=user)
@@ -111,7 +86,7 @@ def tweet_debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  if has_completed_study(user):
+  if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
   # handle form submission
@@ -121,7 +96,7 @@ def tweet_debrief():
     del results_dict['csrf_token']
     results_dict['twitter_user_id'] = user['id']
 
-    insert_or_update_survey_result(user, results_dict)
+    sce.insert_or_update_survey_result(user, results_dict)
 
     return redirect(url_for('debrief'))
   return render_template('04-tweet-debrief.html', user=user, form=form)
@@ -132,7 +107,7 @@ def debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  if has_completed_study(user):
+  if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
   # TODO: look up conditions for user by user['id'],
@@ -145,7 +120,7 @@ def debrief():
     del results_dict['csrf_token']
     results_dict['twitter_user_id'] = user['id']
 
-    insert_or_update_survey_result(user, results_dict)
+    sce.insert_or_update_survey_result(user, results_dict)
 
     return redirect(url_for('complete'))
   return render_template('05-debrief.html', user=user, form=form)
@@ -156,7 +131,7 @@ def complete():
     return redirect(url_for('index'))
   user = session['user']
 
-  if not has_completed_study(user):
+  if not sce.has_completed_study(user):
     survey_result = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
     if survey_result is not None:
       # mark user complete
