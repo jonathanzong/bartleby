@@ -16,7 +16,7 @@ from app.models import *
 
 BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))), "..","..")
 
-ENV = os.environ['CS_ENV'] = "development" # TODO don't leave this
+ENV = os.environ['CS_ENV']
 
 class TwitterDMCADebriefExperimentController:
   def __init__(self, experiment_name, db_session, required_keys):

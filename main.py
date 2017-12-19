@@ -18,7 +18,7 @@ app.secret_key = 'such secret very key!' # session key
 consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
 consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
 
-ENV = os.environ['CS_ENV'] = "development" # TODO
+ENV = os.environ['CS_ENV']
 
 CONFIG_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config")
 db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
@@ -44,8 +44,9 @@ def begin():
     return redirect(url_for('index'))
   user = session['user']
 
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
+  # TODO uncomment this in production
+  # if sce.has_completed_study(user):
+  #   return redirect(url_for('complete'))
 
   # handle form submission
   form = TweetRemovedForm()
@@ -70,8 +71,8 @@ def tweet_intervention():
     return redirect(url_for('index'))
   user = session['user']
 
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
+  # if sce.has_completed_study(user):
+  #   return redirect(url_for('complete'))
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
@@ -83,8 +84,8 @@ def tweet_debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
+  # if sce.has_completed_study(user):
+  #   return redirect(url_for('complete'))
 
   # handle form submission
   form = WouldClickTweetForm()
@@ -105,8 +106,8 @@ def debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
+  # if sce.has_completed_study(user):
+  #   return redirect(url_for('complete'))
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
@@ -130,11 +131,11 @@ def complete():
     return redirect(url_for('index'))
   user = session['user']
 
-  if not sce.has_completed_study(user):
-    did_complete = sce.mark_user_completed(user)
-    if not did_complete:
-      # how did they even get here
-      return redirect(url_for('begin'))
+  # if not sce.has_completed_study(user):
+  #   did_complete = sce.mark_user_completed(user)
+  #   if not did_complete:
+  #     # how did they even get here
+  #     return redirect(url_for('begin'))
 
   return render_template('06-complete.html')
 

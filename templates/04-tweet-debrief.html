@@ -4,12 +4,14 @@
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
 {% endblock %}
 {% block content %}
-  <h1>Debrief</h1>
-  <p>{{ user.id }}</p>
-  <p>{{ user.screen_name }}</p>
+  <div>
+    <a href="{{ url_for('tweet_intervention') }}">back</a>
+  </div>
 
   {% if 'user' in session %}
-    <a href="{{ url_for('logout') }}">log out</a>
+    <div>
+      <a href="{{ url_for('logout') }}">log out</a>
+    </div>
   {% endif %}
 
   <hr>

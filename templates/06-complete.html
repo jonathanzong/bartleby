@@ -1,10 +1,12 @@
 {% extends "layout.html" %}
 {% block content %}
-  <a href="{{ url_for('debrief') }}">back to debrief</a>
-
   {% if 'user' in session %}
-    <a href="{{ url_for('logout') }}">log out</a>
+    <div>
+      <a href="{{ url_for('logout') }}">log out</a>
+    </div>
   {% endif %}
+
+  <hr>
 
   <p>
     Thanks for completing this survey! Your answers will help us improve the ethics of future social media research. After completing this study, we will send you a tweet with our results.
