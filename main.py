@@ -59,6 +59,8 @@ def begin():
     # assign a randomization based on whether tweet_removed
     sce.assign_randomization(user, results_dict)
 
+    session['user']['conditions'] = sce.get_user_conditions(user)
+
     return redirect(url_for('tweet_intervention'))
   return render_template('02-begin.html', user=user, form=form)
 
@@ -71,7 +73,7 @@ def tweet_intervention():
   if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
-  conditions = sce.get_user_conditions(user) # TODO store this in session
+  conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
   return render_template('03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'])
 
@@ -106,7 +108,7 @@ def debrief():
   if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
-  conditions = sce.get_user_conditions(user)
+  conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
   # handle form submission
   form = SurveyForm()
