@@ -48,7 +48,8 @@ class Experiment(Base):
     __tablename__ = 'experiments'
     id                           = Column(String(64), primary_key = True)
     name                         = Column(String(64))
-    account_found                = Column(Boolean)
+    controller                   = Column(String(64))
+    settings_json                = Column(LargeBinary)
 
 class Randomization(Base):
     __tablename__ = 'randomizations'
