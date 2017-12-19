@@ -46,7 +46,7 @@ class TwitterUserMessageAttempt(Base):
 
 class Experiment(Base):
     __tablename__ = 'experiments'
-    id                           = Column(String(64), primary_key = True)
+    id                           = Column(Integer, primary_key = True)
     name                         = Column(String(64))
     controller                   = Column(String(64))
     settings_json                = Column(LargeBinary)

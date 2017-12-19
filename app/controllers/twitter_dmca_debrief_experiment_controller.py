@@ -8,7 +8,11 @@ run once
 3. Load randomizations
 """
 
-import yaml, csv
+import yaml, csv, os, inspect
+
+from sqlalchemy import inspect as sa_inspect
+
+from app.models import *
 
 BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))), "..","..")
 
@@ -16,8 +20,8 @@ ENV = os.environ['CS_ENV'] = "development" # TODO don't leave this
 
 class TwitterDMCADebriefExperimentController:
   def __init__(self, experiment_name, db_session, required_keys):
-  self.db_session = db_session
-  self.load_experiment_config(required_keys, experiment_name)
+    self.db_session = db_session
+    self.load_experiment_config(required_keys, experiment_name)
 
   def get_experiment_config(self, required_keys, experiment_name):
     experiment_file_path = os.path.join(BASE_DIR, "config", "experiments", experiment_name) + ".yml"
@@ -76,8 +80,13 @@ class TwitterDMCADebriefExperimentController:
 
     self.experiment_name = experiment_name
 
+
+  def row_as_dict(self, obj):
+    return {c.key: getattr(obj, c.key)
+            for c in sa_inspect(obj).mapper.column_attrs}
+
   def insert_or_update_survey_result(self, user, results_dict):
-    res = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
+    res = self.db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
 
     if res is not None:
       # load pre-existing response and merge in new answers
@@ -86,16 +95,29 @@ class TwitterDMCADebriefExperimentController:
       merged_results.update(results_dict)
       res.survey_data = json.dumps(merged_results).encode('utf-8')
 
-      db_session.commit()
+      self.db_session.commit()
     else:
       # create new entry
       res = TwitterUserSurveyResult(twitter_user_id=user['id'],
                                     survey_data=json.dumps(results_dict).encode('utf-8'))
-      db_session.add(res)
-      db_session.commit()
+      self.db_session.add(res)
+      self.db_session.commit()
+
+  def assign_randomization(self, user, results_dict):
+    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    twitter_user_metadata.tweet_removed = (results_dict['tweet_removed'] == 'true')
+
+    if results_dict['tweet_removed'] == 'true':
+      randomization = self.db_session.query(Randomization).filter_by(stratum='Removed').filter_by(assigned=False).order_by(Randomization.id).first()
+    else:
+      randomization = self.db_session.query(Randomization).filter_by(stratum='Not Removed').filter_by(assigned=False).order_by(Randomization.id).first()
+    randomization.assigned = True
+    twitter_user_metadata.assignment_json = json.dumps(self.row_as_dict(randomization)).encode('utf-8')
+    self.db_session.commit()
+
 
   def has_completed_study(self, user):
-    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     if twitter_user_metadata is not None:
       return twitter_user_metadata.completed_study_at is not None
     else:

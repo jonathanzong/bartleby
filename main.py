@@ -10,6 +10,8 @@ from utils.common import DbEngine
 from app.models import *
 from app.forms import *
 
+from app.controllers.twitter_dmca_debrief_experiment_controller import *
+
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
 
@@ -23,7 +25,8 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
 sce = TwitterDMCADebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
-    db_session=db_session
+    db_session=db_session,
+    required_keys=['name', 'randomizations']
   )
 
 def is_logged_in():
@@ -53,18 +56,8 @@ def begin():
 
     sce.insert_or_update_survey_result(user, results_dict)
 
-    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    twitter_user_metadata.tweet_removed = (results_dict['tweet_removed'] == 'true')
-
     # assign a randomization based on whether tweet_removed
-
-    if results_dict['tweet_removed'] == 'true':
-      randomization = db_session.query(Randomization).filter_by(stratum='Removed').filter_by(assigned=False).order_by(Randomization.id).first()
-    else:
-      randomization = db_session.query(Randomization).filter_by(stratum='Not Removed').filter_by(assigned=False).order_by(Randomization.id).first()
-    randomization.assigned = True
-    twitter_user_metadata.assignment_json = json.dumps(randomization.__dict__).encode('utf-8')
-    db_session.commit()
+    sce.assign_randomization(user, results_dict)
 
     return redirect(url_for('tweet_intervention'))
   return render_template('02-begin.html', user=user, form=form)

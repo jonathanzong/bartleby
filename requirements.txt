@@ -7,3 +7,4 @@ pytest
 simplejson
 mock
 Flask-WTF
+pyyaml
