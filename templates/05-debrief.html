@@ -41,136 +41,144 @@
         On [date], we sent you a tweet linking to general information about US copyright law
       </p>
 
-      <p>
-        Here is what we collected about your public Twitter behavior from [date] to [date]. This information helps us find out the effect of providing legal information on average. We will not share any of your data, and our dataset includes only the following information and no more:
-      </p>
+      {% if show_table %}
+        <p>
+          Here is what we collected about your public Twitter behavior from [date] to [date]. This information helps us find out the effect of providing legal information on average. We will not share any of your data, and our dataset includes only the following information and no more:
+        </p>
 
-      <div class="data-table">
-        <div class="row">
-          <div class="col-sm-9">
-            Do you use the default Twitter profile image or your own?
+        <div class="data-table">
+          <div class="row">
+            <div class="col-sm-9">
+              Do you use the default Twitter profile image or your own?
+            </div>
+            <div class="col-sm-3">
+              {{ user.default_profile_image }}
+            </div>
           </div>
-          <div class="col-sm-3">
-            {{ user.default_profile_image }}
+          <div class="row">
+            <div class="col-sm-9">
+              How many lifetime tweets had you sent before receiving the copyright notice?
+            </div>
+            <div class="col-sm-3">
+              {{ user.statuses_count }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              Do you have a ✅ verified account?
+            </div>
+            <div class="col-sm-3">
+              {{ user.verified }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              How many years has your account existed?
+            </div>
+            <div class="col-sm-3">
+              {{ user.account_age }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              What language is your Twitter account associated with?
+            </div>
+            <div class="col-sm-3">
+              {{ user.lang }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              Was the link we sent you clicked on?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              Was your account suspended at all during the study period?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              Was your account deleted at all during the study period?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              Was your account protected at all during the study period?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              How many copyright notices did you experience during the study period?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              How many tweets per day did you post before receiving your first copyright notice?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              How many tweets with pictures or other media did you post per day before receiving your first copyright notice?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              How many tweets per day did you post after receiving your first copyright notice?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-9">
+              How many tweets with pictures or other media did you post per day after receiving your first copyright notice?
+            </div>
+            <div class="col-sm-3">
+              (filled in from data)
+            </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-sm-9">
-            How many lifetime tweets had you sent before receiving the copyright notice?
-          </div>
-          <div class="col-sm-3">
-            {{ user.statuses_count }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            Do you have a ✅ verified account?
-          </div>
-          <div class="col-sm-3">
-            {{ user.verified }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            How many years has your account existed?
-          </div>
-          <div class="col-sm-3">
-            {{ user.account_age }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            What language is your Twitter account associated with?
-          </div>
-          <div class="col-sm-3">
-            {{ user.lang }}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            Was the link we sent you clicked on?
-          </div>
-          <div class="col-sm-3">
-            [simulated Yes/No]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            Was your account suspended at all during the study period?
-          </div>
-          <div class="col-sm-3">
-            [simulated Yes/No]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            Was your account deleted at all during the study period?
-          </div>
-          <div class="col-sm-3">
-            [simulated Yes/No]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            Was your account protected at all during the study period?
-          </div>
-          <div class="col-sm-3">
-            [simulated Yes/No]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            How many copyright notices did you experience during the study period?
-          </div>
-          <div class="col-sm-3">
-            [simulated count]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            How many tweets per day did you post before receiving your first copyright notice?
-          </div>
-          <div class="col-sm-3">
-            [simulated count]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            How many tweets with pictures or other media did you post per day before receiving your first copyright notice?
-          </div>
-          <div class="col-sm-3">
-            [simulated count]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            How many tweets per day did you post after receiving your first copyright notice?
-          </div>
-          <div class="col-sm-3">
-            [simulated count]
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-sm-9">
-            How many tweets with pictures or other media did you post per day after receiving your first copyright notice?
-          </div>
-          <div class="col-sm-3">
-            [simulated count]
-          </div>
-        </div>
-      </div>
+      {% endif %}
 
       <p>
-        To learn more about our research, you can read our study design online <link>.
+        To learn more about our research, you can read our study design online [link].
       </p>
 
       <p>
         During the study, you sent [X] tweets per day, [X] more than others on average. People sent [X] tweets with pictures and media per day; you sent [X] tweets per day, compared to an average of [X].
       </p>
 
-      <p>
-        <img src="{{ url_for('static', filename='images/visualization.png') }}" />
-      </p>
+      {% if show_visualization %}
+        <p>
+          <img src="{{ url_for('static', filename='images/vis-everyone.png') }}" />
+        </p>
+
+        <p>
+          <img src="{{ url_for('static', filename='images/vis-you.png') }}" />
+        </p>
+      {% endif %}
 
       <h5>Choosing To Remain in the Study or Opt Out</h5>
 

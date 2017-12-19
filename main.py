@@ -71,7 +71,9 @@ def tweet_intervention():
   if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
-  return render_template('03-tweet-intervention.html', user=user)
+  conditions = sce.get_user_conditions(user) # TODO store this in session
+
+  return render_template('03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'])
 
 @app.route('/tweet-debrief', methods=('GET', 'POST'))
 def tweet_debrief():
@@ -92,6 +94,7 @@ def tweet_debrief():
     sce.insert_or_update_survey_result(user, results_dict)
 
     return redirect(url_for('debrief'))
+
   return render_template('04-tweet-debrief.html', user=user, form=form)
 
 @app.route('/debrief', methods=('GET', 'POST'))
@@ -103,8 +106,7 @@ def debrief():
   if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
-  # TODO: look up conditions for user by user['id'],
-  #       conditionally render template
+  conditions = sce.get_user_conditions(user)
 
   # handle form submission
   form = SurveyForm()
@@ -116,7 +118,9 @@ def debrief():
     sce.insert_or_update_survey_result(user, results_dict)
 
     return redirect(url_for('complete'))
-  return render_template('05-debrief.html', user=user, form=form)
+  return render_template('05-debrief.html', user=user, form=form,
+                          show_table=conditions['show_table'],
+                          show_visualization=conditions['show_visualization'])
 
 @app.route('/complete')
 def complete():
@@ -125,13 +129,8 @@ def complete():
   user = session['user']
 
   if not sce.has_completed_study(user):
-    survey_result = db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
-    if survey_result is not None:
-      # mark user complete
-      twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-      twitter_user_metadata.completed_study_at = datetime.datetime.now()
-      db_session.commit()
-    else:
+    did_complete = sce.mark_user_completed(user)
+    if not did_complete:
       # how did they even get here
       return redirect(url_for('begin'))
 
@@ -185,9 +184,9 @@ def oauth_authorized():
     session['user'] = {
       'id': user.id,
       'screen_name': user.screen_name,
-      'default_profile_image': user.default_profile_image,
+      'default_profile_image': "yes" if user.default_profile_image else "no",
       'statuses_count': user.statuses_count,
-      'verified': user.verified,
+      'verified': "yes" if user.verified else "no",
       'created_at': user.created_at.isoformat(),
       'lang': user.lang,
       'account_age': account_age
@@ -195,21 +194,7 @@ def oauth_authorized():
     user = session['user']
 
     # create user if not exists
-    maybe_twitter_user = db_session.query(TwitterUser).filter_by(id=user['id']).first()
-    if maybe_twitter_user is None:
-      twitter_user = TwitterUser(id=user['id'],
-                                 screen_name=user['screen_name'],
-                                 created_at=user['created_at'],
-                                 lang=user['lang'])
-      db_session.add(twitter_user)
-    maybe_twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    if maybe_twitter_user_metadata is None:
-      # TODO look for their lumen data, redirect them to ineligible if missing
-      twitter_user_metadata = TwitterUserMetadata(twitter_user_id=user['id'],
-                                                  user_json=json.dumps(user).encode('utf-8'))
-      db_session.add(twitter_user_metadata)
-    if maybe_twitter_user is None or maybe_twitter_user_metadata is None:
-      db_session.commit()
+    sce.create_user_if_not_exists(user)
 
     return redirect(url_for('begin'))
   except tweepy.TweepError:

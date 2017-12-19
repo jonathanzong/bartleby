@@ -7,7 +7,7 @@ class TweetRemovedForm(FlaskForm):
                                     choices=[('true', 'Yes'), ('false', 'No')])
 
 class WouldClickTweetForm(FlaskForm):
-  click_tweet          = RadioField('How likely would you be to click the link in the second tweet?',
+  click_tweet          = RadioField('How likely would you be to click the link?',
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (definitely not)', '2 (probably not)', '3 (possibly)', '4 (probably)', '5 (definitely)']])
 

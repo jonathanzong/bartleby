@@ -85,6 +85,23 @@ class TwitterDMCADebriefExperimentController:
     return {c.key: getattr(obj, c.key)
             for c in sa_inspect(obj).mapper.column_attrs}
 
+  def create_user_if_not_exists(self, user):
+    maybe_twitter_user = self.db_session.query(TwitterUser).filter_by(id=user['id']).first()
+    if maybe_twitter_user is None:
+      twitter_user = TwitterUser(id=user['id'],
+                                 screen_name=user['screen_name'],
+                                 created_at=user['created_at'],
+                                 lang=user['lang'])
+      self.db_session.add(twitter_user)
+    maybe_twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    if maybe_twitter_user_metadata is None:
+      # TODO look for their lumen data, redirect them to ineligible if missing
+      twitter_user_metadata = TwitterUserMetadata(twitter_user_id=user['id'],
+                                                  user_json=json.dumps(user).encode('utf-8'))
+      self.db_session.add(twitter_user_metadata)
+    if maybe_twitter_user is None or maybe_twitter_user_metadata is None:
+      self.db_session.commit()
+
   def insert_or_update_survey_result(self, user, results_dict):
     res = self.db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
 
@@ -106,6 +123,17 @@ class TwitterDMCADebriefExperimentController:
   def assign_randomization(self, user, results_dict):
     twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     twitter_user_metadata.tweet_removed = (results_dict['tweet_removed'] == 'true')
+    if twitter_user_metadata.assignment_json is not None:
+      assignment = json.loads(twitter_user_metadata.assignment_json)
+      if (assignment['stratum'] == 'Removed') is not (results_dict['tweet_removed'] == 'true'):
+        # changed their answer, clear the old assignment and continue
+        randomization = self.db_session.query(Randomization).filter_by(id=assignment['id']).first()
+        randomization.assigned = False
+        twitter_user_metadata.assignment_json = None
+        self.db_session.commit()
+      else:
+        # same answer, keep randomization
+        return
 
     if results_dict['tweet_removed'] == 'true':
       randomization = self.db_session.query(Randomization).filter_by(stratum='Removed').filter_by(assigned=False).order_by(Randomization.id).first()
@@ -115,6 +143,34 @@ class TwitterDMCADebriefExperimentController:
     twitter_user_metadata.assignment_json = json.dumps(self.row_as_dict(randomization)).encode('utf-8')
     self.db_session.commit()
 
+  def get_user_conditions(self, user):
+    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    assignment = json.loads(twitter_user_metadata.assignment_json)
+    treatment = assignment['treatment']
+    treatment_binary = format(treatment, '03b') # convert int to binary string
+
+    return {
+      'in_control_group': treatment_binary[0] == '1',
+      'show_table': treatment_binary[1] == '1',
+      'show_visualization': treatment_binary[2] == '1',
+    }
+
+  def mark_user_completed(self, user):
+    survey_result = self.db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
+    if survey_result is not None:
+      # mark user complete
+      results = json.loads(survey_result.survey_data)
+      required_fields = ["tweet_removed", "click_tweet", "would_delete", "society_benefit", "personal_benefit", "collection_surprised", "glad_in_study", "share_results", "vote_study","improve_debrief"]
+      completed = all([(field in results) for field in required_fields])
+      if completed:
+        twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+        twitter_user_metadata.completed_study_at = datetime.datetime.now()
+        self.db_session.commit()
+        return True
+      else:
+        return False
+    else:
+      return False
 
   def has_completed_study(self, user):
     twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
