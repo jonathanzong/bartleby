@@ -19,8 +19,10 @@ BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.
 ENV = os.environ['CS_ENV']
 
 class TwitterDMCADebriefExperimentController:
-  def __init__(self, experiment_name, db_session, required_keys):
+  def __init__(self, experiment_name, db_session, log, required_keys):
     self.db_session = db_session
+    self.log = log
+
     self.load_experiment_config(required_keys, experiment_name)
 
   def get_experiment_config(self, required_keys, experiment_name):
@@ -29,20 +31,19 @@ class TwitterDMCADebriefExperimentController:
       try:
         experiment_config_all = yaml.load(f)
       except yaml.YAMLError as exc:
-        # TODO add event logging
-        # self.log.error("{0}: Failure loading experiment yaml {1}".format(
-          # self.__class__.__name__, experiment_file_path), str(exc))
+        self.log.error("{0}: Failure loading experiment yaml {1}".format(
+          self.__class__.__name__, experiment_file_path), str(exc))
         sys.exit(1)
     if(ENV not in experiment_config_all.keys()):
-      # self.log.error("{0}: Cannot find experiment settings for {1} in {2}".format(
-      #   self.__class__.__name__, ENV, experiment_file_path))
+      self.log.error("{0}: Cannot find experiment settings for {1} in {2}".format(
+        self.__class__.__name__, ENV, experiment_file_path))
       sys.exit(1)
 
     experiment_config = experiment_config_all[ENV]
     for key in required_keys:
       if key not in experiment_config.keys():
-        # self.log.error("{0}: Value missing from {1}: {2}".format(
-        #   self.__class__.__name__, experiment_file_path, key))
+        self.log.error("{0}: Value missing from {1}: {2}".format(
+          self.__class__.__name__, experiment_file_path, key))
         sys.exit(1)
     return experiment_config
 

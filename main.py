@@ -12,6 +12,8 @@ from app.forms import *
 
 from app.controllers.twitter_dmca_debrief_experiment_controller import *
 
+from app.cs_logger import get_logger
+
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
 
@@ -20,12 +22,16 @@ consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
 
 ENV = os.environ['CS_ENV']
 
-CONFIG_DIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "config")
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
+CONFIG_DIR = os.path.join(BASE_DIR, "config")
 db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
+
+log = get_logger(ENV, BASE_DIR)
 
 sce = TwitterDMCADebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
     db_session=db_session,
+    log=log,
     required_keys=['name', 'randomizations']
   )
 
