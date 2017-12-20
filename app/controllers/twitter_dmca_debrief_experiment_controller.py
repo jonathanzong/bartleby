@@ -29,6 +29,7 @@ class TwitterDMCADebriefExperimentController:
       try:
         experiment_config_all = yaml.load(f)
       except yaml.YAMLError as exc:
+        # TODO add event logging
         # self.log.error("{0}: Failure loading experiment yaml {1}".format(
           # self.__class__.__name__, experiment_file_path), str(exc))
         sys.exit(1)

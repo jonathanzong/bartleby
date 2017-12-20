@@ -1,3 +1,6 @@
 development:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
+production:
+  name: twitter_dmca_debrief
+  randomizations: twitter_dmca_debrief_test.randomizations.csv
