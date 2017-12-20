@@ -3,11 +3,13 @@
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
 {% endblock %}
 {% block content %}
-  {% if 'user' in session %}
-    <a href="{{ url_for('logout') }}">log out</a>
-  {% endif %}
+  <div class="nav">
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
+  </div>
 
-  <hr>
+  Do you remember receiving a message from Twitter sometime in the past about potentially-copyrighted material you posted?
 
   <form method="POST" action="{{ url_for('begin') }}">
     {{ form.csrf_token }}

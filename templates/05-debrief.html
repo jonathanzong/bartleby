@@ -4,217 +4,219 @@
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
 {% endblock %}
 {% block content %}
-  <div>
-    <a href="{{ url_for('tweet_debrief') }}">back</a>
+  <div class="nav">
+    <a href="{{ url_for('tweet_debrief') }}">Back</a> |
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
   </div>
-
-  {% if 'user' in session %}
-    <div>
-      <a href="{{ url_for('logout') }}">log out</a>
-    </div>
-  {% endif %}
-
-  <hr>
 
   <form method="POST" action="{{ url_for('debrief') }}">
     {{ form.csrf_token }}
 
     <p>
-      Now imagine you clicked the link. You would see the following page:
+      Now <strong>imagine you clicked the link</strong>. You would see the following page:
     </p>
 
     <div class="debrief-interface">
-      <p>
-        Hi {{ user.screen_name }},
-      </p>
+      <div class="top">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
 
-      <p>
-        Our team of researchers at Princeton University are trying to learn what happens when Twitter removes people's tweets for copyright reasons–do people reduce their Twitter activity? We are also testing the effect of legal information and other resources on people's Twitter participation. This research is independent of Twitter.
-      </p>
+      <div class="content">
 
-      <p>
-        Our records show that we sent you a message as part of the study and that some of your public Twitter information was included in our research. In this page, you can learn what we collected and decide if we should remove your information from our research.
-      </p>
-
-      <p>
-        On [date], record of a copyright takedown notice was posted publicly by Twitter to Lumendatabase.org, a third-party transparency website
-        On [date], we sent you a tweet linking to general information about US copyright law
-      </p>
-
-      {% if show_table %}
         <p>
-          Here is what we collected about your public Twitter behavior from [date] to [date]. This information helps us find out the effect of providing legal information on average. We will not share any of your data, and our dataset includes only the following information and no more:
-        </p>
-
-        <div class="data-table">
-          <div class="row">
-            <div class="col-sm-9">
-              Do you use the default Twitter profile image or your own?
-            </div>
-            <div class="col-sm-3">
-              {{ user.default_profile_image }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              How many lifetime tweets had you sent before receiving the copyright notice?
-            </div>
-            <div class="col-sm-3">
-              {{ user.statuses_count }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              Do you have a ✅ verified account?
-            </div>
-            <div class="col-sm-3">
-              {{ user.verified }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              How many years has your account existed?
-            </div>
-            <div class="col-sm-3">
-              {{ user.account_age }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              What language is your Twitter account associated with?
-            </div>
-            <div class="col-sm-3">
-              {{ user.lang }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              Was the link we sent you clicked on?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              Was your account suspended at all during the study period?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              Was your account deleted at all during the study period?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              Was your account protected at all during the study period?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              How many copyright notices did you experience during the study period?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              How many tweets per day did you post before receiving your first copyright notice?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              How many tweets with pictures or other media did you post per day before receiving your first copyright notice?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              How many tweets per day did you post after receiving your first copyright notice?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-9">
-              How many tweets with pictures or other media did you post per day after receiving your first copyright notice?
-            </div>
-            <div class="col-sm-3">
-              (filled in from data)
-            </div>
-          </div>
-        </div>
-      {% endif %}
-
-      <p>
-        To learn more about our research, you can read our study design online [link].
-      </p>
-
-      <p>
-        During the study, you sent [X] tweets per day, [X] more than others on average. People sent [X] tweets with pictures and media per day; you sent [X] tweets per day, compared to an average of [X].
-      </p>
-
-      {% if show_visualization %}
-        <p>
-          <img src="{{ url_for('static', filename='images/vis-everyone.png') }}" />
+          Hi {{ user.screen_name }},
         </p>
 
         <p>
-          <img src="{{ url_for('static', filename='images/vis-you.png') }}" />
+          Our team of researchers at Princeton University are trying to learn <strong>what happens when Twitter removes people's tweets for copyright reasons–do people reduce their Twitter activity?</strong> We are also testing the effect of legal information and other resources on people's Twitter participation. This research is independent of Twitter, Inc.
         </p>
-      {% endif %}
 
-      <h5>Choosing To Remain in the Study or Opt Out</h5>
+        <p>
+          Our records show that we sent you a message as part of the study and that some of your public Twitter information was included in our research. In this page, you can learn what we collected and decide if we should remove your information from our research.
+        </p>
 
-      <p>
-        By allowing us to include the above information, you can improve the quality of our research to help people whose tweets are removed for copyright reasons.
-      </p>
+        <p>
+          On <em>[date]</em>, record of a copyright takedown notice was posted publicly by Twitter to Lumendatabase.org, a third-party transparency website
+          On <em>[date]</em>, we sent you a tweet linking to general information about US copyright law
+        </p>
 
-      <p>
-        In our research and any public statements, we promise never to share your data, name you, or reveal any identifying information about you. Yet you may have other reasons to opt out of this study and ask us to remove your information from our analysis. We respect that.
-      </p>
+        {% if show_table %}
+          <p>
+            Here is what we collected about your public Twitter behavior from <em>[date]</em> to <em>[date]</em>. This information helps us find out the effect of providing legal information on average. We will not share any of your data, and our dataset includes only the following information and no more:
+          </p>
 
-      <p>
-        This study is only authorized to include people who are 18 years or older. If you are 17 years old or younger, please click to remove yourself from the study.
-      </p>
+          <div class="data-table">
+            <div class="row">
+              <div class="col-sm-9">
+                Do you use the <strong>default Twitter profile</strong> image or your own?
+              </div>
+              <div class="col-sm-3">
+                {{ user.default_profile_image }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                How many <strong>lifetime tweets</strong> had you sent before receiving the copyright notice?
+              </div>
+              <div class="col-sm-3">
+                {{ user.statuses_count }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                Do you have a ✅ <strong>verified account</strong>?
+              </div>
+              <div class="col-sm-3">
+                {{ user.verified }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                <strong>How many years</strong> has your account existed?
+              </div>
+              <div class="col-sm-3">
+                {{ user.account_age }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                What <strong>language</strong> is your Twitter account associated with?
+              </div>
+              <div class="col-sm-3">
+                {{ user.lang }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                Was the <strong>link</strong> we sent you <strong>clicked on</strong>?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                Was your account <strong>suspended</strong> at all during the study period?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                Was your account <strong>deleted</strong> at all during the study period?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                Was your account <strong>protected</strong> at all during the study period?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                <strong>How many copyright notices</strong> did you <strong>receive</strong> during the study period?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                How many <strong>tweets per day</strong> did you post <strong>before</strong> receiving your first copyright notice?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                How many <strong>tweets with pictures or other media</strong> did you post per day <strong>before</strong> receiving your first copyright notice?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                How many <strong>tweets per day</strong> did you post <strong>after</strong> receiving your first copyright notice?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-9">
+                How many <strong>tweets with pictures or other media</strong> did you post per day <strong>after</strong> receiving your first copyright notice?
+              </div>
+              <div class="col-sm-3">
+                (filled in from data)
+              </div>
+            </div>
+          </div>
+        {% endif %}
 
-      {{ form.opt_out }} {{ form.opt_out.label }}
+        <p>
+          To learn more about our research, you can read our study design online <em>[link]</em>.
+        </p>
 
-      <h5>Do you have further questions? Contact us:</h5>
+        <p>
+          During the study, you sent <em>[number]</em> tweets per day, <em>[number]</em> more than others on average.
+        </p>
 
-      <p>
-        <div>J. Nathan Matias</div>
-        <div><a href="mailto:jmatias@princeton.edu" target="_blank">jmatias@princeton.edu</a></div>
-        <div><a href="https://twitter.com/natematias" target="_blank">@natematias</a> on Twitter</div>
-      </p>
+        {% if show_visualization %}
+          <p>
+            <img src="{{ url_for('static', filename='images/vis-everyone.png') }}" />
+          </p>
 
-      <p>
-        If you have questions about your rights as a research participant, or if problems arise which you do not feel you can discuss with the Investigator, please contact:
-      </p>
+          <p>
+            <img src="{{ url_for('static', filename='images/vis-you.png') }}" />
+          </p>
+        {% endif %}
 
-      <p>
-        <div>Institutional Review Board (IRB)</div>
-        <div>Phone: (609) 258-8543</div>
-        <div>Email: <a href="mailto:irb@princeton.edu" target="_blank">irb@princeton.edu</a></div>
-      </p>
+        <h5>Choosing To Remain in the Study or Opt Out</h5>
 
+        <p>
+          By allowing us to include the above information, you can improve the quality of our research to help people whose tweets are removed for copyright reasons.
+        </p>
 
+        <p>
+          In our research and any public statements, we promise never to share your data, name you, or reveal any identifying information about you. Yet you may have other reasons to opt out of this study and ask us to remove your information from our analysis. We respect that.
+        </p>
+
+        <p>
+          This study is only authorized to include people who are 18 years or older. If you are 17 years old or younger, please click to remove yourself from the study.
+        </p>
+
+        {{ form.opt_out }} {{ form.opt_out.label }}
+
+        <h5>Do you have further questions? Contact us:</h5>
+
+        <p>
+          <div>J. Nathan Matias</div>
+          <div><a href="mailto:jmatias@princeton.edu" target="_blank">jmatias@princeton.edu</a></div>
+          <div><a href="https://twitter.com/natematias" target="_blank">@natematias</a> on Twitter</div>
+        </p>
+
+        <p>
+          If you have questions about your rights as a research participant, or if problems arise which you do not feel you can discuss with the Investigator, please contact:
+        </p>
+
+        <p>
+          <div>Institutional Review Board (IRB)</div>
+          <div>Phone: (609) 258-8543</div>
+          <div>Email: <a href="mailto:irb@princeton.edu" target="_blank">irb@princeton.edu</a></div>
+        </p>
+      </div>
     </div>
 
     <div class="form-row {% if form.errors.would_delete %}has-error{% endif%}">

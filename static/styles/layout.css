@@ -5,29 +5,56 @@ html {
   box-sizing: inherit;
 }
 
-body {
+html, body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.4;
   letter-spacing: 0.025em;
   margin-bottom: 60px;
+  color: #333;
+  background: #fcfcfc;
 }
 
 a {
   text-decoration: none;
   color: #cc00ff;
+  white-space: nowrap;
 }
 
 p {
-  margin: 1.6em 0;
+  margin-top: 0.6em;
+  margin-bottom: 1.6em;
 }
 
 img {
   max-width: 100%;
 }
 
+h5 {
+  font-size: 0.9em;
+  margin-bottom: 0.6em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contact {
+  margin-top: 1.6em;
+  margin-bottom: 1.6em;
+}
+
 .small {
   font-size: 0.8em;
+}
+
+.noun {
+  max-width: 50%;
+  margin: 0 auto;
+}
+
+.nav {
+  border-bottom: 1px solid #333;
+  padding-bottom: 0.6em;
+  margin-bottom: 1.6em;
 }
 
 @media (min-width: 768px) {

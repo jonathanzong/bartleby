@@ -23,7 +23,7 @@ form .form-row {
 
 form .form-row > label {
   font-weight: bold;
-  font-size: 0.83em;
+  font-size: 0.9em;
 }
 
 form .has-error {
@@ -35,4 +35,12 @@ form .has-error {
 form .errors {
   color: red;
   margin: 0;
+}
+
+input[type=submit] {
+    padding:5px 15px;
+    background:#777;
+    color: white;
+    border:0 none;
+    cursor:pointer;
 }

@@ -2,7 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import Form, TextAreaField, RadioField, BooleanField, validators
 
 class TweetRemovedForm(FlaskForm):
-  tweet_removed        = RadioField('Before we get started, was your tweet taken down?',
+  tweet_removed        = RadioField('When this happened, did Twitter remove your Tweet or media?',
                                     [validators.DataRequired()],
                                     choices=[('true', 'Yes'), ('false', 'No')])
 
@@ -16,10 +16,10 @@ class SurveyForm(FlaskForm):
   would_delete         = RadioField('In the debriefing webpage, we gave you a chance to have your data deleted from the study. How likely would you be to click the button to delete your data?',
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (definitely not)', '2 (probably not)', '3 (possibly)', '4 (probably)', '5 (definitely)']])
-  society_benefit      = RadioField('How beneficial to society would it be to learn the answer to this research question?',
+  society_benefit      = RadioField("How beneficial to society would it be to learn whether copyright enforcement affects speech on Twitter?",
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (harmful)', '2 (somewhat harmful)', '3 (neutral)', '4 (somewhat beneficial)', '5 (beneficial)']])
-  personal_benefit     = RadioField('How much might this answer benefit you personally?',
+  personal_benefit     = RadioField('How much might research on the effects of online copyright enforcement benefit you personally?',
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (harmful)', '2 (somewhat harmful)', '3 (neutral)', '4 (somewhat beneficial)', '5 (beneficial)']])
   collection_surprised = RadioField('Suppose you learned that you were one of the participants in this study. How surprised are you that we are able to collect this information about your public Twitter behavior?',
@@ -33,7 +33,7 @@ class SurveyForm(FlaskForm):
                                     choices=[(x, x) for x in ['I would be glad I was in the study',
                                              'I would rather not have been in the study',
                                              'I would not care either way']])
-  share_results        = RadioField('What best describes how you might share the results of this research online with others:',
+  share_results        = RadioField('If we sent you what we learn, what best describes how you might share the results of this research online with others:',
                                     [validators.DataRequired()],
                                     choices=[(x, x) for x in ['I would link to the results and mention that I was a participant',
                                              'I would link to the results',

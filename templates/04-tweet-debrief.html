@@ -4,17 +4,12 @@
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
 {% endblock %}
 {% block content %}
-  <div>
-    <a href="{{ url_for('tweet_intervention') }}">back</a>
+  <div class="nav">
+    <a href="{{ url_for('tweet_intervention') }}">Back</a> |
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
   </div>
-
-  {% if 'user' in session %}
-    <div>
-      <a href="{{ url_for('logout') }}">log out</a>
-    </div>
-  {% endif %}
-
-  <hr>
 
   <form method="POST" action="{{ url_for('tweet_debrief') }}">
     {{ form.csrf_token }}
@@ -36,7 +31,8 @@
           </div>
         </div>
       </div>
-      <span class="tweet-link">@{{ user.screen_name }}</span> Can law & privacy information help people whose tweets are removed for copyright reasons? You may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">[link]</span>
+      <span class="tweet-link">@{{ user.screen_name }}</span> Can law & privacy information help people whose tweets are removed for copyright reasons? You may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">civictechai.media.mit.edu/info/...</span>
+      <!-- TODO: create a preview object -->
     </div>
 
     <div class="form-row {% if form.errors.click_tweet %}has-error{% endif%}">
