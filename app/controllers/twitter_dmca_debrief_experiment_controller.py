@@ -49,8 +49,9 @@ class TwitterDMCADebriefExperimentController:
 
   def load_experiment_config(self, required_keys, experiment_name):
     experiment_config = self.get_experiment_config(required_keys, experiment_name)
-    experiment = self.db_session.query(Experiment).filter(Experiment.name == experiment_name).first()
-    if(experiment is None):
+    experiment = self.db_session.query(Experiment).filter_by(name=experiment_name).first()
+
+    if experiment is None:
       condition_keys = []
 
       ## LOAD RANDOMIZED CONDITIONS (see CivilServant-Analysis)
@@ -72,7 +73,7 @@ class TwitterDMCADebriefExperimentController:
         controller = self.__class__.__name__,
         settings_json = json.dumps(experiment_config).encode('utf-8')
       )
-      self.db_session.add(experiment)
+      self.db_session.merge(experiment)
       self.db_session.commit()
 
     ### SET UP INSTANCE PROPERTIES

@@ -194,8 +194,10 @@ def login():
 
 @app.route('/logout')
 def logout():
-  sce.record_user_action(user, 'logout', None)
-  del session['user']
+  if is_logged_in():
+    user = session['user']
+    sce.record_user_action(user, 'logout', None)
+    del session['user']
   return redirect(url_for('index'))
 
 @app.route('/oauth_authorized')

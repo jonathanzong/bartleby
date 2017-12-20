@@ -33,7 +33,7 @@
           </div>
         </div>
       </div>
-      <span class="tweet-link">@participant_account</span> did you know that artificial software can play many videogames and win? Learn more 👉 <span class="tweet-link">[link]</span>
+      <span class="tweet-link">@{{ user.screen_name }}</span> did you know that artificial software can play many videogames and win? Learn more 👉 <span class="tweet-link">[link]</span>
     </div>
   {% else %}
     <div class="tweet">
@@ -49,7 +49,7 @@
           </div>
         </div>
       </div>
-      <span class="tweet-link">@participant_account</span> we noticed a tweet of yours may have been removed for copyright reasons. It's common, rarely goes to court, & rarely happens twice. Learn more 👉 <span class="tweet-link">[link]</span>
+      <span class="tweet-link">@{{ user.screen_name }}</span> we noticed a tweet of yours may have been removed for copyright reasons. It's common, rarely goes to court, & rarely happens twice. Learn more 👉 <span class="tweet-link">[link]</span>
     </div>
   {% endif %}
 
