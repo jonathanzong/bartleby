@@ -99,6 +99,7 @@ class TwitterDMCADebriefExperimentController:
     if maybe_twitter_user_metadata is None:
       # TODO look for their lumen data, redirect them to ineligible if missing
       twitter_user_metadata = TwitterUserMetadata(twitter_user_id=user['id'],
+                                                  experiment_id=self.experiment.id,
                                                   user_json=json.dumps(user).encode('utf-8'))
       self.db_session.add(twitter_user_metadata)
     if maybe_twitter_user is None or maybe_twitter_user_metadata is None:
@@ -156,6 +157,16 @@ class TwitterDMCADebriefExperimentController:
       'show_table': treatment_binary[1] == '1',
       'show_visualization': treatment_binary[2] == '1',
     }
+
+  def record_user_action(self, user, action_type, action_data_dict):
+    action = ExperimentAction(
+      experiment_id=self.experiment.id,
+      action_type=action_type,
+      twitter_user_id=user['id'] if user is not None else None,
+    )
+    if action_data_dict is not None:
+      action.action_data = json.dumps(action_data_dict).encode('utf-8')
+    self.db_session.commit()
 
   def mark_user_completed(self, user):
     survey_result = self.db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()

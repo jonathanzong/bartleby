@@ -63,7 +63,7 @@ class Randomization(Base):
 
 class ExperimentAction(Base):
     __tablename__ = 'experiment_actions'
-    id                  = Column(String(64), primary_key = True)
+    id                  = Column(Integer, primary_key = True)
     experiment_id       = Column(String(64))
     action_type         = Column(String(64))
     created_at          = Column(DateTime, default=datetime.datetime.utcnow)

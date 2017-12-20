@@ -42,6 +42,9 @@ def is_logged_in():
 def index():
   if is_logged_in():
     return redirect(url_for('begin'))
+
+  sce.record_user_action(None, 'page_view', {'page': 'index'})
+
   return render_template('01-index.html')
 
 @app.route('/begin', methods=('GET', 'POST'))
@@ -53,6 +56,8 @@ def begin():
   # TODO uncomment this in production
   # if sce.has_completed_study(user):
   #   return redirect(url_for('complete'))
+
+  sce.record_user_action(user, 'page_view', {'page': 'begin'})
 
   # handle form submission
   form = TweetRemovedForm()
@@ -68,6 +73,8 @@ def begin():
 
     session['user']['conditions'] = sce.get_user_conditions(user)
 
+    sce.record_user_action(user, 'form_submit', {'page': 'begin'})
+
     return redirect(url_for('tweet_intervention'))
   return render_template('02-begin.html', user=user, form=form)
 
@@ -82,6 +89,8 @@ def tweet_intervention():
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
+  sce.record_user_action(user, 'page_view', {'page': 'tweet-intervention'})
+
   return render_template('03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'])
 
 @app.route('/tweet-debrief', methods=('GET', 'POST'))
@@ -93,6 +102,8 @@ def tweet_debrief():
   # if sce.has_completed_study(user):
   #   return redirect(url_for('complete'))
 
+  sce.record_user_action(user, 'page_view', {'page': 'tweet-debrief'})
+
   # handle form submission
   form = WouldClickTweetForm()
   if form.validate_on_submit():
@@ -101,6 +112,8 @@ def tweet_debrief():
     results_dict['twitter_user_id'] = user['id']
 
     sce.insert_or_update_survey_result(user, results_dict)
+
+    sce.record_user_action(user, 'form_submit', {'page': 'tweet-debrief'})
 
     return redirect(url_for('debrief'))
 
@@ -117,6 +130,8 @@ def debrief():
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
+  sce.record_user_action(user, 'page_view', {'page': 'debrief'})
+
   # handle form submission
   form = SurveyForm()
   if form.validate_on_submit():
@@ -125,6 +140,8 @@ def debrief():
     results_dict['twitter_user_id'] = user['id']
 
     sce.insert_or_update_survey_result(user, results_dict)
+
+    sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
 
     return redirect(url_for('complete'))
   return render_template('05-debrief.html', user=user, form=form,
@@ -143,6 +160,8 @@ def complete():
   #     # how did they even get here
   #     return redirect(url_for('begin'))
 
+  sce.record_user_action(user, 'page_view', {'page': 'complete'})
+
   return render_template('06-complete.html')
 
 @app.route('/ineligible')
@@ -153,10 +172,17 @@ def ineligible():
 
   # TODO: if actually eligible, redirect to begin
 
+  sce.record_user_action(user, 'page_view', {'page': 'ineligible'})
+
   return render_template('ineligible.html')
 
 @app.route('/login')
 def login():
+  if is_logged_in():
+    return redirect(url_for('begin'))
+
+  sce.record_user_action(None, 'login_attempt', None)
+
   callback_url = url_for('oauth_authorized', _external=True)
   auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
   try:
@@ -168,6 +194,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+  sce.record_user_action(user, 'logout', None)
   del session['user']
   return redirect(url_for('index'))
 
@@ -204,6 +231,8 @@ def oauth_authorized():
 
     # create user if not exists
     sce.create_user_if_not_exists(user)
+
+    sce.record_user_action(user, 'login_success', None)
 
     return redirect(url_for('begin'))
   except tweepy.TweepError:
