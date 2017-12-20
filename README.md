@@ -43,3 +43,7 @@ alembic upgrade +2
 alembic downgrade -1
 
 ```
+
+## deploy
+
+flask run -h 0.0.0.0 -p 8000 --with-threads &
