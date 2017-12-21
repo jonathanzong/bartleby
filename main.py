@@ -145,8 +145,10 @@ def debrief():
 
     return redirect(url_for('complete'))
   return render_template('05-debrief.html', user=user, form=form,
-                          show_table=conditions['show_table'],
-                          show_visualization=conditions['show_visualization'])
+                          show_table=True,
+                          show_visualization=True) # TODO just for testing
+                          # show_table=conditions['show_table'],
+                          # show_visualization=conditions['show_visualization'])
 
 @app.route('/complete')
 def complete():
