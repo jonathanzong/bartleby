@@ -1,5 +1,6 @@
 from enum import Enum
 import simplejson as json
+import os
 
 
 class TwitterUserState(Enum):
@@ -19,11 +20,19 @@ class DbEngine:
         from sqlalchemy import create_engine
         from sqlalchemy.orm import sessionmaker
         from app.models import Base
+
+        ENV = os.environ['CS_ENV']
+        connect_args = {
+            'ssl': 1,
+            'ssl-cipher': 'DHE-RSA-AES256-SHA',
+            'ssl-verify-server-cert': 1
+        } if ENV == 'production' else None
+
         db_engine = create_engine("mysql://{user}:{password}@{host}/{database}".format(
             host = DBCONFIG['host'],
             user = DBCONFIG['user'],
             password = DBCONFIG['password'],
-            database = DBCONFIG['database']), pool_recycle=3600)
+            database = DBCONFIG['database']), pool_recycle=3600, connect_args=connect_args)
 
         Base.metadata.bind = db_engine
         DBSession = sessionmaker(bind=db_engine)
