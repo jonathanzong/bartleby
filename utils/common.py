@@ -24,7 +24,7 @@ class DbEngine:
         ENV = os.environ['CS_ENV']
         connect_args = {
             'ssl': { 'verify_ssl_cert': True, 'ssl_cipher': 'DHE-RSA-AES256-SHA' }
-        } if ENV == 'production' or ENV == 'staging' else None
+        }
 
         db_engine = create_engine("mysql://{user}:{password}@{host}/{database}".format(
             host = DBCONFIG['host'],
