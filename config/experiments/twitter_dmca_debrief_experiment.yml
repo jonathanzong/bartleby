@@ -1,7 +1,7 @@
 development:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
-staging:
+test:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
 production:
