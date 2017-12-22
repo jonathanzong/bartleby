@@ -26,8 +26,32 @@
             @CivicTechAI
           </div>
         </div>
+        <span class="tweet-twitter-icon"></span>
       </div>
-      <span class="tweet-link">@{{ user.screen_name }}</span> did you know that artificial software can play many videogames and win? Learn more 👉 <span class="tweet-link">[link]</span>
+      <div>
+        <span class="tweet-link">@{{ user.screen_name }}</span> did you know that artificial software can play many videogames and win? Learn more 👉 <span class="tweet-link">civictechai.media.mit.edu/...</span>
+      </div>
+      <div class="tweet-time">
+        7:00PM - Sep 20, 2017
+      </div>
+      <div class="tweet-card">
+        <img src="{{ url_for('static', filename='images/chopper-command.png') }}">
+        <div class="tweet-card-summary">
+          <div class="tweet-card-title">
+            AI Is Learning To Beat Your Favorite Videogames
+          </div>
+          <div>
+            For now, humans continue to dominate classics like Asteroids
+          </div>
+          <div class="tweet-card-link">
+            civictechai.media.mit.edu
+          </div>
+        </div>
+      </div>
+      <span class="tweet-icon tweet-reply"></span>
+      <span class="tweet-icon tweet-retweet"></span>
+      <span class="tweet-icon tweet-heart"></span>
+      <!-- TODO: create a preview object -->
     </div>
   {% else %}
     <div class="tweet">
@@ -41,8 +65,32 @@
             @DmcaInfo
           </div>
         </div>
+        <span class="tweet-twitter-icon"></span>
       </div>
-      <span class="tweet-link">@{{ user.screen_name }}</span> we noticed a tweet of yours may have been removed for copyright reasons. It's common, rarely goes to court, & rarely happens twice. Learn more 👉 <span class="tweet-link">[link]</span>
+      <div>
+        <span class="tweet-link">@{{ user.screen_name }}</span> we noticed a tweet of yours may have been removed for copyright reasons. It's common, rarely goes to court, & rarely happens twice. Learn more 👉 <span class="tweet-link">dmcainfo.media.mit.edu/...</span>
+      </div>
+      <div class="tweet-time">
+        7:00PM - Sep 20, 2017
+      </div>
+      <div class="tweet-card">
+        <img src="{{ url_for('static', filename='images/social-media-communication.png') }}">
+        <div class="tweet-card-summary">
+          <div class="tweet-card-title">
+            Making Sense of Copyright Takedown Notices
+          </div>
+          <div>
+            Content removals are common, often mistaken, and rarely go to court.
+          </div>
+          <div class="tweet-card-link">
+            dmcainfo.media.mit.edu
+          </div>
+        </div>
+      </div>
+      <span class="tweet-icon tweet-reply"></span>
+      <span class="tweet-icon tweet-retweet"></span>
+      <span class="tweet-icon tweet-heart"></span>
+      <!-- TODO: create a preview object -->
     </div>
   {% endif %}
 
