@@ -36,6 +36,7 @@ class TwitterUserMetadata(Base):
     completed_study_at          = Column(DateTime)
 
 class TwitterUserEligibility(Base):
+    __tablename__ = 'twitter_user_eligibility'
     id = Column(String(64), primary_key = True)
 
 class Experiment(Base):
