@@ -51,6 +51,14 @@ class TwitterDMCADebriefExperimentController:
     if experiment is None:
       condition_keys = []
 
+      experiment = Experiment(
+        name = experiment_name,
+        controller = self.__class__.__name__,
+        settings_json = json.dumps(experiment_config).encode('utf-8')
+      )
+      self.db_session.add(experiment)
+      self.db_session.commit()
+
       ## LOAD RANDOMIZED CONDITIONS (see CivilServant-Analysis)
       with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['randomizations']), "r") as f:
         reader = csv.DictReader(f)
@@ -72,12 +80,6 @@ class TwitterDMCADebriefExperimentController:
           twitter_user_eligibility = TwitterUserEligibility(id = row[0])
           self.db_session.add(twitter_user_eligibility)
 
-      experiment = Experiment(
-        name = experiment_name,
-        controller = self.__class__.__name__,
-        settings_json = json.dumps(experiment_config).encode('utf-8')
-      )
-      self.db_session.add(experiment)
       self.db_session.commit()
 
     ### SET UP INSTANCE PROPERTIES
