@@ -57,6 +57,14 @@ h5 {
   margin-bottom: 1.6em;
 }
 
+input[type=submit] {
+    padding:5px 15px;
+    background:#777;
+    color: white;
+    border:0 none;
+    cursor:pointer;
+}
+
 @media (min-width: 768px) {
   .container {
     max-width: 750px;

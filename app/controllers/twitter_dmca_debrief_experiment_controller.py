@@ -73,7 +73,7 @@ class TwitterDMCADebriefExperimentController:
         controller = self.__class__.__name__,
         settings_json = json.dumps(experiment_config).encode('utf-8')
       )
-      self.db_session.merge(experiment)
+      self.db_session.add(experiment)
       self.db_session.commit()
 
     ### SET UP INSTANCE PROPERTIES
@@ -167,6 +167,7 @@ class TwitterDMCADebriefExperimentController:
     )
     if action_data_dict is not None:
       action.action_data = json.dumps(action_data_dict).encode('utf-8')
+    self.db_session.add(action)
     self.db_session.commit()
 
   def mark_user_completed(self, user):

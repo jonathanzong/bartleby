@@ -46,8 +46,11 @@
     </div>
   {% endif %}
 
-  <p>
-    <a href="{{ url_for('tweet_debrief') }}">Next</a>
-  </p>
+
+  <div>
+    <p>
+      <a href="{{ url_for('tweet_debrief') }}"><input type="submit" value="Next"></a>
+    </p>
+  </div>
 
 {% endblock %}

@@ -29,8 +29,31 @@
             @DmcaInfo
           </div>
         </div>
+        <span class="tweet-twitter-icon"></span>
       </div>
-      <span class="tweet-link">@{{ user.screen_name }}</span> Can law & privacy information help people whose tweets are removed for copyright reasons? You may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">civictechai.media.mit.edu/info/...</span>
+      <div>
+        <span class="tweet-link">@{{ user.screen_name }}</span> Can law & privacy information help people whose tweets are removed for copyright reasons? You may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">dmca.princeton.edu/info/...</span>
+      </div>
+      <div class="tweet-time">
+        7:00 PM - Nov 20, 2017
+      </div>
+      <div class="tweet-card">
+        <img src="{{ url_for('static', filename='images/pu-sig.png') }}">
+        <div class="tweet-card-summary">
+          <div class="tweet-card-title">
+            Research Debriefing: Understanding Online Copyright Removals
+          </div>
+          <div>
+            Find out if you were part of our Princeton University research and log in to manage your privacy settings.
+          </div>
+          <div class="tweet-card-link">
+            dmca.princeton.edu
+          </div>
+        </div>
+      </div>
+      <span class="tweet-icon tweet-reply"></span>
+      <span class="tweet-icon tweet-retweet"></span>
+      <span class="tweet-icon tweet-heart"></span>
       <!-- TODO: create a preview object -->
     </div>
 
@@ -44,7 +67,7 @@
     </div>
 
     <div>
-      <input type="submit" value="Submit">
+      <input type="submit" value="Next">
     </div>
   </form>
 
