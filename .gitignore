@@ -1,5 +1,6 @@
 .DS_Store
 twitter_api_keys.py
+twitter_dmca_debrief_test.eligible_ids.csv
 
 ## APP-SPECIFIC FILES
 config.py

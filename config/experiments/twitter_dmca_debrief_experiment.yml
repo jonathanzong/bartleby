@@ -1,9 +1,12 @@
 development:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
+  eligible_ids: twitter_dmca_debrief_test.eligible_ids.csv
 test:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
+  eligible_ids: twitter_dmca_debrief_test.eligible_ids.csv
 production:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
+  eligible_ids: twitter_dmca_debrief_test.eligible_ids.csv

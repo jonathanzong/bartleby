@@ -1,10 +1,8 @@
 """
 this file should:
 
-run once
-
 1. initialize an Experiment id
-2. Load list of Lumen names TODO
+2. Load list of eligible participant ids
 3. Load randomizations
 """
 
@@ -19,9 +17,8 @@ BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.
 ENV = os.environ['CS_ENV']
 
 class TwitterDMCADebriefExperimentController:
-  def __init__(self, experiment_name, db_session, log, required_keys):
+  def __init__(self, experiment_name, db_session, required_keys):
     self.db_session = db_session
-    self.log = log
 
     self.load_experiment_config(required_keys, experiment_name)
 
@@ -31,18 +28,18 @@ class TwitterDMCADebriefExperimentController:
       try:
         experiment_config_all = yaml.load(f)
       except yaml.YAMLError as exc:
-        self.log.error("{0}: Failure loading experiment yaml {1}".format(
+        print("{0}: Failure loading experiment yaml {1}".format(
           self.__class__.__name__, experiment_file_path), str(exc))
         sys.exit(1)
     if(ENV not in experiment_config_all.keys()):
-      self.log.error("{0}: Cannot find experiment settings for {1} in {2}".format(
+      print("{0}: Cannot find experiment settings for {1} in {2}".format(
         self.__class__.__name__, ENV, experiment_file_path))
       sys.exit(1)
 
     experiment_config = experiment_config_all[ENV]
     for key in required_keys:
       if key not in experiment_config.keys():
-        self.log.error("{0}: Value missing from {1}: {2}".format(
+        print("{0}: Value missing from {1}: {2}".format(
           self.__class__.__name__, experiment_file_path, key))
         sys.exit(1)
     return experiment_config
@@ -67,6 +64,13 @@ class TwitterDMCADebriefExperimentController:
             assigned         = False
           )
           self.db_session.add(randomization)
+
+      ## LOAD eligible twitter user ids
+      with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['eligible_ids']), "r") as f:
+        reader = csv.reader(f)
+        for row in reader:
+          twitter_user_eligibility = TwitterUserEligibility(id = row[0])
+          self.db_session.add(twitter_user_eligibility)
 
       experiment = Experiment(
         name = experiment_name,
@@ -98,7 +102,6 @@ class TwitterDMCADebriefExperimentController:
       self.db_session.add(twitter_user)
     maybe_twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     if maybe_twitter_user_metadata is None:
-      # TODO look for their lumen data, redirect them to ineligible if missing
       twitter_user_metadata = TwitterUserMetadata(twitter_user_id=user['id'],
                                                   experiment_id=self.experiment.id,
                                                   user_json=json.dumps(user).encode('utf-8'))
@@ -193,3 +196,8 @@ class TwitterDMCADebriefExperimentController:
       return twitter_user_metadata.completed_study_at is not None
     else:
       return False
+
+
+  def is_eligible(self, user):
+    twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
+    return twitter_user_eligibility is not None

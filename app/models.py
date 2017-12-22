@@ -35,14 +35,8 @@ class TwitterUserMetadata(Base):
     initial_login_at            = Column(DateTime, default=datetime.datetime.utcnow)
     completed_study_at          = Column(DateTime)
 
-
-class TwitterUserMessageAttempt(Base):
-    __tablename__ = 'twitter_user_message_attempt'
-    id                  = Column(String(64), primary_key = True)
-    created_at          = Column(DateTime)
-    message_id          = Column(String(64))
-    account_found       = Column(Boolean) #if we don't find the account, record the attempt and make other values except created_at and id to NONE
-
+class TwitterUserEligibility(Base):
+    id = Column(String(64), primary_key = True)
 
 class Experiment(Base):
     __tablename__ = 'experiments'

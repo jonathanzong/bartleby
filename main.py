@@ -12,8 +12,6 @@ from app.forms import *
 
 from app.controllers.twitter_dmca_debrief_experiment_controller import *
 
-from app.cs_logger import get_logger
-
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
 
@@ -26,12 +24,9 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
-log = get_logger(ENV, BASE_DIR)
-
 sce = TwitterDMCADebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
     db_session=db_session,
-    log=log,
     required_keys=['name', 'randomizations']
   )
 
@@ -53,9 +48,11 @@ def begin():
     return redirect(url_for('index'))
   user = session['user']
 
-  # TODO uncomment this in production
-  # if sce.has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if not sce.is_eligible(user):
+    return redirect(url_for('ineligible'))
+
+  if sce.has_completed_study(user):
+    return redirect(url_for('complete'))
 
   sce.record_user_action(user, 'page_view', {'page': 'begin'})
 
@@ -84,8 +81,11 @@ def tweet_intervention():
     return redirect(url_for('index'))
   user = session['user']
 
-  # if sce.has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if not sce.is_eligible(user):
+    return redirect(url_for('ineligible'))
+
+  if sce.has_completed_study(user):
+    return redirect(url_for('complete'))
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
@@ -99,8 +99,11 @@ def tweet_debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  # if sce.has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if not sce.is_eligible(user):
+    return redirect(url_for('ineligible'))
+
+  if sce.has_completed_study(user):
+    return redirect(url_for('complete'))
 
   sce.record_user_action(user, 'page_view', {'page': 'tweet-debrief'})
 
@@ -125,8 +128,11 @@ def debrief():
     return redirect(url_for('index'))
   user = session['user']
 
-  # if sce.has_completed_study(user):
-  #   return redirect(url_for('complete'))
+  if not sce.is_eligible(user):
+    return redirect(url_for('ineligible'))
+
+  if sce.has_completed_study(user):
+    return redirect(url_for('complete'))
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
@@ -145,10 +151,8 @@ def debrief():
 
     return redirect(url_for('complete'))
   return render_template('05-debrief.html', user=user, form=form,
-                          show_table=True,
-                          show_visualization=True) # TODO just for testing
-                          # show_table=conditions['show_table'],
-                          # show_visualization=conditions['show_visualization'])
+                          show_table=conditions['show_table'],
+                          show_visualization=conditions['show_visualization'])
 
 @app.route('/complete')
 def complete():
@@ -156,11 +160,14 @@ def complete():
     return redirect(url_for('index'))
   user = session['user']
 
-  # if not sce.has_completed_study(user):
-  #   did_complete = sce.mark_user_completed(user)
-  #   if not did_complete:
-  #     # how did they even get here
-  #     return redirect(url_for('begin'))
+  if not sce.is_eligible(user):
+    return redirect(url_for('ineligible'))
+
+  if not sce.has_completed_study(user):
+    did_complete = sce.mark_user_completed(user)
+    if not did_complete:
+      # how did they even get here
+      return redirect(url_for('begin'))
 
   sce.record_user_action(user, 'page_view', {'page': 'complete'})
 
@@ -172,7 +179,8 @@ def ineligible():
     return redirect(url_for('index'))
   user = session['user']
 
-  # TODO: if actually eligible, redirect to begin
+  if sce.is_eligible(user):
+    return redirect(url_for('begin'))
 
   sce.record_user_action(user, 'page_view', {'page': 'ineligible'})
 
@@ -220,7 +228,6 @@ def oauth_authorized():
     created = user.created_at
     account_age = today.year - created.year - ((today.month, today.day) < (created.month, created.day))
 
-    # TODO: store access_token?
     session['user'] = {
       'id': user.id,
       'screen_name': user.screen_name,
@@ -232,6 +239,9 @@ def oauth_authorized():
       'account_age': account_age
     }
     user = session['user']
+
+    if not sce.is_eligible(user):
+      return redirect(url_for('ineligible'))
 
     # create user if not exists
     sce.create_user_if_not_exists(user)

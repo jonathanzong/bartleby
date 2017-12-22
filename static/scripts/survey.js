@@ -15,7 +15,7 @@ function populateFromLocalstorage() {
           inputs[i].checked = true;
         }
         break;
-      // TODO: if there are other input types
+      // add here if there are other input types
     }
   }
   for (var i = 0, len = textareas.length; i < len; i++) {
@@ -38,7 +38,7 @@ function onChange (evt) {
     default:
       localStorage.setItem(this.name, this.value);
       break;
-    // TODO: if there are other input types
+    // add here if there are other input types
   }
 }
 
