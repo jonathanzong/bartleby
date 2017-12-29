@@ -3,6 +3,11 @@
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/index.css') }}">
 {% endblock %}
 {% block content %}
+  <p class="logos">
+    <a href="https://www.princeton.edu/" target="_blank"><img height="50" src="{{ url_for('static', filename='images/princeton-logo.png') }}" alt="Princeton University"></a>
+    <a href="https://hci.princeton.edu/" target="_blank">
+    <img height="50" src="{{ url_for('static', filename='images/hci-logo.png') }}" alt="Princeton HCI Lab"></a>
+  </p>
   <h1>Testing Social Media Research Ethics Procedures</h1>
 
   <p>
