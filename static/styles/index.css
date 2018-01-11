@@ -1,7 +1,66 @@
+.content-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header-wrap {
+  flex: 0;
+}
+
+.header-wrap h1 {
+  font-size: 1.6em;
+}
+
+.big-question {
+  font-size: 1.6em; font-style: italic; margin: 0;
+}
+
+@media only screen and (max-device-width : 768px) {
+  .header-wrap h1 {
+    font-size: 1.3em;
+  }
+  .big-question {
+    font-size: 1em; font-weight: bold;
+  }
+}
+
+.scroll-wrap {
+  flex: 1;
+  min-height: 150px;
+  overflow-y: scroll;
+  border: 1px solid black;
+  padding: 0 10px;
+  background:
+    /* Shadow covers */
+    linear-gradient(white 30%, rgba(255,255,255,0)),
+    linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+
+    /* Shadows */
+    radial-gradient(50% 0, farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)),
+    radial-gradient(50% 100%,farthest-side, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+  background:
+    /* Shadow covers */
+    linear-gradient(white 30%, rgba(255,255,255,0)),
+    linear-gradient(rgba(255,255,255,0), white 70%) 0 100%,
+
+    /* Shadows */
+    radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.2), rgba(0,0,0,0)),
+    radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.2), rgba(0,0,0,0)) 0 100%;
+  background-repeat: no-repeat;
+  background-color: #fcfcfc;
+  background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+
+  /* Opera doesn't support this in the shorthand */
+  background-attachment: local, local, scroll, scroll;
+}
+
 .cta-wrap {
+  flex: 0;
   margin: 1.6em 0;
   padding: 1px 1.6em;
   background: #e7e7e7;
+  font-size: 0.8em;
 }
 
 .btn-twitter-wrap {
@@ -49,3 +108,4 @@
   vertical-align: middle;
   margin-right: 15px;
 }
+

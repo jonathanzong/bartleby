@@ -3,39 +3,32 @@
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/index.css') }}">
 {% endblock %}
 {% block content %}
-  <p class="logos">
-    <a href="https://www.princeton.edu/" target="_blank"><img height="50" src="{{ url_for('static', filename='images/princeton-logo.png') }}" alt="Princeton University"></a>
-    <a href="https://hci.princeton.edu/" target="_blank">
-    <img height="50" src="{{ url_for('static', filename='images/hci-logo.png') }}" alt="Princeton HCI Lab"></a>
-  </p>
-  <h1 style="max-width: 500px">Testing Social Media Research Ethics Procedures</h1>
 
-  <p>
+<div class="content-wrap">
+
+<div class="header-wrap">
+  <p class="logos" style="margin: 0">
+    <a href="https://www.princeton.edu/" target="_blank"><img height="35" src="{{ url_for('static', filename='images/princeton-logo.png') }}" alt="Princeton University"></a>
+    <a href="https://hci.princeton.edu/" target="_blank">
+    <img height="35" src="{{ url_for('static', filename='images/hci-logo.png') }}" alt="Princeton HCI Lab"></a>
+  </p>
+  <h1 style="max-width: 500px; margin: 0; line-height: 1.2">Testing Social Media Research Ethics Procedures</h1>
+
+  <p style="font-size: 0.8em; margin-top: 0.5em; margin-bottom: 1em">
     Principal Investigator: <a href="https://psych.princeton.edu/person/elizabeth-levy-paluck" target="_blank">Elizabeth Paluck</a>, Princeton University Department of Psychology, with <a href="https://twitter.com/natematias" target="_blank">J. Nathan Matias</a> and <a href="http://jonathanzong.com/" target="_blank">Jonathan Zong</a>.
   </p>
 
-  <p style="font-size: 1.6em; font-style: italic;">
+
+  <p class="big-question">
     What effects do people experience from having tweets removed for copyright reasons?
   </p>
   <p>
-     And how can researchers study this issue ethically? Help us answer these questions by taking 15 minutes to answer our survey. (Must be 18 or older.)
+     How can researchers study this issue ethically? Help us answer these questions by taking 15 minutes to answer our survey.
   </p>
+</div>
 
-  <div class="cta-wrap">
-    <div class="btn-twitter-wrap">
-      <a href="{{ url_for('login') }}">
-        <div class="btn-twitter">
-          <img src="{{ url_for('static', filename='images/twitter.png') }}" />
-          Sign in with Twitter
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <p>
-     Or, read on for more details:
-  </p>
-
+<div class="scroll-wrap">
+  <div>
   <p>
     We are inviting you to take part in a research study. Before you decide to participate, it is important that you understand why the research is being done and what it will involve. Please read this information carefully. Ask us if anything is not clear or you need more information.
   </p>
@@ -82,9 +75,12 @@
     <div>Email: <a href="mailto:irb@princeton.edu" target="_blank">irb@princeton.edu</a></div>
   </div>
 
+  </div>
+</div>
+
   <div class="cta-wrap">
     <p>
-      <strong>This research is only open to people who are 18 years or older.</strong> If you are eligible and you consent to participate, please begin the study by logging in with Twitter and granting us permission to observe public details about your Twitter account:
+      <em>Must be 18 years or older.</em> If you are eligible and consent to participate, please log in with Twitter:
     </p>
     <div class="btn-twitter-wrap">
       <a href="{{ url_for('login') }}">
@@ -95,4 +91,7 @@
       </a>
     </div>
   </div>
+
+
+</div>
 {% endblock %}
