@@ -38,7 +38,7 @@ def index():
   if is_logged_in():
     return redirect(url_for('begin'))
 
-  sce.record_user_action(None, 'page_view', {'page': 'index'})
+  sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   return render_template('01-index.html')
 
@@ -54,7 +54,7 @@ def begin():
   if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
-  sce.record_user_action(user, 'page_view', {'page': 'begin'})
+  sce.record_user_action(user, 'page_view', {'page': 'begin', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   # handle form submission
   form = TweetRemovedForm()
@@ -89,7 +89,7 @@ def tweet_intervention():
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
-  sce.record_user_action(user, 'page_view', {'page': 'tweet-intervention'})
+  sce.record_user_action(user, 'page_view', {'page': 'tweet-intervention', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   return render_template('03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'])
 
@@ -105,7 +105,7 @@ def tweet_debrief():
   if sce.has_completed_study(user):
     return redirect(url_for('complete'))
 
-  sce.record_user_action(user, 'page_view', {'page': 'tweet-debrief'})
+  sce.record_user_action(user, 'page_view', {'page': 'tweet-debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   # handle form submission
   form = WouldClickTweetForm()
@@ -136,7 +136,7 @@ def debrief():
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
-  sce.record_user_action(user, 'page_view', {'page': 'debrief'})
+  sce.record_user_action(user, 'page_view', {'page': 'debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   # handle form submission
   form = SurveyForm()
@@ -169,7 +169,7 @@ def complete():
       # how did they even get here
       return redirect(url_for('begin'))
 
-  sce.record_user_action(user, 'page_view', {'page': 'complete'})
+  sce.record_user_action(user, 'page_view', {'page': 'complete', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   return render_template('06-complete.html')
 
@@ -182,7 +182,7 @@ def ineligible():
   if sce.is_eligible(user):
     return redirect(url_for('begin'))
 
-  sce.record_user_action(user, 'page_view', {'page': 'ineligible'})
+  sce.record_user_action(user, 'page_view', {'page': 'ineligible', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   return render_template('ineligible.html')
 
