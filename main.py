@@ -38,8 +38,7 @@ def index():
   if is_logged_in():
     return redirect(url_for('begin'))
 
-  if not request.user_agent.string.startswith('check_http'):
-    sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
+  sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   return render_template('01-index.html')
 
