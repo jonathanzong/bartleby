@@ -31,6 +31,7 @@ class TwitterUserMetadata(Base):
     lumen_notice_id             = Column(String(64))
     user_json                   = Column(LargeBinary)
     assignment_json             = Column(LargeBinary)
+    gift_card_code              = Column(String(64))
     experiment_id               = Column(String(64))
     initial_login_at            = Column(DateTime, default=datetime.datetime.utcnow)
     completed_study_at          = Column(DateTime)
@@ -54,6 +55,12 @@ class Randomization(Base):
     block_id                     = Column(String(64))
     block_size                   = Column(Integer)
     treatment                    = Column(Integer)
+    assigned                     = Column(Boolean)
+
+class GiftCard(Base):
+    __tablename__ = 'gift_cards'
+    id                           = Column(Integer, primary_key = True)
+    gift_card_code               = Column(String(64))
     assigned                     = Column(Boolean)
 
 class ExperimentAction(Base):

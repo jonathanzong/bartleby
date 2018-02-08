@@ -171,7 +171,9 @@ def complete():
 
   sce.record_user_action(user, 'page_view', {'page': 'complete', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  return render_template('06-complete.html')
+  gift_card_code = sce.assign_gift_card(user)
+
+  return render_template('06-complete.html', user=user, gift_card_code=gift_card_code)
 
 @app.route('/ineligible')
 def ineligible():

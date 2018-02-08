@@ -2,11 +2,14 @@ development:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
   eligible_ids: twitter_dmca_debrief_test.eligible_ids.csv
+  gift_card_codes: twitter_dmca_debrief_test.gift_card_codes.csv
 test:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
   eligible_ids: twitter_dmca_debrief_test.eligible_ids.csv
+  gift_card_codes: twitter_dmca_debrief_test.gift_card_codes.csv
 production:
   name: twitter_dmca_debrief
   randomizations: twitter_dmca_debrief_test.randomizations.csv
   eligible_ids: twitter_dmca_debrief_test.eligible_ids.csv
+  gift_card_codes: twitter_dmca_debrief_test.gift_card_codes.csv
