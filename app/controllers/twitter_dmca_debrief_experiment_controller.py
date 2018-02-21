@@ -7,6 +7,7 @@ this file should:
 """
 
 import yaml, csv, os, inspect
+import paypal_api_keys
 
 from sqlalchemy import inspect as sa_inspect
 
@@ -15,6 +16,12 @@ from app.models import *
 BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))), "..","..")
 
 ENV = os.environ['CS_ENV']
+
+import paypalrestsdk
+paypalrestsdk.configure({
+  "mode": "sandbox", # sandbox or live
+  'client_id': paypal_api_keys.PAYPAL_CLIENT_ID,
+  'client_secret': paypal_api_keys.PAYPAL_CLIENT_SECRET })
 
 class TwitterDMCADebriefExperimentController:
   def __init__(self, experiment_name, db_session, required_keys):
@@ -93,6 +100,10 @@ class TwitterDMCADebriefExperimentController:
   def row_as_dict(self, obj):
     return {c.key: getattr(obj, c.key)
             for c in sa_inspect(obj).mapper.column_attrs}
+
+  def user_exists(self, user):
+    maybe_twitter_user = self.db_session.query(TwitterUser).filter_by(id=user['id']).first()
+    return maybe_twitter_user is not None
 
   def create_user_if_not_exists(self, user):
     maybe_twitter_user = self.db_session.query(TwitterUser).filter_by(id=user['id']).first()
@@ -199,8 +210,59 @@ class TwitterDMCADebriefExperimentController:
     else:
       return False
 
+  def send_paypal_payout(self, user, email_address):
+    print(user['id'])
+    print(email_address)
+    sender_batch_id = user['id']
+    payout = paypalrestsdk.Payout({
+      "sender_batch_header": {
+        "sender_batch_id": sender_batch_id,
+        "email_subject": "You have a payment"
+      },
+      "items": [
+        {
+          "recipient_type": "EMAIL",
+          "amount": {
+            "value": 00,
+            "currency": "USD"
+          },
+          "receiver": email_address,
+          "note": "Thank you for participating in our research!",
+          "sender_item_id": "item_1"
+        }
+      ]
+    })
+    try:
+      twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+      if twitter_user_metadata.completed_study_at is None:
+        return
+
+      days_since_started = (datetime.datetime.now() - twitter_user_metadata.initial_login_at).days
+
+      # TODO this time limit, and add language reflecting it
+      if days_since_started > 30 or twitter_user_metadata.paypal_sender_batch_id is not None:
+        # it's been too long
+        return
+
+      payout.create()
+
+      # store sender_batch_id
+      twitter_user_metadata.paypal_sender_batch_id = sender_batch_id
+      self.db_session.add(twitter_user_metadata)
+      self.db_session.commit()
+    except Exception as e:
+      # log e
+      print(e.args)
+
+  def has_sent_payout(self, user):
+    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    if twitter_user_metadata is not None:
+      return twitter_user_metadata.paypal_sender_batch_id is not None
+    else:
+      return False
 
   def is_eligible(self, user):
     # twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
     # return twitter_user_eligibility is not None
+    # TODO update the list
     return True

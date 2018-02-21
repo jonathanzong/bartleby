@@ -6,12 +6,39 @@
     {% endif %}
   </div>
 
+  <h1>Thanks for your feedback on our research!</h1>
+
   <p>
-    Thanks for completing this survey! Your answers will help us improve the ethics of future social media research. After completing this study, we will send you a tweet with our results.
+    Thanks for completing this survey! Your answers will help us improve the ethics of future social media research. In case you're curious about what we learn, we will send you a tweet with our results when we have finished this study.
   </p>
 
   <p>
-    If you want to stay up-to-date on our research, please follow <a href="https://twitter.com/natematias" target="_blank">@natematias</a>, <a href="https://twitter.com/ohnobackspace" target="_blank">@ohnobackspace</a>, <a href="https://twitter.com/betsylevyp" target="_blank">@betsylevyp</a>, and the Princeton Center for IT Policy at <a href="https://twitter.com/princetoncitp" target="_blank">@princetoncitp</a>. We plan to share the results of this study on Twitter as we have results.
+    To show our appreciation, your next cup of coffee is on us. Enter your email address below, and we will send you $3.00 to use as you choose via PayPal:
+  </p>
+
+  {% if has_sent_compensation %}
+    An email with details about your compensation has been sent through Paypal. If you don't receive a notification from Paypal in the next 24 hours, please email Jonathan at jzong@princeton.edu.
+  {% else %}
+    <form method="POST" action="{{ url_for('complete') }}">
+      {{ form.csrf_token }}
+
+      <div class="form-row {% if form.errors.email_address %}has-error{% endif%}">
+        {{ form.email_address.label }} {{ form.email_address }}
+        {% if form.errors.email_address %}
+          <ul class="errors">
+            <li>Please double-check the email address is valid.</li>
+          </ul>
+        {% endif %}
+      </div>
+
+      <div>
+        <input type="submit" value="Submit">
+      </div>
+    </form>
+  {% endif %}
+
+  <p>
+    If you want to stay up-to-date on our research, please follow <a href="https://twitter.com/natematias" target="_blank">@natematias</a>, <a href="https://twitter.com/ohnobackspace" target="_blank">@ohnobackspace</a>, <a href="https://twitter.com/betsylevyp" target="_blank">@betsylevyp</a>, and the Princeton Center for IT Policy at <a href="https://twitter.com/princetoncitp" target="_blank">@princetoncitp</a>. We plan to share the results on Twitter when we finish this study.
   </p>
 
   <div class="noun">

@@ -34,6 +34,7 @@ class TwitterUserMetadata(Base):
     experiment_id               = Column(String(64))
     initial_login_at            = Column(DateTime, default=datetime.datetime.utcnow)
     completed_study_at          = Column(DateTime)
+    paypal_sender_batch_id      = Column(String(64))
 
 class TwitterUserEligibility(Base):
     __tablename__ = 'twitter_user_eligibility'

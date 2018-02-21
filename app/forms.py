@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import Form, TextAreaField, RadioField, BooleanField, validators
+from wtforms import Form, TextAreaField, TextField, RadioField, BooleanField, validators
 
 class TweetRemovedForm(FlaskForm):
   tweet_removed        = RadioField('When this happened, did Twitter remove your Tweet or media?',
@@ -44,3 +44,7 @@ class SurveyForm(FlaskForm):
                                              'I would want some things to change',
                                              'This study should not happen']])
   improve_debrief      = TextAreaField('If we could make the research debriefing webpage different, what would you change? (optional)')
+
+class CompensationForm(FlaskForm):
+  email_address        = TextField('Email address (Paypal account not required)',
+                                    [validators.DataRequired(), validators.Email()])

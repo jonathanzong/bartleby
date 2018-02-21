@@ -31,7 +31,7 @@ sce = TwitterDMCADebriefExperimentController(
   )
 
 def is_logged_in():
-  return 'user' in session
+  return 'user' in session and sce.user_exists(session['user'])
 
 @app.route('/')
 def index():
@@ -154,7 +154,7 @@ def debrief():
                           show_table=conditions['show_table'],
                           show_visualization=conditions['show_visualization'])
 
-@app.route('/complete')
+@app.route('/complete', methods=('GET', 'POST'))
 def complete():
   if not is_logged_in():
     return redirect(url_for('index'))
@@ -171,7 +171,21 @@ def complete():
 
   sce.record_user_action(user, 'page_view', {'page': 'complete', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  return render_template('06-complete.html')
+  has_sent_compensation = sce.has_sent_payout(user)
+
+  # handle form submission
+  form = CompensationForm()
+  if form.validate_on_submit():
+    results_dict = request.form.to_dict()
+    del results_dict['csrf_token']
+
+    if not has_sent_compensation:
+      sce.send_paypal_payout(user, results_dict['email_address'])
+
+    sce.record_user_action(user, 'form_submit', {'page': 'complete'})
+
+    return redirect(url_for('complete'))
+  return render_template('06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation)
 
 @app.route('/ineligible')
 def ineligible():

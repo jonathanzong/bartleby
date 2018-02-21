@@ -8,3 +8,4 @@ simplejson
 mock
 Flask-WTF
 pyyaml
+paypalrestsdk
