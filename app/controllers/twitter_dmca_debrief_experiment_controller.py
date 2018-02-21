@@ -4,7 +4,6 @@ this file should:
 1. initialize an Experiment id
 2. Load list of eligible participant ids
 3. Load randomizations
-4. Load gift card codes
 """
 
 import yaml, csv, os, inspect
@@ -73,13 +72,6 @@ class TwitterDMCADebriefExperimentController:
             assigned         = False
           )
           self.db_session.add(randomization)
-
-      ## LOAD eligible twitter user ids
-      with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['gift_card_codes']), "r") as f:
-        reader = csv.reader(f)
-        for row in reader:
-          gift_card = GiftCard(gift_card_code = row[0])
-          self.db_session.add(gift_card)
 
       ## LOAD eligible twitter user ids
       with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['eligible_ids']), "r") as f:
@@ -160,15 +152,6 @@ class TwitterDMCADebriefExperimentController:
     twitter_user_metadata.assignment_json = json.dumps(self.row_as_dict(randomization)).encode('utf-8')
     self.db_session.commit()
 
-  def assign_gift_card(self, user): # TODO lock the survey if out of gift cards
-    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    if not twitter_user_metadata.gift_card_code:
-      gift_card = self.db_session.query(GiftCard).filter_by(assigned=None).order_by(GiftCard.id).first()
-      gift_card.assigned = True
-      twitter_user_metadata.gift_card_code = gift_card.gift_card_code
-      self.db_session.commit()
-    return twitter_user_metadata.gift_card_code
-
   def get_user_conditions(self, user):
     twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     assignment = json.loads(twitter_user_metadata.assignment_json)
@@ -221,4 +204,3 @@ class TwitterDMCADebriefExperimentController:
     # twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
     # return twitter_user_eligibility is not None
     return True
-    # TODO update the file with the new list
