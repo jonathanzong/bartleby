@@ -286,7 +286,16 @@ class TwitterDMCADebriefExperimentController:
 
     tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you $3 on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/"
 
+    on_time = datetime.time(9,30)
+    off_time = datetime.time(21,30)
+
     while True:
+      if not is_test:
+        now_time = datetime.datetime.now().time()
+        if now_time < on_time or now_time > off_time:
+          sleep(60 * 60)
+          continue
+
       next_eligible_twitter_user = self.db_session.query(TwitterUserEligibility).filter(~ exists().where(TwitterUserRecruitmentTweetAttempt.twitter_user_id==TwitterUserEligibility.id)).first()
 
       if next_eligible_twitter_user is None:
