@@ -272,8 +272,71 @@ def test_mark_user_completed():
 
 @patch('paypalrestsdk.Payout', autospec=True)
 def test_send_paypal_payout(mock_paypal_api):
-    # TODO
-    pass
+    sce = TwitterDMCADebriefExperimentController(
+        experiment_name='twitter_dmca_debrief_experiment',
+        db_session=db_session,
+        required_keys=['name', 'randomizations', 'eligible_ids']
+      )
+
+    user = { 'id': '1234567', 'screen_name': 'hihihi', 'created_at': datetime.datetime.now().isoformat(), 'lang': 'en' }
+    email_address = 'jzong@princeton.edu'
+
+    twitter_user = TwitterUser(id=user['id'])
+    twitter_user_metadata = TwitterUserMetadata(twitter_user_id=user['id'])
+    db_session.add(twitter_user)
+    db_session.add(twitter_user_metadata)
+    db_session.commit()
+
+    error_msg = sce.send_paypal_payout(user, email_address)
+    assert error_msg is not None
+    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    assert twitter_user_metadata.paypal_sender_batch_id == None
+
+    results_dict = { "tweet_removed": "hi",
+                     "click_tweet": "hi",
+                     "would_delete": "hi",
+                     "society_benefit": "hi",
+                     "personal_benefit": "hi",
+                     "collection_surprised": "hi",
+                     "glad_in_study": "hi",
+                     "share_results": "hi",
+                     "vote_study": "hi",
+                     "improve_debrief": "hi" }
+
+    sce.insert_or_update_survey_result(user, results_dict)
+    sce.mark_user_completed(user)
+
+    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    assert twitter_user_metadata.completed_study_at is not None
+
+    twitter_user_metadata.initial_login_at = datetime.datetime.now() - datetime.timedelta(days=8)
+    db_session.commit()
+
+    error_msg = sce.send_paypal_payout(user, email_address)
+    assert error_msg is not None
+    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    assert twitter_user_metadata.paypal_sender_batch_id == None
+
+    twitter_user_metadata.initial_login_at = datetime.datetime.now() - datetime.timedelta(days=1)
+    db_session.commit()
+
+    payout = mock_paypal_api.return_value
+    payout.create.side_effect = Exception('test payout create fails')
+
+    error_msg = sce.send_paypal_payout(user, email_address)
+    assert error_msg is not None
+    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    assert twitter_user_metadata.paypal_sender_batch_id == None
+
+    payout.create.side_effect = None
+
+    error_msg = sce.send_paypal_payout(user, email_address)
+    assert error_msg is None
+    twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    assert twitter_user_metadata.paypal_sender_batch_id == user['id']
+
+    error_msg = sce.send_paypal_payout(user, email_address)
+    assert error_msg is not None
 
 def test_is_eligible():
     sce = TwitterDMCADebriefExperimentController(
