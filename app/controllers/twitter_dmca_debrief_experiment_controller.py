@@ -16,6 +16,7 @@ from random import randint
 from datetime import datetime
 
 from sqlalchemy import inspect as sa_inspect
+from sqlalchemy.sql import exists
 
 from app.models import *
 
@@ -221,6 +222,7 @@ class TwitterDMCADebriefExperimentController:
       return False
 
   def send_paypal_payout(self, user, email_address):
+    import pdb; pdb.set_trace()
     sender_batch_id = user['id']
     payout = paypalrestsdk.Payout({
       "sender_batch_header": {
@@ -284,15 +286,20 @@ class TwitterDMCADebriefExperimentController:
 
     tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you $3 on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/"
 
-    next_eligible_twitter_user = self.db_session.query(TwitterUserEligibility).filter(~ exists().where(TwitterUserRecruitmentTweetAttempt.twitter_user_id==TwitterUserEligibility.id)).first()
+    while True:
+      next_eligible_twitter_user = self.db_session.query(TwitterUserEligibility).filter(~ exists().where(TwitterUserRecruitmentTweetAttempt.twitter_user_id==TwitterUserEligibility.id)).first()
 
-    while next_eligible_twitter_user is not None:
+      if next_eligible_twitter_user is None:
+        break
+
       u_id = next_eligible_twitter_user.id
 
       attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id)
+      attempt.sent = False
 
       try:
-        sleep(10)
+        if not is_test:
+          sleep(10)
         user_object = api.get_user(user_id=u_id)
       except tweepy.TweepError as e:
         attempt.error_message=e.reason
@@ -308,7 +315,8 @@ class TwitterDMCADebriefExperimentController:
         should_tweet = False
 
       try:
-        sleep(10)
+        if not is_test:
+          sleep(10)
         user_statuses = api.user_timeline(user_id=u_id, count=1)
       except tweepy.TweepError as e:
         attempt.error_message=e.reason
@@ -318,20 +326,22 @@ class TwitterDMCADebriefExperimentController:
 
       if len(user_statuses) > 0:
         attempt.last_tweeted_at = user_statuses[0].created_at
-        last_tweet_days = (datetime.now() - user_statuses[0].created_at).days
+        last_tweet_days = (datetime.datetime.now() - user_statuses[0].created_at).days
         if last_tweet_days > 7:
           should_tweet = False
 
-      if should_tweet and ENV == "production" and not is_test:
+      if should_tweet:
         try:
           api.update_status('@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id)
-        except:
+          attempt.sent = True
+        except tweepy.TweepError as e:
           attempt.error_message=e.reason
-        finally:
-          self.db_session.add(attempt)
-          self.db_session.commit()
 
-      delay = randint(13 * 60, 15 * 60)
-      sleep(delay)
+      self.db_session.add(attempt)
+      self.db_session.commit()
+
+      if not is_test:
+        delay = randint(13 * 60, 15 * 60)
+        sleep(delay)
 
 

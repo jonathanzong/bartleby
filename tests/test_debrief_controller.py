@@ -1,12 +1,15 @@
 import pytest
+import tweepy
 from app.controllers.twitter_dmca_debrief_experiment_controller import TwitterDMCADebriefExperimentController
 import os
 import simplejson as json
+from mock import Mock, patch
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import glob, datetime
 from app.models import *
 from utils.common import *
+from types import SimpleNamespace
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__))
 BASE_DIR  = os.path.join(TEST_DIR, "../")
@@ -18,6 +21,7 @@ def clear_db():
     db_session.query(TwitterUser).delete()
     db_session.query(TwitterUserMetadata).delete()
     db_session.query(TwitterUserEligibility).delete()
+    db_session.query(TwitterUserRecruitmentTweetAttempt).delete()
     db_session.query(Experiment).delete()
     db_session.query(Randomization).delete()
     db_session.query(ExperimentAction).delete()
@@ -266,8 +270,8 @@ def test_mark_user_completed():
 
     assert sce.has_completed_study(user) == True
 
-
-def test_send_paypal_payout():
+@patch('paypalrestsdk.Payout', autospec=True)
+def test_send_paypal_payout(mock_paypal_api):
     # TODO
     pass
 
@@ -289,6 +293,97 @@ def test_is_eligible():
 
     assert sce.is_eligible(user) == False
 
-def test_send_recruitment_tweets():
-    # TODO sorry
-    pass
+@patch('tweepy.API', autospec=True)
+def test_send_recruitment_tweets(mock_twitter_api):
+    sce = TwitterDMCADebriefExperimentController(
+        experiment_name='twitter_dmca_debrief_experiment',
+        db_session=db_session,
+        required_keys=['name', 'randomizations', 'eligible_ids']
+      )
+
+    db_session.query(TwitterUserEligibility).delete()
+    db_session.add(TwitterUserEligibility(id='1234567'))
+    db_session.add(TwitterUserEligibility(id='7654321'))
+    db_session.commit()
+
+    api = mock_twitter_api.return_value
+
+    d = { 'lang': 'en', 'screen_name': 'hihihi' }
+    n = SimpleNamespace(**d)
+    api.get_user.return_value = n
+
+    d = { 'created_at': datetime.datetime.now() }
+    n = SimpleNamespace(**d)
+    api.user_timeline.return_value = [ n ]
+
+    sce.send_recruitment_tweets(is_test=True)
+
+    all_recruitment_attempts = db_session.query(TwitterUserRecruitmentTweetAttempt).all()
+    assert len(all_recruitment_attempts) == 2
+    assert all_recruitment_attempts[0].sent == True and all_recruitment_attempts[1].sent == True
+
+    try:
+        sce.send_recruitment_tweets(is_test=True)
+    except:
+        assert False
+
+    all_recruitment_attempts = db_session.query(TwitterUserRecruitmentTweetAttempt).all()
+    assert len(all_recruitment_attempts) == 2
+
+    db_session.query(TwitterUserRecruitmentTweetAttempt).delete()
+    db_session.commit()
+
+    d = { 'lang': 'ru', 'screen_name': 'hihihi' }
+    n = SimpleNamespace(**d)
+    api.get_user.return_value = n
+
+    sce.send_recruitment_tweets(is_test=True)
+
+    all_recruitment_attempts = db_session.query(TwitterUserRecruitmentTweetAttempt).all()
+    assert len(all_recruitment_attempts) == 2
+    assert all_recruitment_attempts[0].sent == False and all_recruitment_attempts[1].sent == False
+    assert all_recruitment_attempts[0].lang == 'ru' and all_recruitment_attempts[1].lang == 'ru'
+
+    db_session.query(TwitterUserRecruitmentTweetAttempt).delete()
+    db_session.commit()
+
+    d = { 'created_at': datetime.datetime.now() - datetime.timedelta(days=8) }
+    n = SimpleNamespace(**d)
+    api.user_timeline.return_value = [ n ]
+
+    sce.send_recruitment_tweets(is_test=True)
+    all_recruitment_attempts = db_session.query(TwitterUserRecruitmentTweetAttempt).all()
+    assert len(all_recruitment_attempts) == 2
+    assert all_recruitment_attempts[0].sent == False and all_recruitment_attempts[1].sent == False
+
+    db_session.query(TwitterUserRecruitmentTweetAttempt).delete()
+    db_session.commit()
+
+    d = { 'lang': 'en', 'screen_name': 'hihihi' }
+    n = SimpleNamespace(**d)
+    api.get_user.return_value = n
+
+    d = { 'created_at': datetime.datetime.now() }
+    n = SimpleNamespace(**d)
+    api.user_timeline.return_value = [ n ]
+
+    api.update_status.side_effect = tweepy.TweepError('test update_status fails')
+    sce.send_recruitment_tweets(is_test=True)
+    all_recruitment_attempts = db_session.query(TwitterUserRecruitmentTweetAttempt).all()
+    assert len(all_recruitment_attempts) == 2
+    assert all_recruitment_attempts[0].sent == False and all_recruitment_attempts[1].sent == False
+    assert all_recruitment_attempts[0].error_message is not None and all_recruitment_attempts[1].error_message is not None
+
+    api.user_timeline.side_effect = tweepy.TweepError('test user_timeline fails')
+    sce.send_recruitment_tweets(is_test=True)
+    all_recruitment_attempts = db_session.query(TwitterUserRecruitmentTweetAttempt).all()
+    assert len(all_recruitment_attempts) == 2
+    assert all_recruitment_attempts[0].sent == False and all_recruitment_attempts[1].sent == False
+    assert all_recruitment_attempts[0].error_message is not None and all_recruitment_attempts[1].error_message is not None
+
+    api.get_user.side_effect = tweepy.TweepError('test get_user fails')
+    sce.send_recruitment_tweets(is_test=True)
+    all_recruitment_attempts = db_session.query(TwitterUserRecruitmentTweetAttempt).all()
+    assert len(all_recruitment_attempts) == 2
+    assert all_recruitment_attempts[0].sent == False and all_recruitment_attempts[1].sent == False
+    assert all_recruitment_attempts[0].error_message is not None and all_recruitment_attempts[1].error_message is not None

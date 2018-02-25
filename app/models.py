@@ -44,6 +44,7 @@ class TwitterUserRecruitmentTweetAttempt(Base):
     __tablename__ = 'twitter_user_recruitment_tweet_attempt'
     twitter_user_id             = Column(String(64), primary_key = True)
     attempted_at                = Column(DateTime, default=datetime.datetime.utcnow)
+    sent                        = Column(Boolean)
     lang                        = Column(String(32))
     last_tweeted_at             = Column(DateTime)
     error_message               = Column(String(64))
