@@ -15,8 +15,8 @@ Base = declarative_base()
 
 class TwitterUser(Base):
     __tablename__ = 'twitter_users'
-    id                  = Column(String(64), primary_key = True) # should be lowercase
-    screen_name         = Column(String(256), index = True) # if not found, # if not found, NOT_FOUND_TWITTER_USER_STR
+    id                  = Column(String(64), primary_key = True)
+    screen_name         = Column(String(256), index = True)
     created_at          = Column(DateTime)
     lang                = Column(String(32))
     record_created_at   = Column(DateTime, default=datetime.datetime.utcnow)
@@ -39,6 +39,14 @@ class TwitterUserMetadata(Base):
 class TwitterUserEligibility(Base):
     __tablename__ = 'twitter_user_eligibility'
     id = Column(String(64), primary_key = True)
+
+class TwitterUserRecruitmentTweetAttempt(Base):
+    __tablename__ = 'twitter_user_recruitment_tweet_attempt'
+    twitter_user_id             = Column(String(64), primary_key = True)
+    attempted_at                = Column(DateTime, default=datetime.datetime.utcnow)
+    lang                        = Column(String(32))
+    last_tweeted_at             = Column(DateTime)
+    error_message               = Column(String(64))
 
 class Experiment(Base):
     __tablename__ = 'experiments'

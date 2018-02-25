@@ -6,8 +6,14 @@ this file should:
 3. Load randomizations
 """
 
-import yaml, csv, os, inspect
+import yaml, csv, os, inspect, tweepy
+import simplejson as json
 import paypal_api_keys
+import twitter_sender_api_keys
+
+from time import sleep
+from random import randint
+from datetime import datetime
 
 from sqlalchemy import inspect as sa_inspect
 
@@ -19,7 +25,7 @@ ENV = os.environ['CS_ENV']
 
 import paypalrestsdk
 paypalrestsdk.configure({
-  "mode": "sandbox", # sandbox or live
+  "mode": "live" if ENV == "production" else "sandbox",
   'client_id': paypal_api_keys.PAYPAL_CLIENT_ID,
   'client_secret': paypal_api_keys.PAYPAL_CLIENT_SECRET })
 
@@ -103,7 +109,8 @@ class TwitterDMCADebriefExperimentController:
 
   def user_exists(self, user):
     maybe_twitter_user = self.db_session.query(TwitterUser).filter_by(id=user['id']).first()
-    return maybe_twitter_user is not None
+    maybe_twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+    return maybe_twitter_user is not None and maybe_twitter_user_metadata is not None
 
   def create_user_if_not_exists(self, user):
     maybe_twitter_user = self.db_session.query(TwitterUser).filter_by(id=user['id']).first()
@@ -182,7 +189,10 @@ class TwitterDMCADebriefExperimentController:
       twitter_user_id=user['id'] if user is not None else None,
     )
     if action_data_dict is not None:
-      action.action_data = json.dumps(action_data_dict).encode('utf-8')
+      action_str = json.dumps(action_data_dict)
+      if 'check_http' in action_str:
+        return
+      action.action_data = action_str.encode('utf-8')
     self.db_session.add(action)
     self.db_session.commit()
 
@@ -211,8 +221,6 @@ class TwitterDMCADebriefExperimentController:
       return False
 
   def send_paypal_payout(self, user, email_address):
-    print(user['id'])
-    print(email_address)
     sender_batch_id = user['id']
     payout = paypalrestsdk.Payout({
       "sender_batch_header": {
@@ -223,7 +231,7 @@ class TwitterDMCADebriefExperimentController:
         {
           "recipient_type": "EMAIL",
           "amount": {
-            "value": 00,
+            "value": 3.00,
             "currency": "USD"
           },
           "receiver": email_address,
@@ -239,8 +247,8 @@ class TwitterDMCADebriefExperimentController:
 
       days_since_started = (datetime.datetime.now() - twitter_user_metadata.initial_login_at).days
 
-      # TODO this time limit, and add language reflecting it
-      if days_since_started > 30 or twitter_user_metadata.paypal_sender_batch_id is not None:
+      # TODO this time limit, add an error message
+      if days_since_started > 7 or twitter_user_metadata.paypal_sender_batch_id is not None:
         # it's been too long
         return
 
@@ -251,8 +259,8 @@ class TwitterDMCADebriefExperimentController:
       self.db_session.add(twitter_user_metadata)
       self.db_session.commit()
     except Exception as e:
-      # log e
-      print(e.args)
+      # TODO log e
+      pass
 
   def has_sent_payout(self, user):
     twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
@@ -262,7 +270,68 @@ class TwitterDMCADebriefExperimentController:
       return False
 
   def is_eligible(self, user):
-    # twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
-    # return twitter_user_eligibility is not None
+    twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
+    return twitter_user_eligibility is not None
     # TODO update the list
-    return True
+    # return True
+
+  #####
+
+  def send_recruitment_tweets(self, is_test=False):
+    auth = tweepy.OAuthHandler(twitter_sender_api_keys.consumer_key, twitter_sender_api_keys.consumer_secret)
+    auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
+    api = tweepy.API(auth)
+
+    tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you $3 on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/"
+
+    next_eligible_twitter_user = self.db_session.query(TwitterUserEligibility).filter(~ exists().where(TwitterUserRecruitmentTweetAttempt.twitter_user_id==TwitterUserEligibility.id)).first()
+
+    while next_eligible_twitter_user is not None:
+      u_id = next_eligible_twitter_user.id
+
+      attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id)
+
+      try:
+        sleep(10)
+        user_object = api.get_user(user_id=u_id)
+      except tweepy.TweepError as e:
+        attempt.error_message=e.reason
+        self.db_session.add(attempt)
+        self.db_session.commit()
+        continue
+
+      should_tweet = True
+
+      attempt.lang = user_object.lang
+
+      if user_object.lang != 'en':
+        should_tweet = False
+
+      try:
+        sleep(10)
+        user_statuses = api.user_timeline(user_id=u_id, count=1)
+      except tweepy.TweepError as e:
+        attempt.error_message=e.reason
+        self.db_session.add(attempt)
+        self.db_session.commit()
+        continue
+
+      if len(user_statuses) > 0:
+        attempt.last_tweeted_at = user_statuses[0].created_at
+        last_tweet_days = (datetime.now() - user_statuses[0].created_at).days
+        if last_tweet_days > 7:
+          should_tweet = False
+
+      if should_tweet and ENV == "production" and not is_test:
+        try:
+          api.update_status('@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id)
+        except:
+          attempt.error_message=e.reason
+        finally:
+          self.db_session.add(attempt)
+          self.db_session.commit()
+
+      delay = randint(13 * 60, 15 * 60)
+      sleep(delay)
+
+

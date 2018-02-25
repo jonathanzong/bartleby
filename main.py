@@ -27,7 +27,7 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 sce = TwitterDMCADebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
     db_session=db_session,
-    required_keys=['name', 'randomizations']
+    required_keys=['name', 'randomizations', 'eligible_ids']
   )
 
 def is_logged_in():

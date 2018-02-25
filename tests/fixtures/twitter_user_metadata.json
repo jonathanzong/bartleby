@@ -2,7 +2,7 @@
 {
   "twitter_user_id":"4392758",
   "received_lumen_notice_at": "2016-07-03 11:22:07",
-  "twitter_removed": "false",
+  "tweet_removed": "false",
   "lumen_notice_id":"37428",
   "user_json": "{ \"id\": \"4392758\" }",
   "assignment_json": "{ \"assignment\": \"1\" }",
@@ -13,7 +13,7 @@
 {
   "twitter_user_id":"43221",
   "received_lumen_notice_at": "2017-04-01 13:22:07",
-  "twitter_removed": "false",
+  "tweet_removed": "false",
   "lumen_notice_id":"897979",
   "user_json": "{ \"id\": \"43221\" }",
   "assignment_json": "{ \"assignment\": \"1\" }",
@@ -24,7 +24,7 @@
 {
   "twitter_user_id":"9084379",
   "received_lumen_notice_at": "2016-07-03 11:22:07",
-  "twitter_removed": "false",
+  "tweet_removed": "false",
   "lumen_notice_id":"329764",
   "user_json": "{ \"id\": \"9084379\" }",
   "assignment_json": "{ \"assignment\": \"2\" }",
@@ -35,7 +35,7 @@
 {
   "twitter_user_id":"328974",
   "received_lumen_notice_at": "2016-07-03 11:22:07",
-  "twitter_removed": "false",
+  "tweet_removed": "false",
   "lumen_notice_id":"324243",
   "user_json": "{ \"id\": \"328974\" }",
   "assignment_json": "{ \"assignment\": \"3\" }",

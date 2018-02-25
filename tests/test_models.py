@@ -40,7 +40,7 @@ def populate_twitter_users():
             twitter_user = TwitterUser(id = user['id'],
                                        created_at = created_at,
                                        screen_name = user['screen_name'],
-                                       account_created_at = user['account_created_at'],
+                                       record_created_at = user['record_created_at'],
                                        lang = user['lang'],
                                        user_state = user['user_state']
                                        )
@@ -66,7 +66,7 @@ def populate_twitter_user_metadata():
         for metadata in twitter_user_metadatas:
             twitter_user_metadata = TwitterUserMetadata(twitter_user_id = metadata['twitter_user_id'],
                                        received_lumen_notice_at = metadata['received_lumen_notice_at'],
-                                       twitter_removed = metadata['twitter_removed'],
+                                       tweet_removed = metadata['tweet_removed'],
                                        lumen_notice_id = metadata['lumen_notice_id'],
                                        user_json = metadata['user_json'].encode('utf-8'),
                                        assignment_json = metadata['assignment_json'].encode('utf-8'),
