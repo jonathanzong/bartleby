@@ -344,7 +344,9 @@ class TwitterDMCADebriefExperimentController:
 
       if should_tweet:
         try:
-          api.update_status('@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id)
+          if not is_test:
+            api.update_status('@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id)
+          print('sent to %s' % user_object.screen_name)
           attempt.sent = True
         except tweepy.TweepError as e:
           attempt.error_message=e.reason
