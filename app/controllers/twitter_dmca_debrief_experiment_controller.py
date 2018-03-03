@@ -346,11 +346,11 @@ class TwitterDMCADebriefExperimentController:
         try:
           if not is_test:
             api.update_status('@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id)
-          print('sent to %s' % user_object.screen_name)
           attempt.sent = True
         except tweepy.TweepError as e:
           attempt.error_message=e.reason
 
+      print('attempted user id %s' % u_id)
       self.db_session.add(attempt)
       self.db_session.commit()
 
