@@ -173,6 +173,11 @@ def complete():
 
   has_sent_compensation = sce.has_sent_payout(user)
 
+  error_msg = None
+  if 'error_msg' in session:
+    error_msg = session['error_msg']
+    del session['error_msg']
+
   # handle form submission
   form = CompensationForm()
   if form.validate_on_submit():
@@ -180,17 +185,17 @@ def complete():
     del results_dict['csrf_token']
 
     if not has_sent_compensation:
-      sce.send_paypal_payout(user, results_dict['email_address'])
+      session['error_msg'] = sce.send_paypal_payout(user, results_dict['email_address'])
 
     sce.record_user_action(user, 'form_submit', {'page': 'complete'})
 
     return redirect(url_for('complete'))
-  return render_template('06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation)
+  return render_template('06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation, error_msg=error_msg)
 
 @app.route('/ineligible')
 def ineligible():
-  if not is_logged_in():
-    return redirect(url_for('index'))
+  if is_logged_in():
+    return redirect(url_for('begin'))
   user = session['user']
 
   if sce.is_eligible(user):

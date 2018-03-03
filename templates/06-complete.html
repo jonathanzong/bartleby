@@ -1,4 +1,18 @@
 {% extends "layout.html" %}
+{% block head %}
+  <style>
+    .form-row label {
+      display: block;
+      font-size: 0.8em;
+    }
+    .form-row input {
+      display: block;
+      margin-bottom: 0.6em;
+      border: 1px solid #aaa;
+      width: 200px;
+    }
+  </style>
+{% endblock %}
 {% block content %}
   <div class="nav">
     {% if 'user' in session %}
@@ -19,6 +33,9 @@
   {% if has_sent_compensation %}
     An email with details about your compensation has been sent through Paypal. If you don't receive a notification from Paypal in the next 24 hours, please email Jonathan at jzong@princeton.edu.
   {% else %}
+    {% if error_msg %}
+      {{ error_msg }}
+    {% endif %}
     <form method="POST" action="{{ url_for('complete') }}">
       {{ form.csrf_token }}
 

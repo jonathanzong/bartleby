@@ -273,7 +273,10 @@ class TwitterDMCADebriefExperimentController:
 
   def is_eligible(self, user):
     twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
-    return twitter_user_eligibility is not None
+    if ENV == "production":
+      return twitter_user_eligibility is not None
+    else:
+      return twitter_user_eligibility is not None or user['id'] == 393724541
     # TODO update the list
     # return True
 
