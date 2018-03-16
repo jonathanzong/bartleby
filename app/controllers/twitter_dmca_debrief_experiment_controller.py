@@ -233,7 +233,7 @@ class TwitterDMCADebriefExperimentController:
         {
           "recipient_type": "EMAIL",
           "amount": {
-            "value": 3.00,
+            "value": 5.00,
             "currency": "USD"
           },
           "receiver": email_address,
@@ -287,7 +287,7 @@ class TwitterDMCADebriefExperimentController:
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
 
-    tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you $3 on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/"
+    tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you $5 on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/"
 
     on_time = datetime.time(9,30)
     off_time = datetime.time(21,30)
