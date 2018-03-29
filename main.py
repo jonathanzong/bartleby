@@ -37,10 +37,11 @@ def is_logged_in():
 def index():
   if is_logged_in():
     return redirect(url_for('begin'))
+  amount_dollars = int(request.args.get('c')) if request.args.get('c') else 0
 
   sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  return render_template('01-index.html')
+  return render_template('01-index.html', amount_dollars=amount_dollars)
 
 @app.route('/begin', methods=('GET', 'POST'))
 def begin():
@@ -159,6 +160,7 @@ def complete():
   if not is_logged_in():
     return redirect(url_for('index'))
   user = session['user']
+  amount_dollars = sce.get_user_compensation_amount(user)
 
   if not sce.is_eligible(user):
     return redirect(url_for('ineligible'))
@@ -184,13 +186,13 @@ def complete():
     results_dict = request.form.to_dict()
     del results_dict['csrf_token']
 
-    if not has_sent_compensation:
-      session['error_msg'] = sce.send_paypal_payout(user, results_dict['email_address'])
+    if not has_sent_compensation and amount_dollars > 0:
+      session['error_msg'] = sce.send_paypal_payout(user, results_dict['email_address'], amount_dollars)
 
     sce.record_user_action(user, 'form_submit', {'page': 'complete'})
 
     return redirect(url_for('complete'))
-  return render_template('06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation, error_msg=error_msg)
+  return render_template('06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation, error_msg=error_msg, amount_dollars=amount_dollars)
 
 @app.route('/ineligible')
 def ineligible():

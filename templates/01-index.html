@@ -23,7 +23,7 @@
     What effects do people experience from having tweets removed for copyright reasons?
   </p>
   <p>
-     We're about to start new research and want your feedback on the privacy and ethics of our work before we start. Help us answer these questions by taking 10–15 minutes to answer our survey, and <strong>we will send you $5.00</strong> for your next cup of coffee via PayPal when you finish.
+     We're about to start new research and want your feedback on the privacy and ethics of our work before we start. Help us answer these questions by taking 10–15 minutes to answer our survey{% if amount_dollars %}, and <strong>we will send you ${{ amount_dollars }}.00</strong> for your next cup of coffee via PayPal when you finish.{% else %} to help others like you.{% endif %}
   </p>
 </div>
 
@@ -52,10 +52,12 @@
     Your answers will help us improve how we manage the privacy of people who participate in our research. We will publish our findings when this study finishes. Follow <a href="https://twitter.com/dmcainfo" target="_blank">@DmcaInfo</a> on Twitter to receive the results when we finish.
   </p>
 
+  {% if amount_dollars %}
   <h5>Compensation</h5>
   <p>
-    When you complete the survey, enter your email address, and we will send you $5.00 via Paypal within the next 24 hours. This offer is valid for 7 days starting when you begin the survey.
+    When you complete the survey, enter your email address, and we will send you ${{ amount_dollars }}.00 via Paypal within the next 24 hours. This offer is valid for 7 days starting when you begin the survey.
   </p>
+  {% endif %}
 
   <h5>Confidentiality</h5>
   <p>

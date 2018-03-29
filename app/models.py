@@ -48,6 +48,8 @@ class TwitterUserRecruitmentTweetAttempt(Base):
     lang                        = Column(String(32))
     last_tweeted_at             = Column(DateTime)
     error_message               = Column(String(64))
+    amount_dollars              = Column(Integer)
+    tweet_body                  = Column(String(64))
 
 class Experiment(Base):
     __tablename__ = 'experiments'

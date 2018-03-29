@@ -287,7 +287,7 @@ def test_send_paypal_payout(mock_paypal_api):
     db_session.add(twitter_user_metadata)
     db_session.commit()
 
-    error_msg = sce.send_paypal_payout(user, email_address)
+    error_msg = sce.send_paypal_payout(user, email_address, 0)
     assert error_msg is not None
     twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     assert twitter_user_metadata.paypal_sender_batch_id == None
@@ -312,7 +312,7 @@ def test_send_paypal_payout(mock_paypal_api):
     twitter_user_metadata.initial_login_at = datetime.datetime.now() - datetime.timedelta(days=8)
     db_session.commit()
 
-    error_msg = sce.send_paypal_payout(user, email_address)
+    error_msg = sce.send_paypal_payout(user, email_address, 0)
     assert error_msg is not None
     twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     assert twitter_user_metadata.paypal_sender_batch_id == None
@@ -323,19 +323,19 @@ def test_send_paypal_payout(mock_paypal_api):
     payout = mock_paypal_api.return_value
     payout.create.side_effect = Exception('test payout create fails')
 
-    error_msg = sce.send_paypal_payout(user, email_address)
+    error_msg = sce.send_paypal_payout(user, email_address, 0)
     assert error_msg is not None
     twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     assert twitter_user_metadata.paypal_sender_batch_id == None
 
     payout.create.side_effect = None
 
-    error_msg = sce.send_paypal_payout(user, email_address)
+    error_msg = sce.send_paypal_payout(user, email_address, 0)
     assert error_msg is None
     twitter_user_metadata = db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     assert twitter_user_metadata.paypal_sender_batch_id == user['id']
 
-    error_msg = sce.send_paypal_payout(user, email_address)
+    error_msg = sce.send_paypal_payout(user, email_address, 0)
     assert error_msg is not None
 
 def test_is_eligible():
@@ -355,6 +355,23 @@ def test_is_eligible():
     user = {'id': 'not a real id'}
 
     assert sce.is_eligible(user) == False
+
+def test_get_user_compensation_amount():
+    sce = TwitterDMCADebriefExperimentController(
+        experiment_name='twitter_dmca_debrief_experiment',
+        db_session=db_session,
+        required_keys=['name', 'randomizations', 'eligible_ids']
+      )
+
+    user = { 'id': '1234567', 'screen_name': 'hihihi', 'created_at': datetime.datetime.now().isoformat(), 'lang': 'en' }
+
+    assert sce.get_user_compensation_amount(user) == 0
+
+    attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=user['id'], amount_dollars=5)
+    db_session.add(attempt)
+    db_session.commit()
+
+    assert sce.get_user_compensation_amount(user) == 5
 
 @patch('tweepy.API', autospec=True)
 def test_send_recruitment_tweets(mock_twitter_api):

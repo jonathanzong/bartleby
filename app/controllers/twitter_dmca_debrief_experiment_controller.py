@@ -222,7 +222,7 @@ class TwitterDMCADebriefExperimentController:
       return False
 
   # return value is an error message
-  def send_paypal_payout(self, user, email_address):
+  def send_paypal_payout(self, user, email_address, amount_dollars):
     sender_batch_id = user['id']
     payout = paypalrestsdk.Payout({
       "sender_batch_header": {
@@ -233,7 +233,7 @@ class TwitterDMCADebriefExperimentController:
         {
           "recipient_type": "EMAIL",
           "amount": {
-            "value": 5.00,
+            "value": amount_dollars,
             "currency": "USD"
           },
           "receiver": email_address,
@@ -280,14 +280,24 @@ class TwitterDMCADebriefExperimentController:
     # TODO update the list
     # return True
 
+  def get_user_compensation_amount(self, user):
+    attempt = self.db_session.query(TwitterUserRecruitmentTweetAttempt).filter_by(twitter_user_id=user['id']).first()
+    if attempt is not None:
+      return attempt.amount_dollars
+    else:
+      return 0
+
   #####
 
-  def send_recruitment_tweets(self, is_test=False):
+  def send_recruitment_tweets(self, amount_dollars=0, is_test=False):
     auth = tweepy.OAuthHandler(twitter_sender_api_keys.consumer_key, twitter_sender_api_keys.consumer_secret)
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
 
-    tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you $5 on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/"
+    if amount_dollars:
+      tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/".format(amount_dollars)
+    else:
+      tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research to help others like you http://dmca.cs.princeton.edu/"
 
     on_time = datetime.time(9,30)
     off_time = datetime.time(21,30)
@@ -306,7 +316,8 @@ class TwitterDMCADebriefExperimentController:
 
       u_id = next_eligible_twitter_user.id
 
-      attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id)
+      emojiless_body = filter(lambda x: x in string.printable, tweet_body)
+      attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id, tweet_body=emojiless_body, amount_dollars=amount_dollars)
       attempt.sent = False
 
       try:
@@ -345,7 +356,10 @@ class TwitterDMCADebriefExperimentController:
       if should_tweet:
         try:
           if not is_test:
-            api.update_status('@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id)
+            send_text = '@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id
+            if amount_dollars:
+              send_text += '&c=' + amount_dollars
+            api.update_status(send_text)
           attempt.sent = True
         except tweepy.TweepError as e:
           attempt.error_message=e.reason
