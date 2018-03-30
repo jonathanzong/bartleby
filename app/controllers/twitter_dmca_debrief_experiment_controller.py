@@ -295,9 +295,9 @@ class TwitterDMCADebriefExperimentController:
     api = tweepy.API(auth)
 
     if amount_dollars:
-      tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/".format(amount_dollars)
+      tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for @ohnobackspace's research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee http://dmca.cs.princeton.edu/".format(amount_dollars)
     else:
-      tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for our research to help others like you http://dmca.cs.princeton.edu/"
+      tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for @ohnobackspace's research to help others like you http://dmca.cs.princeton.edu/"
 
     on_time = datetime.time(9,30)
     off_time = datetime.time(21,30)
