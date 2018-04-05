@@ -171,7 +171,7 @@ def complete():
       # how did they even get here
       return redirect(url_for('begin'))
 
-  sce.record_user_action(user, 'page_view', {'page': 'complete', 'user_agent': request.user_agent.string, 'qs': request.query_string})
+  sce.record_user_action(user, 'page_view', {'page': 'complete', 'user_agent': request.user_agent.string, 'qs': request.query_string, 'referrer': request.referrer})
 
   has_sent_compensation = sce.has_sent_payout(user)
 

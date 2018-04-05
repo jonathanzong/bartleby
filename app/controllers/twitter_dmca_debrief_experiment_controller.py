@@ -14,6 +14,7 @@ import twitter_sender_api_keys
 from time import sleep
 from random import randint
 from datetime import datetime
+from string import printable
 
 from sqlalchemy import inspect as sa_inspect
 from sqlalchemy.sql import exists
@@ -316,7 +317,7 @@ class TwitterDMCADebriefExperimentController:
 
       u_id = next_eligible_twitter_user.id
 
-      emojiless_body = filter(lambda x: x in string.printable, tweet_body)
+      emojiless_body = ''.join(filter(lambda x: x in printable, tweet_body))
       attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id, tweet_body=emojiless_body, amount_dollars=amount_dollars)
       attempt.sent = False
 
