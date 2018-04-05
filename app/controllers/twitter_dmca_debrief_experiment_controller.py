@@ -359,7 +359,7 @@ class TwitterDMCADebriefExperimentController:
           if not is_test:
             send_text = '@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id
             if amount_dollars:
-              send_text += '&c=' + amount_dollars
+              send_text += '&c=' + str(amount_dollars)
             api.update_status(send_text)
           attempt.sent = True
         except tweepy.TweepError as e:
