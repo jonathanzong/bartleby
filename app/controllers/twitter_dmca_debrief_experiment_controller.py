@@ -288,6 +288,13 @@ class TwitterDMCADebriefExperimentController:
     else:
       return 0
 
+  def get_user_study_template(self, user):
+    attempt = self.db_session.query(TwitterUserRecruitmentTweetAttempt).filter_by(twitter_user_id=user['id']).first()
+    if attempt is not None:
+      return attempt.study_template if attempt.study_template is not None else "dmca"
+    else:
+      return "dmca"
+
   #####
 
   def send_recruitment_tweets(self, amount_dollars=0, is_test=False):

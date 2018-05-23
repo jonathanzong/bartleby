@@ -1,0 +1,102 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/tweet.css') }}">
+{% endblock %}
+{% block content %}
+  <div class="nav">
+    <a href="{{ url_for('begin') }}">Back</a> |
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
+  </div>
+
+  <p>
+    Imagine that a tweet of yours was recently removed by Twitter, and you received a message from Twitter explaining that they removed it for copyright reasons. Next, imagine you received the following tweet several hours later.
+  </p>
+
+  {% if in_control_group %}
+    <div class="tweet">
+      <div class="tweet-meta">
+        <img class="tweet-propic" src="https://pbs.twimg.com/profile_images/943384318251958272/6dURAW-h_bigger.jpg" alt="">
+        <div class="tweet-from">
+          <div class="tweet-from-name">
+            CivicTechAI
+          </div>
+          <div class="tweet-from-handle">
+            @CivicTechAI
+          </div>
+        </div>
+        <span class="tweet-twitter-icon"></span>
+      </div>
+      <div>
+        <span class="tweet-link">@{{ user.screen_name }}</span> did you know that artificial software can play many videogames and win? Learn more 👉 <span class="tweet-link">civictechai.media.mit.edu/...</span>
+      </div>
+      <div class="tweet-time">
+        7:00PM - Sep 20, 2017
+      </div>
+      <div class="tweet-card">
+        <img src="{{ url_for('static', filename='images/chopper-command.png') }}">
+        <div class="tweet-card-summary">
+          <div class="tweet-card-title">
+            AI Is Learning To Beat Your Favorite Videogames
+          </div>
+          <div>
+            For now, humans continue to dominate classics like Asteroids
+          </div>
+          <div class="tweet-card-link">
+            civictechai.media.mit.edu
+          </div>
+        </div>
+      </div>
+      <span class="tweet-icon tweet-reply"></span>
+      <span class="tweet-icon tweet-retweet"></span>
+      <span class="tweet-icon tweet-heart"></span>
+    </div>
+  {% else %}
+    <div class="tweet">
+      <div class="tweet-meta">
+        <img class="tweet-propic" src="https://pbs.twimg.com/profile_images/943383310037696512/bhsWlvnd_bigger.jpg" alt="">
+        <div class="tweet-from">
+          <div class="tweet-from-name">
+            DMCAInfo
+          </div>
+          <div class="tweet-from-handle">
+            @DmcaInfo
+          </div>
+        </div>
+        <span class="tweet-twitter-icon"></span>
+      </div>
+      <div>
+        <span class="tweet-link">@{{ user.screen_name }}</span> we noticed a tweet of yours may have been removed for copyright reasons. It's common, rarely goes to court, & rarely happens twice. Learn more 👉 <span class="tweet-link">dmcainfo.media.mit.edu/...</span>
+      </div>
+      <div class="tweet-time">
+        7:00PM - Sep 20, 2017
+      </div>
+      <div class="tweet-card">
+        <img src="{{ url_for('static', filename='images/social-media-communication.png') }}">
+        <div class="tweet-card-summary">
+          <div class="tweet-card-title">
+            Making Sense of Copyright Takedown Notices
+          </div>
+          <div>
+            Content removals are common, often mistaken, and rarely go to court.
+          </div>
+          <div class="tweet-card-link">
+            dmcainfo.media.mit.edu
+          </div>
+        </div>
+      </div>
+      <span class="tweet-icon tweet-reply"></span>
+      <span class="tweet-icon tweet-retweet"></span>
+      <span class="tweet-icon tweet-heart"></span>
+    </div>
+  {% endif %}
+
+
+  <div>
+    <p>
+      <a href="{{ url_for('tweet_debrief') }}"><input type="submit" value="Next"></a>
+    </p>
+  </div>
+
+{% endblock %}

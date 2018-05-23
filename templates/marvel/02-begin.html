@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
+{% endblock %}
+{% block content %}
+  <div class="nav">
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
+  </div>
+
+  Recall receiving a message from Twitter sometime in the past about potentially-copyrighted material you posted.
+
+  <form method="POST" action="{{ url_for('begin') }}">
+    {{ form.csrf_token }}
+
+    <div class="form-row {% if form.errors.tweet_removed %}has-error{% endif%}">
+      {{ form.tweet_removed.label }} {{ form.tweet_removed }}
+      {% if form.errors.tweet_removed %}
+        <ul class="errors">
+          <li>Please choose an option.</li>
+        </ul>
+      {% endif %}
+    </div>
+
+    <div>
+      <input type="submit" value="Next">
+    </div>
+  </form>
+  <script src="{{ url_for('static', filename='scripts/survey.js') }}"></script>
+{% endblock %}

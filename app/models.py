@@ -49,6 +49,7 @@ class TwitterUserRecruitmentTweetAttempt(Base):
     last_tweeted_at             = Column(DateTime)
     error_message               = Column(String(64))
     amount_dollars              = Column(Integer)
+    study_template              = Column(String(64)) # which study template to render, match the name of folder in templates
     tweet_body                  = Column(String(64))
 
 class Experiment(Base):

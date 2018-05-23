@@ -41,7 +41,8 @@ def index():
 
   sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  return render_template('01-index.html', amount_dollars=amount_dollars)
+  study_template = request.args.get('t') if request.args.get('t') else "dmca"
+  return render_template(study_template + '/01-index.html', amount_dollars=amount_dollars)
 
 @app.route('/begin', methods=('GET', 'POST'))
 def begin():
@@ -74,7 +75,8 @@ def begin():
     sce.record_user_action(user, 'form_submit', {'page': 'begin'})
 
     return redirect(url_for('tweet_intervention'))
-  return render_template('02-begin.html', user=user, form=form)
+  study_template = sce.get_user_study_template(user)
+  return render_template(study_template + '/02-begin.html', user=user, form=form)
 
 @app.route('/tweet-intervention')
 def tweet_intervention():
@@ -92,7 +94,8 @@ def tweet_intervention():
 
   sce.record_user_action(user, 'page_view', {'page': 'tweet-intervention', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  return render_template('03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'])
+  study_template = sce.get_user_study_template(user)
+  return render_template(study_template + '/03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'])
 
 @app.route('/tweet-debrief', methods=('GET', 'POST'))
 def tweet_debrief():
@@ -121,7 +124,8 @@ def tweet_debrief():
 
     return redirect(url_for('debrief'))
 
-  return render_template('04-tweet-debrief.html', user=user, form=form)
+  study_template = sce.get_user_study_template(user)
+  return render_template(study_template + '/04-tweet-debrief.html', user=user, form=form)
 
 @app.route('/debrief', methods=('GET', 'POST'))
 def debrief():
@@ -151,7 +155,8 @@ def debrief():
     sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
 
     return redirect(url_for('complete'))
-  return render_template('05-debrief.html', user=user, form=form,
+  study_template = sce.get_user_study_template(user)
+  return render_template(study_template + '/05-debrief.html', user=user, form=form,
                           show_table=conditions['show_table'],
                           show_visualization=conditions['show_visualization'])
 
@@ -192,7 +197,8 @@ def complete():
     sce.record_user_action(user, 'form_submit', {'page': 'complete'})
 
     return redirect(url_for('complete'))
-  return render_template('06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation, error_msg=error_msg, amount_dollars=amount_dollars)
+  study_template = sce.get_user_study_template(user)
+  return render_template(study_template + '/06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation, error_msg=error_msg, amount_dollars=amount_dollars)
 
 @app.route('/ineligible')
 def ineligible():
