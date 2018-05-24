@@ -297,7 +297,7 @@ class TwitterDMCADebriefExperimentController:
 
   #####
 
-  def send_recruitment_tweets(self, amount_dollars=0, is_test=False):
+  def send_recruitment_tweets(self, amount_dollars=0, study_template=None, is_test=False):
     auth = tweepy.OAuthHandler(twitter_sender_api_keys.consumer_key, twitter_sender_api_keys.consumer_secret)
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
@@ -325,7 +325,7 @@ class TwitterDMCADebriefExperimentController:
       u_id = next_eligible_twitter_user.id
 
       emojiless_body = ''.join(filter(lambda x: x in printable, tweet_body))
-      attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id, tweet_body=emojiless_body, amount_dollars=amount_dollars)
+      attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id, tweet_body=emojiless_body, amount_dollars=amount_dollars, study_template=study_template)
       attempt.sent = False
 
       try:
@@ -367,6 +367,8 @@ class TwitterDMCADebriefExperimentController:
             send_text = '@' + user_object.screen_name + ' ' + tweet_body + '?u=' + u_id
             if amount_dollars:
               send_text += '&c=' + str(amount_dollars)
+            if study_template is not None:
+              send_text += '&t=' + study_template
             api.update_status(send_text)
           attempt.sent = True
         except tweepy.TweepError as e:
