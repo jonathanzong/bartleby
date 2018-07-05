@@ -15,7 +15,7 @@
     {{ form.csrf_token }}
 
     <p>
-      Whether or not you clicked on the above link, imagine you received a second tweet 3 months later, after dinnertime:
+      Whether or not you retweeted the tweet, imagine you received a tweet 3 months later, after dinnertime:
     </p>
 
     <div class="tweet">
@@ -23,31 +23,31 @@
         <img class="tweet-propic" src="https://pbs.twimg.com/profile_images/943383310037696512/bhsWlvnd_bigger.jpg" alt="">
         <div class="tweet-from">
           <div class="tweet-from-name">
-            DMCAInfo
+            Debriefing Research
           </div>
           <div class="tweet-from-handle">
-            @DmcaInfo
+            @DebriefingResearch
           </div>
         </div>
         <span class="tweet-twitter-icon"></span>
       </div>
       <div>
-        <span class="tweet-link">@{{ user.screen_name }}</span> Can law & privacy information help people whose tweets are removed for copyright reasons? You may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">dmca.princeton.edu/info/...</span>
+        <span class="tweet-link">@{{ user.screen_name }}</span> Your Twitter account may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">debrief.cs.princeton.edu/info/...</span>
       </div>
       <div class="tweet-time">
-        7:00 PM - Nov 20, 2017
+        7:00 PM - Aug 20, 2018
       </div>
       <div class="tweet-card">
         <img src="{{ url_for('static', filename='images/pu-sig.png') }}">
         <div class="tweet-card-summary">
           <div class="tweet-card-title">
-            Research Debriefing: Understanding Online Copyright Removals
+            Research Debriefing: Understanding Cross-account Marketing
           </div>
           <div>
             Find out if you were part of our Princeton University research and log in to manage your privacy settings.
           </div>
           <div class="tweet-card-link">
-            dmca.princeton.edu
+            debrief.cs.princeton.edu
           </div>
         </div>
       </div>

@@ -32,134 +32,33 @@
         </p>
 
         <p>
-          Our team of researchers at Princeton University are trying to learn <strong>what happens when Twitter removes people's tweets for copyright reasons–do people reduce their Twitter activity?</strong> We are also testing the effect of legal information and other resources on people's Twitter participation. This research is independent of Twitter, Inc.
+          Our team of researchers at Princeton University are trying to learn <strong>how followers share content about the movies they follow. Are tweets by more specific accounts more likely to be retweeted?</strong> This research is independent of Twitter, Inc.
         </p>
 
         <p>
           Our records show that we sent you a message as part of the study and that some of your public Twitter information was included in our research. In this page, you can learn what we collected and decide if we should remove your information from our research.
         </p>
 
-        <p>
-          On <em>[date]</em>, record of a copyright takedown notice was posted publicly by Twitter to Lumendatabase.org, a third-party transparency website
-          On <em>[date]</em>, we sent you a tweet linking to general information about US copyright law
-        </p>
-
         {% if show_table %}
           <p>
-            Here is what we collected about your public Twitter behavior from <em>[date]</em> to <em>[date]</em>. This information helps us find out the effect of providing legal information on average. We will not share any of your data, and our dataset includes only the following information and no more:
+            Here is what we collected about your public Twitter behavior from <em>[date]</em> to <em>[date]</em>. We will not share any of your data, and our dataset includes only the following information and no more:
           </p>
 
           <div class="data-table">
             <div class="row">
               <div class="col-sm-9">
-                Do you use the <strong>default Twitter profile</strong> image or your own?
+                Percent of tweets you retweeted from <strong>@Avengers</strong>
               </div>
               <div class="col-sm-3">
-                {{ user.default_profile_image }}
+                8%
               </div>
             </div>
             <div class="row">
               <div class="col-sm-9">
-                How many <strong>lifetime tweets</strong> had you sent before receiving the copyright notice?
+                Percent of tweets you retweeted from <strong>@DrStrange</strong>
               </div>
               <div class="col-sm-3">
-                {{ user.statuses_count }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                Do you have a ✅ <strong>verified account</strong>?
-              </div>
-              <div class="col-sm-3">
-                {{ user.verified }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                <strong>How many years</strong> has your account existed?
-              </div>
-              <div class="col-sm-3">
-                {{ user.account_age }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                What <strong>language</strong> is your Twitter account associated with?
-              </div>
-              <div class="col-sm-3">
-                {{ user.lang }}
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                Was the <strong>link</strong> we sent you <strong>clicked on</strong>?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                Was your account <strong>suspended</strong> at all during the study period?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                Was your account <strong>deleted</strong> at all during the study period?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                Was your account <strong>protected</strong> at all during the study period?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                <strong>How many copyright notices</strong> did you <strong>receive</strong> during the study period?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                How many <strong>tweets per day</strong> did you post <strong>before</strong> receiving your first copyright notice?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                How many <strong>tweets with pictures or other media</strong> did you post per day <strong>before</strong> receiving your first copyright notice?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                How many <strong>tweets per day</strong> did you post <strong>after</strong> receiving your first copyright notice?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-sm-9">
-                How many <strong>tweets with pictures or other media</strong> did you post per day <strong>after</strong> receiving your first copyright notice?
-              </div>
-              <div class="col-sm-3">
-                (filled in from data)
+                6.4%
               </div>
             </div>
           </div>
@@ -169,24 +68,16 @@
           To learn more about our research, you can read our study design online <em>[link]</em>.
         </p>
 
-        <p>
-          During the study, you sent <em>[number]</em> tweets per day, <em>[number]</em> more than others on average.
-        </p>
-
         {% if show_visualization %}
           <p>
-            <img src="{{ url_for('static', filename='images/vis-everyone.png') }}" />
-          </p>
-
-          <p>
-            <img src="{{ url_for('static', filename='images/vis-you.png') }}" />
+            <img src="{{ url_for('static', filename='images/marvel-visualization.png') }}" />
           </p>
         {% endif %}
 
         <h5>Choosing To Remain in the Study or Opt Out</h5>
 
         <p>
-          By allowing us to include the above information, you can improve the quality of our research to help people whose tweets are removed for copyright reasons.
+          By allowing us to include the above information, you can improve the quality of our research.
         </p>
 
         <p>

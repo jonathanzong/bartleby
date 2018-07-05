@@ -16,10 +16,10 @@ class SurveyForm(FlaskForm):
   would_delete         = RadioField('In the debriefing webpage, we gave you a chance to have your data deleted from the study. How likely would you be to click the button to delete your data?',
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (definitely not)', '2 (probably not)', '3 (possibly)', '4 (probably)', '5 (definitely)']])
-  society_benefit      = RadioField("How beneficial to society would it be to learn whether copyright enforcement affects speech on Twitter?",
+  society_benefit      = RadioField("How beneficial to society would it be to learn the results of this study about online behavior?",
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (harmful)', '2 (somewhat harmful)', '3 (neutral)', '4 (somewhat beneficial)', '5 (beneficial)']])
-  personal_benefit     = RadioField('How much might research on the effects of online copyright enforcement benefit you personally?',
+  personal_benefit     = RadioField('How much might this research on online behavior benefit you personally?',
                                     [validators.DataRequired()],
                                     choices=[(x[0], x) for x in ['1 (harmful)', '2 (somewhat harmful)', '3 (neutral)', '4 (somewhat beneficial)', '5 (beneficial)']])
   collection_surprised = RadioField('Suppose you learned that you were one of the participants in this study. How surprised are you that we are able to collect this information about your public Twitter behavior?',

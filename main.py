@@ -76,6 +76,9 @@ def begin():
 
     return redirect(url_for('tweet_intervention'))
   study_template = sce.get_user_study_template(user)
+  if study_template is not None and study_template is not 'dmca':
+    # only 'dmca' currently uses a stratified sample, so nothing else needs the /begin page
+    return redirect(url_for('tweet_intervention'))
   return render_template(study_template + '/02-begin.html', user=user, form=form)
 
 @app.route('/tweet-intervention')
