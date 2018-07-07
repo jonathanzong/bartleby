@@ -246,14 +246,14 @@ class TwitterDMCADebriefExperimentController:
     try:
       twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
       if twitter_user_metadata.completed_study_at is None:
-        return 'The survey has not been submitted yet. If this is in error, please contact Jonathan at jzong@princeton.edu'
+        return 'The survey has not been submitted yet. If this is in error, please contact Jonathan at jz7@cs.princeton.edu'
 
       days_since_started = (datetime.datetime.now() - twitter_user_metadata.initial_login_at).days
 
       if days_since_started > 7:
-        return 'The 7 day window to complete the survey for compensation has expired. If this is in error, please contact Jonathan at jzong@princeton.edu'
+        return 'The 7 day window to complete the survey for compensation has expired. If this is in error, please contact Jonathan at jz7@cs.princeton.edu'
       if twitter_user_metadata.paypal_sender_batch_id is not None:
-        return 'The compensation email has been sent through Paypal. If you do not receive it within 24 hours, please contact Jonathan at jzong@princeton.edu'
+        return 'The compensation email has been sent through Paypal. If you do not receive it within 24 hours, please contact Jonathan at jz7@cs.princeton.edu'
 
       payout.create()
 
@@ -263,7 +263,7 @@ class TwitterDMCADebriefExperimentController:
       self.db_session.commit()
     except Exception as e:
       # TODO log e
-      return 'An error occured while sending the compensation. If this happens repeatedly, please contact Jonathan at jzong@princeton.edu'
+      return 'An error occured while sending the compensation. If this happens repeatedly, please contact Jonathan at jz7@cs.princeton.edu'
 
   def has_sent_payout(self, user):
     twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()

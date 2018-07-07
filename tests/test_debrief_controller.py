@@ -279,7 +279,7 @@ def test_send_paypal_payout(mock_paypal_api):
       )
 
     user = { 'id': '1234567', 'screen_name': 'hihihi', 'created_at': datetime.datetime.now().isoformat(), 'lang': 'en' }
-    email_address = 'jzong@princeton.edu'
+    email_address = 'jz7@cs.princeton.edu'
 
     twitter_user = TwitterUser(id=user['id'])
     twitter_user_metadata = TwitterUserMetadata(twitter_user_id=user['id'])

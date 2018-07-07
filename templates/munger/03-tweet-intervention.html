@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/tweet.css') }}">
+{% endblock %}
+{% block content %}
+  <div class="nav">
+    <a href="{{ url_for('begin') }}">Back</a> |
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
+  </div>
+
+  <p>
+    Imagine that you were in a conversation on Twitter where you sent a message including the word "n****r"  to someone else. Next, imagine that you received a tweet from a third person encouraging you to think about how that might affect the recipient:
+  </p>
+
+  <div class="tweet">
+    <div class="tweet-meta">
+      <img class="tweet-propic" src="/images/twitter-default-pic.png" alt="">
+      <div class="tweet-from">
+        <div class="tweet-from-name">
+          Greg
+        </div>
+        <div class="tweet-from-handle">
+          @greg12345
+        </div>
+      </div>
+      <span class="tweet-twitter-icon"></span>
+    </div>
+    <div>
+      <span class="tweet-link">@{{ user.screen_name }}</span> Hey man, just remember that there are real people who are hurt when you harass them with that kind of language
+    </div>
+    <div class="tweet-time">
+      1:56PM - May 13, 2018
+    </div>
+    <span class="tweet-icon tweet-reply"></span>
+    <span class="tweet-icon tweet-retweet"></span>
+    <span class="tweet-icon tweet-heart"></span>
+  </div>
+
+  <div>
+    <p>
+      <a href="{{ url_for('tweet_debrief') }}"><input type="submit" value="Next"></a>
+    </p>
+  </div>
+
+{% endblock %}
