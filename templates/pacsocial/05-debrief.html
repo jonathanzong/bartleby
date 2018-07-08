@@ -32,33 +32,37 @@
         </p>
 
         <p>
-          Our team of researchers at Princeton University is trying to learn <strong>how followers share content about the movies they follow. Are tweets by more specific accounts more likely to be retweeted?</strong> This research is independent of Twitter, Inc.
+          Our team of researchers at Princeton University is trying to learn <strong>what happens when social bots encourage people to connect. Do people follow each other?</strong> This research is independent of Twitter, Inc.
         </p>
 
         <p>
           Our records show that we sent you a message as part of the study and that some of your public Twitter information was included in our research. In this page, you can learn what we collected and decide if we should remove your information from our research.
         </p>
 
+        <p>
+          On <em>[date]</em>, we sent you a tweet suggesting you connect with another Twitter user.
+        </p>
+
         {% if show_table %}
           <p>
-            Here is what we collected about your public Twitter behavior from <em>[date]</em> to <em>[date]</em>. We will not share any of your data, and our dataset includes only the following information and no more:
+            Here is what we collected about your public Twitter behavior from <em>[date]</em> to <em>[date]</em>. This information helps us find out the effect of tagging people together on the same tweet. We will not share any of your data, and our dataset includes only the following information and no more:
           </p>
 
           <div class="data-table">
             <div class="row">
               <div class="col-sm-9">
-                Percent of tweets you retweeted from <strong>@Avengers</strong>
+                Did you follow the other person?
               </div>
               <div class="col-sm-3">
-                8%
+                Yes
               </div>
             </div>
             <div class="row">
               <div class="col-sm-9">
-                Percent of tweets you retweeted from <strong>@DrStrange</strong>
+                Number of tweets you sent to the other person over a week
               </div>
               <div class="col-sm-3">
-                6.4%
+                2
               </div>
             </div>
           </div>
@@ -70,7 +74,7 @@
 
         {% if show_visualization %}
           <p>
-            <img src="{{ url_for('static', filename='images/marvel-visualization.png') }}" />
+            <img src="{{ url_for('static', filename='images/pacsocial-visualization.png') }}" />
           </p>
         {% endif %}
 

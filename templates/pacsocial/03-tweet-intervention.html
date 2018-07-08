@@ -11,7 +11,7 @@
   </div>
 
   <p>
-    Imagine that you were in a conversation on Twitter where you sent a message including the word "n****r"  to someone else. Next, imagine that you received a tweet from a third person encouraging you to think about how that might affect the recipient:
+    Imagine that you were on Twitter and a bot mentioned you and another user in a tweet, encouraging you to follow each other:
   </p>
 
   <div class="tweet">
@@ -19,16 +19,16 @@
       <img class="tweet-propic" src="{{ url_for('static', filename='images/twitter-default-pic.png') }}" alt="">
       <div class="tweet-from">
         <div class="tweet-from-name">
-          Greg
+          socialbot
         </div>
         <div class="tweet-from-handle">
-          @greg12345
+          @socialbot
         </div>
       </div>
       <span class="tweet-twitter-icon"></span>
     </div>
     <div>
-      <span class="tweet-link">@{{ user.screen_name }}</span> Hey man, just remember that there are real people who are hurt when you harass them with that kind of language
+      <span class="tweet-link">@{{ user.screen_name }}</span>,check out my friend <span class="tweet-link">@username</span>
     </div>
     <div class="tweet-time">
       1:56PM - May 13, 2018
