@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/tweet.css') }}">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
+{% endblock %}
+{% block content %}
+  <div class="nav">
+    <a href="{{ url_for('tweet_intervention') }}">Back</a> |
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
+  </div>
+
+  <form method="POST" action="{{ url_for('tweet_debrief') }}">
+    {{ form.csrf_token }}
+
+    <p>
+      Whether or not you engaged with the message, imagine you received a tweet 3 months later, after dinnertime:
+    </p>
+
+    <div class="tweet">
+      <div class="tweet-meta">
+        <img class="tweet-propic" src="https://pbs.twimg.com/profile_images/943383310037696512/bhsWlvnd_bigger.jpg" alt="">
+        <div class="tweet-from">
+          <div class="tweet-from-name">
+            Debriefing Research
+          </div>
+          <div class="tweet-from-handle">
+            @DebriefingResearch
+          </div>
+        </div>
+        <span class="tweet-twitter-icon"></span>
+      </div>
+      <div>
+        <span class="tweet-link">@{{ user.screen_name }}</span> Your Twitter account may have been included in our research study. Learn more & manage privacy here 👉 <span class="tweet-link">debrief.cs.princeton.edu/info/...</span>
+      </div>
+      <div class="tweet-time">
+        7:00 PM - Aug 20, 2018
+      </div>
+      <div class="tweet-card">
+        <img src="{{ url_for('static', filename='images/pu-sig.png') }}">
+        <div class="tweet-card-summary">
+          <div class="tweet-card-title">
+            Research Debriefing: Advocacy on Twitter
+          </div>
+          <div>
+            Find out if you were part of our Princeton University research and log in to manage your privacy settings.
+          </div>
+          <div class="tweet-card-link">
+            debrief.cs.princeton.edu
+          </div>
+        </div>
+      </div>
+      <span class="tweet-icon tweet-reply"></span>
+      <span class="tweet-icon tweet-retweet"></span>
+      <span class="tweet-icon tweet-heart"></span>
+    </div>
+
+    <div class="form-row {% if form.errors.click_tweet %}has-error{% endif%}">
+      {{ form.click_tweet.label }} {{ form.click_tweet }}
+      {% if form.errors.click_tweet %}
+        <ul class="errors">
+          <li>Please choose an option.</li>
+        </ul>
+      {% endif %}
+    </div>
+
+    <div>
+      <input type="submit" value="Next">
+    </div>
+  </form>
+
+  <script src="{{ url_for('static', filename='scripts/survey.js') }}"></script>
+{% endblock %}
