@@ -51,6 +51,7 @@ class TwitterUserRecruitmentTweetAttempt(Base):
     amount_dollars              = Column(Integer)
     study_template              = Column(String(64)) # which study template to render, match the name of folder in templates
     tweet_body                  = Column(String(64))
+    extra_data                  = Column(LargeBinary) # data specific to a study_template, like which academic account followed
 
 class Experiment(Base):
     __tablename__ = 'experiments'

@@ -295,9 +295,15 @@ class TwitterDMCADebriefExperimentController:
     else:
       return "dmca"
 
+  def get_user_extra_data(self, user):
+    attempt = self.db_session.query(TwitterUserRecruitmentTweetAttempt).filter_by(twitter_user_id=user['id']).first()
+    if attempt is not None:
+      return json.loads(attempt.extra_data) if attempt.extra_data is not None else None
+    return None
+
   #####
 
-  def send_recruitment_tweets(self, amount_dollars=0, study_template=None, is_test=False):
+  def send_recruitment_tweets(self, amount_dollars=0, study_template=None, extra_data=None, is_test=False):
     auth = tweepy.OAuthHandler(twitter_sender_api_keys.consumer_key, twitter_sender_api_keys.consumer_secret)
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
@@ -351,8 +357,10 @@ class TwitterDMCADebriefExperimentController:
 
       u_id = next_eligible_twitter_user.id
 
+      extra_data_encoded = json.dumps(extra_data).encode('utf-8') if extra_data is not None else None
+
       emojiless_body = ''.join(filter(lambda x: x in printable, tweet_body))
-      attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id, tweet_body=emojiless_body, amount_dollars=amount_dollars, study_template=study_template)
+      attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id, tweet_body=emojiless_body, amount_dollars=amount_dollars, study_template=study_template, extra_data=extra_data_encoded)
       attempt.sent = False
 
       try:
@@ -396,6 +404,8 @@ class TwitterDMCADebriefExperimentController:
               send_text += '&c=' + str(amount_dollars)
             if study_template is not None:
               send_text += '&t=' + study_template
+            if extra_data is not None:
+              send_text += '&x=' + json.dumps(extra_data)
             api.update_status(send_text)
           attempt.sent = True
         except tweepy.TweepError as e:

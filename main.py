@@ -41,8 +41,9 @@ def index():
 
   sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  study_template = request.args.get('t') if request.args.get('t') else "dmca"
-  return render_template(study_template + '/01-index.html', amount_dollars=amount_dollars)
+  study_template = request.args.get('t') if request.args.get('t') else "academic" # set default template for direct link to homepage here
+  extra_data = json.loads(request.args.get('x')) if request.args.get('x') else None # set default template for direct link to homepage here
+  return render_template(study_template + '/01-index.html', amount_dollars=amount_dollars, extra_data=extra_data)
 
 @app.route('/begin', methods=('GET', 'POST'))
 def begin():
@@ -98,7 +99,8 @@ def tweet_intervention():
   sce.record_user_action(user, 'page_view', {'page': 'tweet-intervention', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   study_template = sce.get_user_study_template(user)
-  return render_template(study_template + '/03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'])
+  extra_data = sce.get_user_extra_data(user)
+  return render_template(study_template + '/03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'], extra_data=extra_data)
 
 @app.route('/tweet-debrief', methods=('GET', 'POST'))
 def tweet_debrief():
@@ -280,7 +282,8 @@ def oauth_authorized():
 
     return redirect(url_for('begin'))
   except tweepy.TweepError:
-    return 'Error! Failed to get access token.'
+    # return 'Error! Failed to get access token.'
+    return redirect(url_for('index'))
 
 @app.errorhandler(404)
 def page_not_found(e):
