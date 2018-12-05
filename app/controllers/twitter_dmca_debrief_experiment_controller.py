@@ -32,8 +32,10 @@ paypalrestsdk.configure({
   'client_secret': paypal_api_keys.PAYPAL_CLIENT_SECRET })
 
 class TwitterDMCADebriefExperimentController:
-  def __init__(self, experiment_name, db_session, required_keys):
+  def __init__(self, experiment_name, default_study, db_session, required_keys):
     self.db_session = db_session
+
+    self.DEFAULT_STUDY = default_study
 
     self.load_experiment_config(required_keys, experiment_name)
 
@@ -291,9 +293,9 @@ class TwitterDMCADebriefExperimentController:
   def get_user_study_template(self, user):
     attempt = self.db_session.query(TwitterUserRecruitmentTweetAttempt).filter_by(twitter_user_id=user['id']).first()
     if attempt is not None:
-      return attempt.study_template if attempt.study_template is not None else "dmca"
+      return attempt.study_template if attempt.study_template is not None else self.DEFAULT_STUDY
     else:
-      return "dmca"
+      return self.DEFAULT_STUDY
 
   def get_user_extra_data(self, user):
     attempt = self.db_session.query(TwitterUserRecruitmentTweetAttempt).filter_by(twitter_user_id=user['id']).first()
@@ -303,7 +305,7 @@ class TwitterDMCADebriefExperimentController:
 
   #####
 
-  def send_recruitment_tweets(self, amount_dollars=0, study_template=None, extra_data=None, is_test=False):
+  def send_recruitment_tweets(self, study_template, amount_dollars=0, extra_data=None, is_test=False):
     auth = tweepy.OAuthHandler(twitter_sender_api_keys.consumer_key, twitter_sender_api_keys.consumer_secret)
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
@@ -334,7 +336,7 @@ class TwitterDMCADebriefExperimentController:
         tweet_body = "Do you follow advocacy NGOs on Twitter? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
       else:
         tweet_body = "Do you follow advocacy NGOs on Twitter? Answer a few questions for @ohnobackspace’s research to help us learn more"
-    else: # default to dmca
+    elif study_template == 'dmca':
       if amount_dollars:
         tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for @ohnobackspace's research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
       else:

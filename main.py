@@ -24,8 +24,11 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
+DEFAULT_STUDY = 'academic'  # set default template for direct link to homepage here
+
 sce = TwitterDMCADebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
+    default_study=DEFAULT_STUDY,
     db_session=db_session,
     required_keys=['name', 'randomizations', 'eligible_ids']
   )
@@ -41,8 +44,8 @@ def index():
 
   sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  study_template = request.args.get('t') if request.args.get('t') else "academic" # set default template for direct link to homepage here
-  extra_data = json.loads(request.args.get('x')) if request.args.get('x') else None # set default template for direct link to homepage here
+  study_template = request.args.get('t') if request.args.get('t') else DEFAULT_STUDY
+  extra_data = json.loads(request.args.get('x')) if request.args.get('x') else None
   return render_template(study_template + '/01-index.html', amount_dollars=amount_dollars, extra_data=extra_data)
 
 @app.route('/begin', methods=('GET', 'POST'))
