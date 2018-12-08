@@ -35,7 +35,7 @@
 
   <h5>Purpose of the research</h5>
   <p>
-    We are asking you to participate in our research because you follow the @{{ extra_data.academic_account }} account on Twitter, which is public information. <strong>We plan to test new ways to support people like you, and we would like your feedback on the design, ethics, and privacy of our future study.</strong> This project is independent from Twitter.
+    {% if extra_data.academic_account %}We are asking you to participate in our research because you follow the @{{ extra_data.academic_account }} account on Twitter, which is public information. {% endif %}<strong>We plan to test new ways to support people like you, and we would like your feedback on the design, ethics, and privacy of our future study.</strong> This project is independent from Twitter.
   </p>
 
   <h5>If you participate, what to expect</h5>
