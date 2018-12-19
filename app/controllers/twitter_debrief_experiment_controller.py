@@ -31,7 +31,7 @@ paypalrestsdk.configure({
   'client_id': paypal_api_keys.PAYPAL_CLIENT_ID,
   'client_secret': paypal_api_keys.PAYPAL_CLIENT_SECRET })
 
-class TwitterDMCADebriefExperimentController:
+class TwitterDebriefExperimentController:
   def __init__(self, experiment_name, default_study, db_session, required_keys):
     self.db_session = db_session
 

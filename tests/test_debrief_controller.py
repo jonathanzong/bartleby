@@ -1,6 +1,6 @@
 import pytest
 import tweepy
-from app.controllers.twitter_dmca_debrief_experiment_controller import TwitterDMCADebriefExperimentController
+from app.controllers.twitter_debrief_experiment_controller import TwitterDebriefExperimentController
 import os
 import simplejson as json
 from mock import Mock, patch
@@ -35,7 +35,7 @@ def teardown_function(function):
     clear_db()
 
 def test_experiment_initialization():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -51,7 +51,7 @@ def test_experiment_initialization():
     assert len(all_eligible_ids) > 0
 
 def test_user_exists():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -74,7 +74,7 @@ def test_user_exists():
     assert sce.user_exists(user) == True
 
 def test_create_user_if_not_exists():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -96,7 +96,7 @@ def test_create_user_if_not_exists():
     assert sce.user_exists(user) == True
 
 def test_insert_or_update_survey_result():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -127,7 +127,7 @@ def test_insert_or_update_survey_result():
     assert 'q1' in data_dict and 'q2' in data_dict and 'q3' in data_dict and data_dict['q1'] == 'a1-2' and data_dict['q2'] == 'a2' and data_dict['q3'] == 'a3'
 
 def test_assign_randomization():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -209,7 +209,7 @@ def test_assign_randomization():
     assert randomization.assigned == True
 
 def test_get_user_conditions():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -230,7 +230,7 @@ def test_get_user_conditions():
 
 
 def test_mark_user_completed():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -272,7 +272,7 @@ def test_mark_user_completed():
 
 @patch('paypalrestsdk.Payout', autospec=True)
 def test_send_paypal_payout(mock_paypal_api):
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -339,7 +339,7 @@ def test_send_paypal_payout(mock_paypal_api):
     assert error_msg is not None
 
 def test_is_eligible():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -357,7 +357,7 @@ def test_is_eligible():
     assert sce.is_eligible(user) == False
 
 def test_get_user_compensation_amount():
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
@@ -375,7 +375,7 @@ def test_get_user_compensation_amount():
 
 @patch('tweepy.API', autospec=True)
 def test_send_recruitment_tweets(mock_twitter_api):
-    sce = TwitterDMCADebriefExperimentController(
+    sce = TwitterDebriefExperimentController(
         experiment_name='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']

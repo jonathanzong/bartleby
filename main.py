@@ -10,7 +10,7 @@ from utils.common import DbEngine
 from app.models import *
 from app.forms import *
 
-from app.controllers.twitter_dmca_debrief_experiment_controller import *
+from app.controllers.twitter_debrief_experiment_controller import *
 
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
@@ -26,8 +26,8 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
 DEFAULT_STUDY = 'academic'  # set default template for direct link to homepage here
 
-sce = TwitterDMCADebriefExperimentController(
-    experiment_name='twitter_dmca_debrief_experiment',
+sce = TwitterDebriefExperimentController(
+    experiment_name='twitter_academic_debrief_experiment',
     default_study=DEFAULT_STUDY,
     db_session=db_session,
     required_keys=['name', 'randomizations', 'eligible_ids']
