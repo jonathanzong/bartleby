@@ -94,8 +94,10 @@ class TwitterDebriefExperimentController:
       with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['eligible_ids']), "r") as f:
         reader = csv.reader(f, delimiter=',')
         for row in reader:
-          twitter_user_eligibility = TwitterUserEligibility(id = row[0], extra_data = row[1])
-          self.db_session.merge(twitter_user_eligibility)
+          maybe_twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=row[0]).first()
+          if not maybe_twitter_user_eligibility:
+            twitter_user_eligibility = TwitterUserEligibility(id = row[0], extra_data = row[1])
+            self.db_session.add(twitter_user_eligibility)
 
       self.db_session.commit()
 
