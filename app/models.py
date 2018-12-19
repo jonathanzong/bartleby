@@ -39,6 +39,7 @@ class TwitterUserMetadata(Base):
 class TwitterUserEligibility(Base):
     __tablename__ = 'twitter_user_eligibility'
     id = Column(String(64), primary_key = True)
+    extra_data                  = Column(LargeBinary) # data specific to a study_template, like which academic account followed
 
 class TwitterUserRecruitmentTweetAttempt(Base):
     __tablename__ = 'twitter_user_recruitment_tweet_attempt'

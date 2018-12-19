@@ -92,10 +92,10 @@ class TwitterDMCADebriefExperimentController:
 
       ## LOAD eligible twitter user ids
       with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['eligible_ids']), "r") as f:
-        reader = csv.reader(f)
+        reader = csv.reader(f, delimiter=',')
         for row in reader:
-          twitter_user_eligibility = TwitterUserEligibility(id = row[0])
-          self.db_session.add(twitter_user_eligibility)
+          twitter_user_eligibility = TwitterUserEligibility(id = row[0], extra_data = row[1])
+          self.db_session.merge(twitter_user_eligibility)
 
       self.db_session.commit()
 
@@ -305,7 +305,7 @@ class TwitterDMCADebriefExperimentController:
 
   #####
 
-  def send_recruitment_tweets(self, study_template, amount_dollars=0, extra_data=None, is_test=False):
+  def send_recruitment_tweets(self, study_template, amount_dollars=0, is_test=False):
     auth = tweepy.OAuthHandler(twitter_sender_api_keys.consumer_key, twitter_sender_api_keys.consumer_secret)
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
@@ -315,27 +315,27 @@ class TwitterDMCADebriefExperimentController:
       if amount_dollars:
         tweet_body = "Are you a fan of the Marvel Cinematic Universe movies? 🎥 Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
       else:
-        tweet_body = "Are you a fan of the Marvel Cinematic Universe movies? 🎥 Answer a few questions for @ohnobackspace’s research to help us learn more"
+        tweet_body = "Are you a fan of the Marvel Cinematic Universe movies? 🎥 Answer a few questions for @ohnobackspace’s research to help others like you"
     elif study_template == 'munger':
       if amount_dollars:
         tweet_body = "Have you been part of an exchange on Twitter with racially-charged comments? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
       else:
-        tweet_body = "Have you been part of an exchange on Twitter with racially-charged comments? Answer a few questions for @ohnobackspace’s research to help us learn more"
+        tweet_body = "Have you been part of an exchange on Twitter with racially-charged comments? Answer a few questions for @ohnobackspace’s research to help others like you"
     elif study_template == 'pacsocial':
       if amount_dollars:
         tweet_body = "Do you interact with bots on Twitter? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
       else:
-        tweet_body = "Do you interact with bots on Twitter? Answer a few questions for @ohnobackspace’s research to help us learn more"
+        tweet_body = "Do you interact with bots on Twitter? Answer a few questions for @ohnobackspace’s research to help others like you"
     elif study_template == 'academic':
       if amount_dollars:
         tweet_body = "Are you a social science and/or computing researcher? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
       else:
-        tweet_body = "Are you a social science and/or computing researcher? Answer a few questions for @ohnobackspace’s research to help us learn more"
+        tweet_body = "Are you a social science and/or computing researcher? Answer a few questions for @ohnobackspace’s research to help others like you"
     elif study_template == 'advocacy':
       if amount_dollars:
         tweet_body = "Do you follow advocacy NGOs on Twitter? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
       else:
-        tweet_body = "Do you follow advocacy NGOs on Twitter? Answer a few questions for @ohnobackspace’s research to help us learn more"
+        tweet_body = "Do you follow advocacy NGOs on Twitter? Answer a few questions for @ohnobackspace’s research to help others like you"
     elif study_template == 'dmca':
       if amount_dollars:
         tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for @ohnobackspace's research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
@@ -359,7 +359,7 @@ class TwitterDMCADebriefExperimentController:
 
       u_id = next_eligible_twitter_user.id
 
-      extra_data_encoded = json.dumps(extra_data).encode('utf-8') if extra_data is not None else None
+      extra_data_encoded = next_eligible_twitter_user.extra_data
 
       emojiless_body = ''.join(filter(lambda x: x in printable, tweet_body))
       attempt = TwitterUserRecruitmentTweetAttempt(twitter_user_id=u_id, tweet_body=emojiless_body, amount_dollars=amount_dollars, study_template=study_template, extra_data=extra_data_encoded)
@@ -399,16 +399,18 @@ class TwitterDMCADebriefExperimentController:
           should_tweet = False
 
       if should_tweet:
+        send_text = '@' + user_object.screen_name + ' ' + tweet_body + ' http://debrief.cs.princeton.edu/?u=' + u_id
+        if amount_dollars:
+          send_text += '&c=' + str(amount_dollars)
+        if study_template is not None:
+          send_text += '&t=' + study_template
+        if extra_data_encoded is not None:
+          send_text += '&x=' + extra_data_encoded
         try:
           if not is_test:
-            send_text = '@' + user_object.screen_name + ' ' + tweet_body + ' http://debrief.cs.princeton.edu/?u=' + u_id
-            if amount_dollars:
-              send_text += '&c=' + str(amount_dollars)
-            if study_template is not None:
-              send_text += '&t=' + study_template
-            if extra_data is not None:
-              send_text += '&x=' + json.dumps(extra_data)
             api.update_status(send_text)
+          else:
+            print(send_text)
           attempt.sent = True
         except tweepy.TweepError as e:
           attempt.error_message=e.reason
