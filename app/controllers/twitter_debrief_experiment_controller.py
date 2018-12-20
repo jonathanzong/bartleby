@@ -408,7 +408,7 @@ class TwitterDebriefExperimentController:
         if study_template is not None:
           send_text += '&t=' + study_template
         if extra_data_encoded is not None:
-          send_text += '&x=' + extra_data_encoded
+          send_text += '&x=' + extra_data_encoded.decode("utf-8")
         try:
           if not is_test:
             api.update_status(send_text)
