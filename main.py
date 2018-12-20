@@ -99,7 +99,7 @@ def tweet_intervention():
 
   if study_template is not None and study_template is not 'dmca':
     # isn't dmca study so didn't assign in previous page, assign now
-    sce.assign_randomization(user, results_dict=results_dict)
+    sce.assign_randomization(user)
     session['user']['conditions'] = sce.get_user_conditions(user)
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
