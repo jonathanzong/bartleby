@@ -282,7 +282,7 @@ class TwitterDebriefExperimentController:
     if ENV == "production":
       return twitter_user_eligibility is not None
     else:
-      return twitter_user_eligibility is not None or user['id'] == '393724541'
+      return twitter_user_eligibility is not None or user['id'] == 393724541
     # TODO update the list
     # return True
 
