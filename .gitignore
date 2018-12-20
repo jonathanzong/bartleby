@@ -2,8 +2,7 @@
 twitter_api_keys.py
 paypal_api_keys.py
 twitter_sender_api_keys.py
-twitter_dmca_debrief_test.eligible_ids.csv
-__old-dmca__twitter_dmca_debrief_test.eligible_ids.csv
+*.eligible_ids.csv
 config/experiments/samples
 
 ## APP-SPECIFIC FILES
