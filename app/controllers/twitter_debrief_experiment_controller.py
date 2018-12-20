@@ -419,11 +419,11 @@ class TwitterDebriefExperimentController:
         except tweepy.TweepError as e:
           attempt.error_message=e.reason
 
-      print('attempted user id %s' % u_id)
+      print('attempted user id %s, tweeted: %r' % (u_id, should_tweet))
       self.db_session.add(attempt)
       self.db_session.commit()
 
-      if not is_test:
+      if not is_test and should_tweet:
         delay = randint(13 * 60, 15 * 60)
         sleep(delay)
 
