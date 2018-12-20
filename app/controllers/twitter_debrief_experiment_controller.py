@@ -154,12 +154,13 @@ class TwitterDebriefExperimentController:
       self.db_session.add(res)
       self.db_session.commit()
 
-  def assign_randomization(self, user, results_dict):
+  def assign_randomization(self, user, results_dict=None):
     twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    twitter_user_metadata.tweet_removed = (results_dict['tweet_removed'] == 'true')
+    tweet_removed = (results_dict['tweet_removed'] == 'true') if results_dict is not None else False
+    twitter_user_metadata.tweet_removed = tweet_removed
     if twitter_user_metadata.assignment_json is not None:
       assignment = json.loads(twitter_user_metadata.assignment_json)
-      if (assignment['stratum'] == 'Removed') is not (results_dict['tweet_removed'] == 'true'):
+      if (assignment['stratum'] == 'Removed') is not tweet_removed:
         # changed their answer, clear the old assignment and continue
         randomization = self.db_session.query(Randomization).filter_by(id=assignment['id']).first()
         randomization.assigned = False
@@ -169,7 +170,7 @@ class TwitterDebriefExperimentController:
         # same answer, keep randomization
         return
 
-    if results_dict['tweet_removed'] == 'true':
+    if tweet_removed:
       randomization = self.db_session.query(Randomization).filter_by(stratum='Removed').filter_by(assigned=False).order_by(Randomization.id).first()
     else:
       randomization = self.db_session.query(Randomization).filter_by(stratum='Not Removed').filter_by(assigned=False).order_by(Randomization.id).first()

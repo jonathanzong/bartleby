@@ -71,10 +71,10 @@ def begin():
 
     sce.insert_or_update_survey_result(user, results_dict)
 
-    # assign a randomization based on whether tweet_removed
-    sce.assign_randomization(user, results_dict)
-
-    session['user']['conditions'] = sce.get_user_conditions(user)
+    if study_template is not None and study_template is 'dmca':
+      # assign a randomization based on whether tweet_removed
+      sce.assign_randomization(user, results_dict=results_dict)
+      session['user']['conditions'] = sce.get_user_conditions(user)
 
     sce.record_user_action(user, 'form_submit', {'page': 'begin'})
 
@@ -96,6 +96,11 @@ def tweet_intervention():
 
   if sce.has_completed_study(user):
     return redirect(url_for('complete'))
+
+  if study_template is not None and study_template is not 'dmca':
+    # isn't dmca study so didn't assign in previous page, assign now
+    sce.assign_randomization(user, results_dict=results_dict)
+    session['user']['conditions'] = sce.get_user_conditions(user)
 
   conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
