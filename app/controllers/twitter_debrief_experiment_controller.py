@@ -209,7 +209,7 @@ class TwitterDebriefExperimentController:
     if survey_result is not None:
       # mark user complete
       results = json.loads(survey_result.survey_data)
-      required_fields = ["tweet_removed", "click_tweet", "would_delete", "society_benefit", "personal_benefit", "collection_surprised", "glad_in_study", "share_results", "vote_study","improve_debrief"]
+      required_fields = ["click_tweet", "would_delete", "society_benefit", "personal_benefit", "collection_surprised", "glad_in_study", "share_results", "vote_study","improve_debrief"]
       completed = all([(field in results) for field in required_fields])
       if completed:
         twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
