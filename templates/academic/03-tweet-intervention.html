@@ -11,7 +11,7 @@
   </div>
 
   <p>
-    Imagine that you follow the @{{ extra_data.academic_account }} account on Twitter. Next, imagine that one of the accounts sent you recommendations of experts in your field to follow on Twitter, who you do not currently follow:
+    Imagine that you follow the {% if extra_data.academic_account %}@{{ extra_data.academic_account }}{% else %}@sigchi{% endif %} account on Twitter. Next, imagine that one of the accounts sent you recommendations of experts in your field to follow on Twitter, who you do not currently follow:
 
   </p>
 
