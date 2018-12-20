@@ -15,6 +15,7 @@ from time import sleep
 from random import randint
 from datetime import datetime
 from string import printable
+import urllib
 
 from sqlalchemy import inspect as sa_inspect
 from sqlalchemy.sql import exists
@@ -310,6 +311,10 @@ class TwitterDebriefExperimentController:
   #####
 
   def send_recruitment_tweets(self, study_template, amount_dollars=0, is_test=False):
+    if is_test:
+      print("this is a test.")
+    else:
+      print("this is NOT a test!!!")
     auth = tweepy.OAuthHandler(twitter_sender_api_keys.consumer_key, twitter_sender_api_keys.consumer_secret)
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
@@ -409,7 +414,7 @@ class TwitterDebriefExperimentController:
         if study_template is not None:
           send_text += '&t=' + study_template
         if extra_data_encoded is not None:
-          send_text += '&x=' + extra_data_encoded.decode("utf-8")
+          send_text += '&x=' + urllib.parse.quote_plus(extra_data_encoded.decode("utf-8"))
         try:
           if not is_test:
             api.update_status(send_text)
@@ -419,7 +424,7 @@ class TwitterDebriefExperimentController:
         except tweepy.TweepError as e:
           attempt.error_message=e.reason
 
-      print('attempted user id %s, tweeted: %r' % (u_id, should_tweet))
+      print('attempted user id %s, should_tweet: %r' % (u_id, should_tweet))
       self.db_session.add(attempt)
       self.db_session.commit()
 

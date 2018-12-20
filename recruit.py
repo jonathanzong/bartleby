@@ -15,4 +15,4 @@ sce = TwitterDebriefExperimentController(
     required_keys=['name', 'randomizations', 'eligible_ids']
   )
 
-sce.send_recruitment_tweets(is_test=True)
+sce.send_recruitment_tweets(study_template='academic', is_test=True)
