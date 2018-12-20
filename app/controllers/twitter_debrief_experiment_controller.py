@@ -96,7 +96,8 @@ class TwitterDebriefExperimentController:
         for row in reader:
           maybe_twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=row[0]).first()
           if not maybe_twitter_user_eligibility:
-            twitter_user_eligibility = TwitterUserEligibility(id = row[0], extra_data = row[1])
+            extra_data = row[1] if len(row) > 1 else None
+            twitter_user_eligibility = TwitterUserEligibility(id = row[0], extra_data = extra_data.encode('utf-8'))
             self.db_session.add(twitter_user_eligibility)
 
       self.db_session.commit()
