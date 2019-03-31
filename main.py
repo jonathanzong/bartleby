@@ -57,8 +57,6 @@ def debrief():
   if not sce.is_eligible(user):
     return redirect(url_for('ineligible'))
 
-  # conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
-
   sce.record_user_action(user, 'page_view', {'page': 'debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   # handle form submission

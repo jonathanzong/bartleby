@@ -3,7 +3,6 @@ this file should:
 
 1. initialize an Experiment id
 2. Load list of eligible participant ids
-3. Load randomizations
 """
 
 import yaml, csv, os, inspect, tweepy
@@ -77,20 +76,6 @@ class TwitterDebriefExperimentController:
       self.db_session.add(experiment)
       self.db_session.commit()
 
-      ## LOAD RANDOMIZED CONDITIONS (see CivilServant-Analysis)
-      with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['randomizations']), "r") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-          randomization = Randomization(
-            randomization_id = row['id'],
-            stratum          = row['stratum'],
-            block_id         = row['block.id'],
-            block_size       = row['block.size'],
-            treatment        = row['treatment'],
-            assigned         = False
-          )
-          self.db_session.add(randomization)
-
       ## LOAD eligible twitter user ids
       with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['eligible_ids']), "r") as f:
         reader = csv.reader(f, delimiter=',')
@@ -155,42 +140,6 @@ class TwitterDebriefExperimentController:
       self.db_session.add(res)
       self.db_session.commit()
 
-  def assign_randomization(self, user, results_dict=None):
-    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    tweet_removed = (results_dict['tweet_removed'] == 'true') if results_dict is not None else False
-    twitter_user_metadata.tweet_removed = tweet_removed
-    if twitter_user_metadata.assignment_json is not None:
-      assignment = json.loads(twitter_user_metadata.assignment_json)
-      if (assignment['stratum'] == 'Removed') is not tweet_removed:
-        # changed their answer, clear the old assignment and continue
-        randomization = self.db_session.query(Randomization).filter_by(id=assignment['id']).first()
-        randomization.assigned = False
-        twitter_user_metadata.assignment_json = None
-        self.db_session.commit()
-      else:
-        # same answer, keep randomization
-        return
-
-    if tweet_removed:
-      randomization = self.db_session.query(Randomization).filter_by(stratum='Removed').filter_by(assigned=False).order_by(Randomization.id).first()
-    else:
-      randomization = self.db_session.query(Randomization).filter_by(stratum='Not Removed').filter_by(assigned=False).order_by(Randomization.id).first()
-    randomization.assigned = True
-    twitter_user_metadata.assignment_json = json.dumps(self.row_as_dict(randomization)).encode('utf-8')
-    self.db_session.commit()
-
-  def get_user_conditions(self, user):
-    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    assignment = json.loads(twitter_user_metadata.assignment_json)
-    treatment = assignment['treatment']
-    treatment_binary = format(treatment, '03b') # convert int to binary string
-
-    return {
-      'in_control_group': treatment_binary[0] == '1',
-      'show_table': treatment_binary[1] == '1',
-      'show_visualization': treatment_binary[2] == '1',
-    }
-
   def record_user_action(self, user, action_type, action_data_dict):
     action = ExperimentAction(
       experiment_id=self.experiment.id,
@@ -204,30 +153,6 @@ class TwitterDebriefExperimentController:
       action.action_data = action_str.encode('utf-8')
     self.db_session.add(action)
     self.db_session.commit()
-
-  def mark_user_completed(self, user):
-    survey_result = self.db_session.query(TwitterUserSurveyResult).filter_by(twitter_user_id=user['id']).first()
-    if survey_result is not None:
-      # mark user complete
-      results = json.loads(survey_result.survey_data)
-      required_fields = ["click_tweet", "would_delete", "society_benefit", "personal_benefit", "collection_surprised", "glad_in_study", "share_results", "vote_study","improve_debrief"]
-      completed = all([(field in results) for field in required_fields])
-      if completed:
-        twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-        twitter_user_metadata.completed_study_at = datetime.datetime.now()
-        self.db_session.commit()
-        return True
-      else:
-        return False
-    else:
-      return False
-
-  def has_completed_study(self, user):
-    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    if twitter_user_metadata is not None:
-      return twitter_user_metadata.completed_study_at is not None
-    else:
-      return False
 
   # return value is an error message
   def send_paypal_payout(self, user, email_address, amount_dollars):
@@ -252,8 +177,6 @@ class TwitterDebriefExperimentController:
     })
     try:
       twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-      if twitter_user_metadata.completed_study_at is None:
-        return 'The survey has not been submitted yet. If this is in error, please contact Jonathan at jz7@cs.princeton.edu'
 
       days_since_started = (datetime.datetime.now() - twitter_user_metadata.initial_login_at).days
 
