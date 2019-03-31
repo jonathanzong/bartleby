@@ -8,87 +8,40 @@
 
 <div class="header-wrap">
   <p class="logos" style="margin: 0">
-    <a href="https://www.princeton.edu/" target="_blank"><img height="35" src="{{ url_for('static', filename='images/princeton-logo.png') }}" alt="Princeton University"></a>
-    <a href="https://hci.princeton.edu/" target="_blank">
-    <img height="35" src="{{ url_for('static', filename='images/hci-logo.png') }}" alt="Princeton HCI Lab"></a>
+    <a href="https://www.mit.edu/"><img height="35" src="{{ url_for('static', filename='images/mit-logo.png') }}" alt="Massachusetts Institute of Technology"></a>
+    <a href="https://www.dal.ca/"><img height="35" src="{{ url_for('static', filename='images/dalhousie-logo.jpg') }}" alt="Dalhouse University"></a>
   </p>
-  <h1 style="max-width: 500px; margin: 0; line-height: 1.2">Testing Social Media Research Ethics Procedures</h1>
+  <h1 style="max-width: 500px; line-height: 1.2">MIT Study on Limiting the Chilling Effect from Online Copyright Takedown Notices </h1>
 
   <p style="font-size: 0.8em; margin-top: 0.5em; margin-bottom: 1em">
-    Principal Investigator: <a href="https://psych.princeton.edu/person/elizabeth-levy-paluck" target="_blank">Elizabeth Paluck</a>, Princeton University Department of Psychology, with <a href="https://twitter.com/natematias" target="_blank">J. Nathan Matias</a> and <a href="http://jonathanzong.com/" target="_blank">Jonathan Zong</a>.
+    <a href="https://twitter.com/natematias">J. Nathan Matias</a>, <a href="https://www.dal.ca/faculty/law/faculty-staff/our-faculty/jon-penney.html">Jonathon Penney</a>, and <a href="https://twitter.com/ohnobackspace">Jonathan Zong</a>, in collaboration with <a href="http://civilservant.io/">CivilServant</a>, with Ethan Zuckerman as Principal Investigator.
   </p>
+
+</div>
+
+<div class="scroll-wrap">
+  <div>
 
 
   <p class="big-question">
     What effects do people experience from having tweets removed for copyright reasons?
   </p>
   <p>
-     We're about to start new research and want your feedback on the privacy and ethics of our work before we start. Help us answer these questions by taking 10–15 minutes to answer our survey{% if amount_dollars %}, and <strong>we will send you ${{ amount_dollars }}.00</strong> for your next cup of coffee via PayPal when you finish.{% else %} to help others like you.{% endif %}
-  </p>
-</div>
-
-<div class="scroll-wrap">
-  <div>
-  <p>
-    We are inviting you to take part in a research study. Before you decide to participate, it is important that you understand why the research is being done and what it will involve. Please read this information carefully. Ask us if anything is not clear or you need more information.
-  </p>
-
-  <h5>Purpose of the research</h5>
-  <p>
-    We are asking you to participate in our research because your tweets may have been removed for copyright reasons in the past, information that Twitter makes public on the <a href="http://lumendatabase.org" target="_blank">Lumen Database</a>. <strong>We plan to test new ways to support people like you, and we would like your feedback on the design, ethics, and privacy of our future study.</strong> This project is independent from Twitter and Lumen.
-  </p>
-
-  <h5>If you participate, what to expect</h5>
-  <p>
-    In this study, we ask you to consider a scenario where your tweets are removed by Twitter after a copyright complaint, imagining that we then include your information in a study on the effects of online copyright enforcement.
-  </p>
-
-  <p>
-    Next, we will show you a website that allows people to manage the privacy of the information we collect for the imaginary study. We will ask for feedback on this website with a survey.
-  </p>
-
-  <h5>Benefits and risks</h5>
-  <p>
-    Your answers will help us improve how we manage the privacy of people who participate in our research. We will publish our findings when this study finishes. Follow <a href="https://twitter.com/dmcainfo" target="_blank">@DmcaInfo</a> on Twitter to receive the results when we finish.
-  </p>
-
-  {% if amount_dollars %}
-  <h5>Compensation</h5>
-  <p>
-    When you complete the survey, enter your email address, and we will send you ${{ amount_dollars }}.00 via Paypal within the next 24 hours. This offer is valid for 7 days starting when you begin the survey.
-  </p>
-  {% endif %}
-
-  <h5>Confidentiality</h5>
-  <p>
-    All records from this study will be kept confidential. Only the research team will have access to your responses. Your responses will be kept private, and we will not include any personally-identifiable information in any publications.
+     TODO
   </p>
 
   <h5>Do you have further questions? Contact us:</h5>
 
   <div class="contact">
     <div>J. Nathan Matias</div>
-    <div><a href="mailto:jmatias@princeton.edu" target="_blank">jmatias@princeton.edu</a></div>
+    <div><a href="mailto:jnmatias@mit.edu" target="_blank">jnmatias@mit.edu</a></div>
     <div><a href="https://twitter.com/natematias" target="_blank">@natematias</a> on Twitter</div>
-  </div>
-
-  <p>
-    If you have questions about your rights as a research participant, or if problems arise which you do not feel you can discuss with the Investigator, please contact:
-  </p>
-
-  <div class="contact">
-    <div>Institutional Review Board (IRB)</div>
-    <div>Phone: (609) 258-8543</div>
-    <div>Email: <a href="mailto:irb@princeton.edu" target="_blank">irb@princeton.edu</a></div>
   </div>
 
   </div>
 </div>
 
   <div class="cta-wrap">
-    <p style="margin: 1em">
-      <em>Must be 18 years or older.</em> If you are eligible and consent to participate, please log in with Twitter:
-    </p>
     <div class="btn-twitter-wrap">
       <a href="{{ url_for('login') }}">
         <div class="btn-twitter">

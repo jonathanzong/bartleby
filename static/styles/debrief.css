@@ -1,27 +1,14 @@
-.debrief-interface {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.debrief-interface .top {
-  padding: 10px;
-  background: #f1f1f1;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.debrief-interface .top .dot {
-  height: 12px;
-  width: 12px;
-  background-color: #bbb;
-  border-radius: 50%;
-  display: inline-block;
-}
-
 .debrief-interface .content {
-  padding: 30px;
-  border: 3px solid #f1f1f1;
-  background: white;
+  padding: 0;
+  border: none;
+}
+
+@media only screen and (min-width: 768px) {
+  .debrief-interface .content {
+    padding: 30px;
+    border: 3px solid #f1f1f1;
+    background: white;
+  }
 }
 
 .debrief-interface p:first-child {
@@ -56,3 +43,12 @@
   font-style: italic;
 }
 
+.debrief-interface .opt-out-checkbox {
+  padding: 15px;
+  background: #f7f7f7;
+}
+
+.debrief-interface ul li {
+  list-style-type: circle;
+  margin-left: 1em;
+}

@@ -24,10 +24,10 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
-DEFAULT_STUDY = 'academic'  # set default template for direct link to homepage here
+DEFAULT_STUDY = 'dmca'  # set default template for direct link to homepage here
 
 sce = TwitterDebriefExperimentController(
-    experiment_name='twitter_academic_debrief_experiment',
+    experiment_name='twitter_dmca_debrief_experiment',
     default_study=DEFAULT_STUDY,
     db_session=db_session,
     required_keys=['name', 'randomizations', 'eligible_ids']
@@ -39,7 +39,7 @@ def is_logged_in():
 @app.route('/')
 def index():
   if is_logged_in():
-    return redirect(url_for('begin'))
+    return redirect(url_for('debrief'))
   amount_dollars = int(request.args.get('c')) if request.args.get('c') else 0
 
   sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
@@ -47,96 +47,6 @@ def index():
   study_template = request.args.get('t') if request.args.get('t') else DEFAULT_STUDY
   extra_data = json.loads(request.args.get('x')) if request.args.get('x') else None
   return render_template(study_template + '/01-index.html', amount_dollars=amount_dollars, extra_data=extra_data)
-
-@app.route('/begin', methods=('GET', 'POST'))
-def begin():
-  if not is_logged_in():
-    return redirect(url_for('index'))
-  user = session['user']
-
-  if not sce.is_eligible(user):
-    return redirect(url_for('ineligible'))
-
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
-
-  sce.record_user_action(user, 'page_view', {'page': 'begin', 'user_agent': request.user_agent.string, 'qs': request.query_string})
-
-  # handle form submission
-  form = TweetRemovedForm()
-  if form.validate_on_submit():
-    results_dict = request.form.to_dict()
-    del results_dict['csrf_token']
-    results_dict['twitter_user_id'] = user['id']
-
-    sce.insert_or_update_survey_result(user, results_dict)
-
-    # assign a randomization based on whether tweet_removed
-    sce.assign_randomization(user, results_dict=results_dict)
-    session['user']['conditions'] = sce.get_user_conditions(user)
-
-    sce.record_user_action(user, 'form_submit', {'page': 'begin'})
-
-    return redirect(url_for('tweet_intervention'))
-  study_template = sce.get_user_study_template(user)
-  if study_template is not None and study_template is not 'dmca':
-    # only 'dmca' currently uses a stratified sample, so nothing else needs the /begin page
-    return redirect(url_for('tweet_intervention'))
-  return render_template(study_template + '/02-begin.html', user=user, form=form)
-
-@app.route('/tweet-intervention')
-def tweet_intervention():
-  if not is_logged_in():
-    return redirect(url_for('index'))
-  user = session['user']
-
-  if not sce.is_eligible(user):
-    return redirect(url_for('ineligible'))
-
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
-
-  # if it isn't dmca study, then it didn't assign in previous page, assign now
-  sce.assign_randomization(user)
-  session['user']['conditions'] = sce.get_user_conditions(user)
-
-  conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
-
-  sce.record_user_action(user, 'page_view', {'page': 'tweet-intervention', 'user_agent': request.user_agent.string, 'qs': request.query_string})
-
-  study_template = sce.get_user_study_template(user)
-  extra_data = sce.get_user_extra_data(user)
-  return render_template(study_template + '/03-tweet-intervention.html', user=user, in_control_group=conditions['in_control_group'], extra_data=extra_data)
-
-@app.route('/tweet-debrief', methods=('GET', 'POST'))
-def tweet_debrief():
-  if not is_logged_in():
-    return redirect(url_for('index'))
-  user = session['user']
-
-  if not sce.is_eligible(user):
-    return redirect(url_for('ineligible'))
-
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
-
-  sce.record_user_action(user, 'page_view', {'page': 'tweet-debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
-
-  # handle form submission
-  form = WouldClickTweetForm()
-  if form.validate_on_submit():
-    results_dict = request.form.to_dict()
-    del results_dict['csrf_token']
-    results_dict['twitter_user_id'] = user['id']
-
-    sce.insert_or_update_survey_result(user, results_dict)
-
-    sce.record_user_action(user, 'form_submit', {'page': 'tweet-debrief'})
-
-    return redirect(url_for('debrief'))
-
-  study_template = sce.get_user_study_template(user)
-  return render_template(study_template + '/04-tweet-debrief.html', user=user, form=form)
 
 @app.route('/debrief', methods=('GET', 'POST'))
 def debrief():
@@ -147,10 +57,7 @@ def debrief():
   if not sce.is_eligible(user):
     return redirect(url_for('ineligible'))
 
-  if sce.has_completed_study(user):
-    return redirect(url_for('complete'))
-
-  conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
+  # conditions = user['conditions'] if 'conditions' in user else sce.get_user_conditions(user)
 
   sce.record_user_action(user, 'page_view', {'page': 'debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
@@ -165,60 +72,18 @@ def debrief():
 
     sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
 
-    return redirect(url_for('complete'))
+    # return redirect(url_for('complete'))
   study_template = sce.get_user_study_template(user)
-  return render_template(study_template + '/05-debrief.html', user=user, form=form,
-                          show_table=conditions['show_table'],
-                          show_visualization=conditions['show_visualization'])
-
-@app.route('/complete', methods=('GET', 'POST'))
-def complete():
-  if not is_logged_in():
-    return redirect(url_for('index'))
-  user = session['user']
-  amount_dollars = sce.get_user_compensation_amount(user)
-
-  if not sce.is_eligible(user):
-    return redirect(url_for('ineligible'))
-
-  if not sce.has_completed_study(user):
-    did_complete = sce.mark_user_completed(user)
-    if not did_complete:
-      # how did they even get here
-      return redirect(url_for('begin'))
-
-  sce.record_user_action(user, 'page_view', {'page': 'complete', 'user_agent': request.user_agent.string, 'qs': request.query_string, 'referrer': request.referrer})
-
-  has_sent_compensation = sce.has_sent_payout(user)
-
-  error_msg = None
-  if 'error_msg' in session:
-    error_msg = session['error_msg']
-    del session['error_msg']
-
-  # handle form submission
-  form = CompensationForm()
-  if form.validate_on_submit():
-    results_dict = request.form.to_dict()
-    del results_dict['csrf_token']
-
-    if not has_sent_compensation and amount_dollars > 0:
-      session['error_msg'] = sce.send_paypal_payout(user, results_dict['email_address'], amount_dollars)
-
-    sce.record_user_action(user, 'form_submit', {'page': 'complete'})
-
-    return redirect(url_for('complete'))
-  study_template = sce.get_user_study_template(user)
-  return render_template(study_template + '/06-complete.html', user=user, form=form, has_sent_compensation=has_sent_compensation, error_msg=error_msg, amount_dollars=amount_dollars)
+  return render_template(study_template + '/05-debrief.html', user=user, form=form)
 
 @app.route('/ineligible')
 def ineligible():
   if is_logged_in():
-    return redirect(url_for('begin'))
+    return redirect(url_for('debrief'))
   user = session['user']
 
   if sce.is_eligible(user):
-    return redirect(url_for('begin'))
+    return redirect(url_for('debrief'))
 
   sce.record_user_action(user, 'page_view', {'page': 'ineligible', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
@@ -227,7 +92,7 @@ def ineligible():
 @app.route('/login')
 def login():
   if is_logged_in():
-    return redirect(url_for('begin'))
+    return redirect(url_for('debrief'))
 
   sce.record_user_action(None, 'login_attempt', None)
 
@@ -286,7 +151,7 @@ def oauth_authorized():
 
     sce.record_user_action(user, 'login_success', None)
 
-    return redirect(url_for('begin'))
+    return redirect(url_for('debrief'))
   except tweepy.TweepError:
     # return 'Error! Failed to get access token.'
     return redirect(url_for('index'))

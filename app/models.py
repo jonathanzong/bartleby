@@ -40,6 +40,7 @@ class TwitterUserEligibility(Base):
     __tablename__ = 'twitter_user_eligibility'
     id = Column(String(64), primary_key = True)
     extra_data                  = Column(LargeBinary) # data specific to a study_template, like which academic account followed
+    study_data_json             = Column(LargeBinary) # data collected on a user from the main study, to show in debriefing interface
 
 class TwitterUserRecruitmentTweetAttempt(Base):
     __tablename__ = 'twitter_user_recruitment_tweet_attempt'
@@ -60,16 +61,6 @@ class Experiment(Base):
     name                         = Column(String(64), index = True)
     controller                   = Column(String(64))
     settings_json                = Column(LargeBinary)
-
-class Randomization(Base):
-    __tablename__ = 'randomizations'
-    id                           = Column(Integer, primary_key = True)
-    randomization_id             = Column(String(64))
-    stratum                      = Column(String(64), index = True)
-    block_id                     = Column(String(64))
-    block_size                   = Column(Integer)
-    treatment                    = Column(Integer)
-    assigned                     = Column(Boolean)
 
 class ExperimentAction(Base):
     __tablename__ = 'experiment_actions'

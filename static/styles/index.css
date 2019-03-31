@@ -1,3 +1,7 @@
+body, html {
+  overflow: hidden;
+}
+
 .content-wrap {
   display: flex;
   flex-direction: column;
