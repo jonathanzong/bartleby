@@ -12,7 +12,7 @@ sce = TwitterDebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
     default_study=DEFAULT_STUDY,
     db_session=db_session,
-    required_keys=['name', 'randomizations', 'eligible_ids']
+    required_keys=['name', 'eligible_ids']
   )
 
 sce.send_recruitment_tweets(study_template='dmca', is_test=True)

@@ -30,7 +30,7 @@ sce = TwitterDebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
     default_study=DEFAULT_STUDY,
     db_session=db_session,
-    required_keys=['name', 'randomizations', 'eligible_ids']
+    required_keys=['name', 'eligible_ids']
   )
 
 def is_logged_in():
@@ -67,6 +67,11 @@ def debrief():
     results_dict = request.form.to_dict()
     del results_dict['csrf_token']
     results_dict['twitter_user_id'] = user['id']
+
+    if 'opt_out' in results_dict:
+      results_dict['opt_out'] = 'true'
+    else:
+      results_dict['opt_out'] = 'false'
 
     sce.insert_or_update_survey_result(user, results_dict)
 
