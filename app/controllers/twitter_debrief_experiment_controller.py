@@ -242,37 +242,8 @@ class TwitterDebriefExperimentController:
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
 
-    # TODO factor this out into a conf file or model property or something
-    if study_template == 'marvel':
-      if amount_dollars:
-        tweet_body = "Are you a fan of the Marvel Cinematic Universe movies? 🎥 Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
-      else:
-        tweet_body = "Are you a fan of the Marvel Cinematic Universe movies? 🎥 Answer a few questions for @ohnobackspace’s research to help others like you"
-    elif study_template == 'munger':
-      if amount_dollars:
-        tweet_body = "Have you been part of an exchange on Twitter with racially-charged comments? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
-      else:
-        tweet_body = "Have you been part of an exchange on Twitter with racially-charged comments? Answer a few questions for @ohnobackspace’s research to help others like you"
-    elif study_template == 'pacsocial':
-      if amount_dollars:
-        tweet_body = "Do you interact with bots on Twitter? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
-      else:
-        tweet_body = "Do you interact with bots on Twitter? Answer a few questions for @ohnobackspace’s research to help others like you"
-    elif study_template == 'academic':
-      if amount_dollars:
-        tweet_body = "Are you a social science and/or computing researcher? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
-      else:
-        tweet_body = "Are you a social science and/or computing researcher? Answer a few questions for @ohnobackspace’s research to help others like you"
-    elif study_template == 'advocacy':
-      if amount_dollars:
-        tweet_body = "Do you follow advocacy NGOs on Twitter? Answer a few questions for @ohnobackspace’s research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
-      else:
-        tweet_body = "Do you follow advocacy NGOs on Twitter? Answer a few questions for @ohnobackspace’s research to help others like you"
-    elif study_template == 'dmca':
-      if amount_dollars:
-        tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for @ohnobackspace's research, and we'll compensate you ${0} on Paypal–credit you can use for your next cup of coffee".format(amount_dollars)
-      else:
-        tweet_body = "Have your tweets ever been taken down for copyright reasons? ©💥 Answer a few questions for @ohnobackspace's research to help others like you"
+    # TODO add the link!
+    tweet_body = "Have your tweets ever been taken down for copyright reasons? Our team at MIT are studying ways to help people whose content is removed, and your data may be included. Click here to learn more & manage privacy"
 
     on_time = datetime.time(9,30)
     off_time = datetime.time(21,30)
