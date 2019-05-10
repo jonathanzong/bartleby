@@ -15,4 +15,6 @@ sce = TwitterDebriefExperimentController(
     required_keys=['name', 'user_data_dir']
   )
 
-sce.send_recruitment_tweets(study_template='dmca', is_test=True)
+with open('opted_out_users', 'w') as out:
+  for user_id in sce.get_opted_out_users():
+    out.write(user_id + '\n')

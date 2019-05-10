@@ -30,7 +30,7 @@ sce = TwitterDebriefExperimentController(
     experiment_name='twitter_dmca_debrief_experiment',
     default_study=DEFAULT_STUDY,
     db_session=db_session,
-    required_keys=['name', 'eligible_ids']
+    required_keys=['name', 'user_data_dir']
   )
 
 def is_logged_in():
@@ -148,6 +148,10 @@ def oauth_authorized():
 
     if not sce.is_eligible(user):
       return redirect(url_for('ineligible'))
+
+    study_data = sce.get_user_study_data(user)
+    if study_data is not None:
+      session['user'].update(study_data)
 
     # create user if not exists
     sce.create_user_if_not_exists(user)

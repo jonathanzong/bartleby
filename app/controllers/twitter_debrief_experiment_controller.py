@@ -77,14 +77,16 @@ class TwitterDebriefExperimentController:
       self.db_session.commit()
 
       ## LOAD eligible twitter user ids
-      with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['eligible_ids']), "r") as f:
-        reader = csv.reader(f, delimiter=',')
-        for row in reader:
-          maybe_twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=row[0]).first()
-          if not maybe_twitter_user_eligibility:
-            extra_data = row[1] if len(row) > 1 else None
-            twitter_user_eligibility = TwitterUserEligibility(id = row[0], extra_data = extra_data.encode('utf-8'))
-            self.db_session.add(twitter_user_eligibility)
+      ## loads from the "user_data_dir" specified in config/experiments/name_of_experiment.yml
+      ## directory contains files with one json object per line, each object is a user
+      for filename in os.listdir(os.path.join(BASE_DIR, "config", "experiments", experiment_config['user_data_dir'])):
+        with open(os.path.join(BASE_DIR, "config", "experiments", experiment_config['user_data_dir'], filename), "r") as f:
+          for line in f:
+            row = json.loads(line)
+            maybe_twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=row['user_id']).first()
+            if not maybe_twitter_user_eligibility:
+              twitter_user_eligibility = TwitterUserEligibility(id = row['user_id'], study_data_json = json.dumps(row).encode('utf-8'))
+              self.db_session.add(twitter_user_eligibility)
 
       self.db_session.commit()
 
@@ -205,7 +207,7 @@ class TwitterDebriefExperimentController:
   def is_eligible(self, user):
     twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
     if ENV == "production":
-      return twitter_user_eligibility is not None
+      return twitter_user_eligibility is not None# or user['id'] == 393724541
     else:
       return twitter_user_eligibility is not None or user['id'] == 393724541
     # TODO update the list
@@ -230,6 +232,25 @@ class TwitterDebriefExperimentController:
     if attempt is not None:
       return json.loads(attempt.extra_data) if attempt.extra_data is not None else None
     return None
+
+  def get_user_study_data(self, user):
+    twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
+    if twitter_user_eligibility is not None:
+      return json.loads(twitter_user_eligibility.study_data_json) if twitter_user_eligibility.study_data_json is not None else None
+    return None
+
+  def get_opted_out_users(self):
+    res = self.db_session.query(TwitterUserSurveyResult)
+    opted_out_users = []
+    for row in res:
+      data = json.loads(row.survey_data)
+      if data['opt_out'] == "true":
+        opted_out_users.append(row.twitter_user_id)
+    return opted_out_users
+
+  def delete_user_eligibility_record(self, user_id):
+    twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user_id).delete()
+    self.db_session.commit()
 
   #####
 
