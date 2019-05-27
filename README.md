@@ -14,6 +14,17 @@ GRANT ALL PRIVILEGES ON debrief_study_production.* TO 'USERNAME'@'localhost';
 flush privileges;
 ```
 
+## creating config
+In `config` directory, create file named `<env>.json`, e.g. `development.json`
+```
+{
+    "host": "localhost",
+    "database": "debrief_study_development",
+    "user": "",
+    "password": ""
+}
+```
+
 ## running migrations
 ```
 export CS_ENV=all
