@@ -81,8 +81,8 @@ def debrief():
 
 @app.route('/ineligible')
 def ineligible():
-  if is_logged_in():
-    return redirect(url_for('debrief'))
+  if not is_logged_in():
+    return redirect(url_for('index'))
   user = session['user']
 
   if sce.is_eligible(user):
