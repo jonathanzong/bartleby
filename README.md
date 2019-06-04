@@ -27,6 +27,20 @@ In `config` directory, create file named `<env>.json`, e.g. `development.json`
 
 In project root directory, create `alembic.ini`
 
+In project root directory, create `twitter_api_keys.py`
+```
+TWITTER_CONSUMER_KEY=''
+TWITTER_CONSUMER_SECRET=''
+```
+
+In project root directory, create `twitter_sender_api_keys.py`
+```
+consumer_key = ''
+consumer_secret = ''
+access_token = ''
+access_token_secret = ''
+```
+
 ## running migrations
 ```
 export CS_ENV=all
