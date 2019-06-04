@@ -7,7 +7,7 @@ this file should:
 
 import yaml, csv, os, inspect, tweepy
 import simplejson as json
-import paypal_api_keys
+# import paypal_api_keys
 import twitter_sender_api_keys
 
 from time import sleep
@@ -25,11 +25,11 @@ BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(inspect.getfile(inspect.
 
 ENV = os.environ['CS_ENV']
 
-import paypalrestsdk
-paypalrestsdk.configure({
-  "mode": "live" if ENV == "production" else "sandbox",
-  'client_id': paypal_api_keys.PAYPAL_CLIENT_ID,
-  'client_secret': paypal_api_keys.PAYPAL_CLIENT_SECRET })
+# import paypalrestsdk
+# paypalrestsdk.configure({
+#   "mode": "live" if ENV == "production" else "sandbox",
+#   'client_id': paypal_api_keys.PAYPAL_CLIENT_ID,
+#   'client_secret': paypal_api_keys.PAYPAL_CLIENT_SECRET })
 
 class TwitterDebriefExperimentController:
   def __init__(self, experiment_name, default_study, db_session, required_keys):
@@ -157,52 +157,52 @@ class TwitterDebriefExperimentController:
     self.db_session.commit()
 
   # return value is an error message
-  def send_paypal_payout(self, user, email_address, amount_dollars):
-    sender_batch_id = user['id']
-    payout = paypalrestsdk.Payout({
-      "sender_batch_header": {
-        "sender_batch_id": sender_batch_id,
-        "email_subject": "You have a payment"
-      },
-      "items": [
-        {
-          "recipient_type": "EMAIL",
-          "amount": {
-            "value": amount_dollars,
-            "currency": "USD"
-          },
-          "receiver": email_address,
-          "note": "Thank you for participating in our research!",
-          "sender_item_id": "item_1"
-        }
-      ]
-    })
-    try:
-      twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+  # def send_paypal_payout(self, user, email_address, amount_dollars):
+  #   sender_batch_id = user['id']
+  #   payout = paypalrestsdk.Payout({
+  #     "sender_batch_header": {
+  #       "sender_batch_id": sender_batch_id,
+  #       "email_subject": "You have a payment"
+  #     },
+  #     "items": [
+  #       {
+  #         "recipient_type": "EMAIL",
+  #         "amount": {
+  #           "value": amount_dollars,
+  #           "currency": "USD"
+  #         },
+  #         "receiver": email_address,
+  #         "note": "Thank you for participating in our research!",
+  #         "sender_item_id": "item_1"
+  #       }
+  #     ]
+  #   })
+  #   try:
+  #     twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
 
-      days_since_started = (datetime.datetime.now() - twitter_user_metadata.initial_login_at).days
+  #     days_since_started = (datetime.datetime.now() - twitter_user_metadata.initial_login_at).days
 
-      if days_since_started > 7:
-        return 'The 7 day window to complete the survey for compensation has expired. If this is in error, please contact Jonathan at jz7@cs.princeton.edu'
-      if twitter_user_metadata.paypal_sender_batch_id is not None:
-        return 'The compensation email has been sent through Paypal. If you do not receive it within 24 hours, please contact Jonathan at jz7@cs.princeton.edu'
+  #     if days_since_started > 7:
+  #       return 'The 7 day window to complete the survey for compensation has expired. If this is in error, please contact Jonathan at jz7@cs.princeton.edu'
+  #     if twitter_user_metadata.paypal_sender_batch_id is not None:
+  #       return 'The compensation email has been sent through Paypal. If you do not receive it within 24 hours, please contact Jonathan at jz7@cs.princeton.edu'
 
-      payout.create()
+  #     payout.create()
 
-      # store sender_batch_id
-      twitter_user_metadata.paypal_sender_batch_id = sender_batch_id
-      self.db_session.add(twitter_user_metadata)
-      self.db_session.commit()
-    except Exception as e:
-      # TODO log e
-      return 'An error occured while sending the compensation. If this happens repeatedly, please contact Jonathan at jz7@cs.princeton.edu'
+  #     # store sender_batch_id
+  #     twitter_user_metadata.paypal_sender_batch_id = sender_batch_id
+  #     self.db_session.add(twitter_user_metadata)
+  #     self.db_session.commit()
+  #   except Exception as e:
+  #     # TODO log e
+  #     return 'An error occured while sending the compensation. If this happens repeatedly, please contact Jonathan at jz7@cs.princeton.edu'
 
-  def has_sent_payout(self, user):
-    twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
-    if twitter_user_metadata is not None:
-      return twitter_user_metadata.paypal_sender_batch_id is not None
-    else:
-      return False
+  # def has_sent_payout(self, user):
+  #   twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
+  #   if twitter_user_metadata is not None:
+  #     return twitter_user_metadata.paypal_sender_batch_id is not None
+  #   else:
+  #     return False
 
   def is_eligible(self, user):
     twitter_user_eligibility = self.db_session.query(TwitterUserEligibility).filter_by(id=user['id']).first()
