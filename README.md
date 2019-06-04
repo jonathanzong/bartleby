@@ -25,6 +25,8 @@ In `config` directory, create file named `<env>.json`, e.g. `development.json`
 }
 ```
 
+In project root directory, create `alembic.ini`
+
 ## running migrations
 ```
 export CS_ENV=all
