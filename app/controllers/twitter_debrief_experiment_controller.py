@@ -43,7 +43,7 @@ class TwitterDebriefExperimentController:
     experiment_file_path = os.path.join(BASE_DIR, "config", "experiments", experiment_name) + ".yml"
     with open(experiment_file_path, 'r') as f:
       try:
-        experiment_config_all = yaml.load(f)
+        experiment_config_all = yaml.load(f, Loader=yaml.FullLoader)
       except yaml.YAMLError as exc:
         print("{0}: Failure loading experiment yaml {1}".format(
           self.__class__.__name__, experiment_file_path), str(exc))
