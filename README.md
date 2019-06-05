@@ -41,6 +41,8 @@ access_token = ''
 access_token_secret = ''
 ```
 
+Make folder `debrief_data` in `config/experiments` containing the debrief data json files
+
 ## running migrations
 ```
 export CS_ENV=all
