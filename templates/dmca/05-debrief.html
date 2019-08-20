@@ -27,12 +27,12 @@
         <p>
           <ul>
             <li>On {{ user.notice_date }}, <a href="https://www.lumendatabase.org/notices/{{ user.lumen_notice }}">record</a> of a copyright takedown notice was posted publicly to <a href="https://www.lumendatabase.org/">lumendatabase.org</a>.</li>
-            <li>We counted the number of tweets you sent per day from [date] to [date].</li>
+            <li>We counted the number of tweets you sent per day from {{ user.start_date }} to {{ user.end_date }}.</li>
           </ul>
         </p>
 
         <p>
-          Here is the information we have collected about your Twitter behavior. If you want to learn more about the statistics we are using, you can read our analysis plan online [link]. When the study is complete, we plan to publish an anonymized dataset that will make no reference to your Twitter ID and will exclude any information about specific dates or the contents of your tweets so that it cannot be traced back to you. By publishing the data, we can ensure that other researchers can check our conclusions. That dataset will include only the following information and no more:
+          Here is the information we have collected about your Twitter behavior. When the study is complete, we plan to publish an anonymized dataset that will make no reference to your Twitter ID and will exclude any information about specific dates or the contents of your tweets so that it cannot be traced back to you. By publishing the data, we can ensure that other researchers can check our conclusions. That dataset will include only the following information and no more:
         </p>
 
         <p>
@@ -44,7 +44,7 @@
         </p>
 
         <p>
-          Here is what we collected about your public Twitter behavior from [date] to [date]. When we publish our results, we plan to publish anonymized counts of tweeting frequency using methods that make it difficult to re-identify individuals.
+          Here is what we collected about your public Twitter behavior from {{ user.start_date }} to {{ user.end_date }}. When we publish our results, we plan to publish anonymized counts of tweeting frequency using methods that make it difficult to re-identify individuals.
         </p>
 
         <p>
@@ -98,14 +98,6 @@
             </div>
             <div class="col-sm-6">
               {{ user.num_tweets_after_notice }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-6">
-              When was the last day we observed your account?
-            </div>
-            <div class="col-sm-6">
-              {{ user.last_observation_date }}
             </div>
           </div>
         </div>

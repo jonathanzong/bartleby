@@ -168,6 +168,15 @@ def oauth_authorized():
 
     study_data = sce.get_user_study_data(user)
     if study_data is not None:
+      study_data["created_at"] = datetime.datetime.strptime(study_data["created_at"], "%Y-%m-%d %H:%M:%S")
+      study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
+      study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
+      study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
+      study_data["created_at"] = study_data["created_at"].strftime("%B %-d, %Y")
+      study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
+      study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
+      study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
+      print(study_data)
       session['user'].update(study_data)
 
     # create user if not exists

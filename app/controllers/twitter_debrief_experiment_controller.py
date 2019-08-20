@@ -263,8 +263,9 @@ class TwitterDebriefExperimentController:
     auth.set_access_token(twitter_sender_api_keys.access_token, twitter_sender_api_keys.access_token_secret)
     api = tweepy.API(auth)
 
-    # TODO add the link!
-    tweet_body = "Have your tweets ever been taken down for copyright reasons? Our team at MIT are studying ways to help people whose content is removed, and your data may be included. Click here to learn more & manage privacy"
+    # TODO
+    debriefing_url = "https://debrief.media.mit.edu/"
+    tweet_body = "As someone tweeting from January 9, 2019 to March 8, 2019 you may have been part of an MIT study to study copyright policies on Twitter. Learn more & manage privacy 👇"
 
     on_time = datetime.time(9,30)
     off_time = datetime.time(21,30)
@@ -323,7 +324,7 @@ class TwitterDebriefExperimentController:
           should_tweet = False
 
       if should_tweet:
-        send_text = '@' + user_object.screen_name + ' ' + tweet_body + ' http://debrief.cs.princeton.edu/?u=' + u_id
+        send_text = '@' + user_object.screen_name + ' ' + tweet_body + ' ' + debriefing_url + '?u=' + u_id
         if amount_dollars:
           send_text += '&c=' + str(amount_dollars)
         if study_template is not None:
