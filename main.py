@@ -1,4 +1,5 @@
 import twitter_api_keys
+import pybrake_key
 import tweepy
 import json
 import os
@@ -10,10 +11,18 @@ from utils.common import DbEngine
 from app.models import *
 from app.forms import *
 
+import pybrake.flask
+
 from app.controllers.twitter_debrief_experiment_controller import *
 
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
+app.config['PYBRAKE'] = dict(
+    host='https://dmca-debrief-errbit.herokuapp.com',
+    project_id=1212,
+    project_key=pybrake_key.PYBRAKE_KEY,
+)
+app = pybrake.flask.init_app(app)
 
 consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
 consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
