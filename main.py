@@ -173,6 +173,8 @@ def oauth_authorized():
 
     study_data = sce.get_user_study_data(user)
     if study_data is not None:
+      study_data["account_created_at"] = study_data["created_at"]
+      del study_data["created_at"]
       study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
       study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
       study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
