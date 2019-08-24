@@ -71,9 +71,7 @@ def debrief():
   # handle form submission (ajax call)
   form = SurveyForm()
   if request.data:
-    print('request.data')
     results_dict = json.loads(request.data)
-    print(results_dict)
     results_dict['twitter_user_id'] = user['id']
 
     if 'opt_out' in results_dict and results_dict['opt_out']:
@@ -86,9 +84,7 @@ def debrief():
     sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
   # handle form submission (submit button)
   if form.validate_on_submit():
-    print('val on submit')
     results_dict = request.form.to_dict()
-    print(results_dict)
     del results_dict['csrf_token']
     results_dict['twitter_user_id'] = user['id']
 
@@ -185,7 +181,6 @@ def oauth_authorized():
       study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
       study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
       study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
-      print(study_data)
       session['user'].update(study_data)
 
     # create user if not exists
