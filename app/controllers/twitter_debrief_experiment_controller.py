@@ -294,6 +294,7 @@ class TwitterDebriefExperimentController:
         if not is_test:
           sleep(10)
         user_object = api.get_user(user_id=u_id)
+        print(user_object)
       except tweepy.TweepError as e:
         attempt.error_message=e.reason
         self.db_session.add(attempt)
@@ -305,7 +306,6 @@ class TwitterDebriefExperimentController:
       attempt.lang = user_object.lang
 
       if user_object.lang != 'en':
-        print(user_object.lang)
         should_tweet = False
 
       try:
