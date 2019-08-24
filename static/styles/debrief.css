@@ -48,14 +48,6 @@
   background: #f7f7f7;
 }
 
-.debrief-interface .confirm-checkbox {
-  display: inline-block;
-  color: #777;
-  font-size: 0.8em;
-  margin-left: 23px;
-  display: none;
-}
-
 .debrief-interface ul li {
   list-style-type: circle;
   margin-left: 1em;

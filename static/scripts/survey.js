@@ -8,6 +8,9 @@ function populateFromLocalstorage() {
     switch(inputs[i].type) {
       case 'checkbox':
         inputs[i].checked = val == 'true';
+        if (inputs[i].name === 'opt_out') {
+          document.querySelector(".opt-out-checkbox").style.background = inputs[i].checked ? "#ffeeee" : "#f7f7f7";
+        }
         break;
       case 'radio':
       default:
@@ -35,10 +38,7 @@ function onChange (evt) {
       localStorage.setItem(this.name, this.checked);
       submit(this.name, this.checked);
       if (this.name === 'opt_out') {
-        document.querySelector(".confirm-checkbox").style.display = "block";
-        setTimeout(function() {
-          document.querySelector(".confirm-checkbox").style.display = "none";
-        }, 5000);
+        document.querySelector(".opt-out-checkbox").style.background = this.checked ? "#ffcccc" : "#f7f7f7";
       }
       break;
     case 'radio':
