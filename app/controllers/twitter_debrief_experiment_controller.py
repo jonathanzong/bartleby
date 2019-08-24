@@ -74,6 +74,7 @@ class TwitterDebriefExperimentController:
         settings_json = json.dumps(experiment_config).encode('utf-8')
       )
       self.db_session.add(experiment)
+      self.db_session.commit()
 
       ## LOAD eligible twitter user ids
       ## loads from the "user_data_dir" specified in config/experiments/name_of_experiment.yml
