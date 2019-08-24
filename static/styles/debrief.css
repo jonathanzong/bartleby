@@ -32,11 +32,11 @@
 }
 
 .debrief-interface .data-table .row:nth-child(odd) {
-  background-color: white;
+  background-color: #f7f7f7;
 }
 
 .debrief-interface .data-table .row:nth-child(even) {
-  background-color: #f7f7f7;
+  background-color: white;
 }
 
 .debrief-interface .data-table .col-sm-3 {
@@ -46,6 +46,14 @@
 .debrief-interface .opt-out-checkbox {
   padding: 15px;
   background: #f7f7f7;
+}
+
+.debrief-interface .confirm-checkbox {
+  display: inline-block;
+  color: #777;
+  font-size: 0.8em;
+  margin-left: 23px;
+  display: none;
 }
 
 .debrief-interface ul li {

@@ -3,7 +3,7 @@ form ul {
   /*font-size: 12px;*/
 }
 
-form ul li {
+form .form-row ul li {
   list-style-type: none !important;
   margin-left: 0 !important;
 }

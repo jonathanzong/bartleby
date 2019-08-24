@@ -34,6 +34,12 @@ function onChange (evt) {
     case 'checkbox':
       localStorage.setItem(this.name, this.checked);
       submit(this.name, this.checked);
+      if (this.name === 'opt_out') {
+        document.querySelector(".confirm-checkbox").style.display = "block";
+        setTimeout(function() {
+          document.querySelector(".confirm-checkbox").style.display = "none";
+        }, 5000);
+      }
       break;
     case 'radio':
     default:
