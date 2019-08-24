@@ -305,6 +305,7 @@ class TwitterDebriefExperimentController:
       attempt.lang = user_object.lang
 
       if user_object.lang != 'en':
+        print(user_object.lang)
         should_tweet = False
 
       try:
@@ -317,11 +318,11 @@ class TwitterDebriefExperimentController:
         self.db_session.commit()
         continue
 
-      if len(user_statuses) > 0:
-        attempt.last_tweeted_at = user_statuses[0].created_at
-        last_tweet_days = (datetime.datetime.now() - user_statuses[0].created_at).days
-        if last_tweet_days > 7:
-          should_tweet = False
+      # if len(user_statuses) > 0:
+      #   attempt.last_tweeted_at = user_statuses[0].created_at
+      #   last_tweet_days = (datetime.datetime.now() - user_statuses[0].created_at).days
+      #   if last_tweet_days > 7:
+      #     should_tweet = False
 
       if should_tweet:
         send_text = '@' + user_object.screen_name + ' ' + tweet_body + ' ' + debriefing_url + '?u=' + u_id
