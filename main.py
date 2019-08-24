@@ -103,7 +103,7 @@ def debrief():
 
 @app.route('/ineligible')
 def ineligible():
-  if not is_logged_in():
+  if not 'user' in session:
     return redirect(url_for('index'))
   user = session['user']
 
