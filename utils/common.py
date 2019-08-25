@@ -30,7 +30,7 @@ class DbEngine:
             host = DBCONFIG['host'],
             user = DBCONFIG['user'],
             password = DBCONFIG['password'],
-            database = DBCONFIG['database']), pool_recycle=3600, connect_args=connect_args)
+            database = DBCONFIG['database']), pool_pre_ping=True, connect_args=connect_args)
 
         Base.metadata.bind = db_engine
         DBSession = sessionmaker(bind=db_engine)
