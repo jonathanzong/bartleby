@@ -48,10 +48,13 @@ sce = TwitterDebriefExperimentController(
 def is_logged_in():
   return 'user' in session and sce.user_exists(session['user'])
 
-@app.route('/')
-def index():
+@app.route('/', defaults={'study_id': None})
+@app.route('/<study_id>')
+def index(study_id):
+  session['study_id'] = study_id
   if is_logged_in():
-    return redirect(url_for('debrief'))
+    return redirect(url_for_study('debrief'))
+
   amount_dollars = int(request.args.get('c')) if request.args.get('c') else 0
 
   sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
@@ -60,10 +63,12 @@ def index():
   extra_data = json.loads(request.args.get('x')) if request.args.get('x') else None
   return render_template(study_template + '/index.html', amount_dollars=amount_dollars, extra_data=extra_data)
 
-@app.route('/debrief', methods=('GET', 'POST'))
-def debrief():
+@app.route('/debrief', methods=('GET', 'POST'), defaults={'study_id': None})
+@app.route('/debrief/<study_id>', methods=('GET', 'POST'))
+def debrief(study_id):
+  session['study_id'] = study_id
   if not is_logged_in():
-    return redirect(url_for('index'))
+    return redirect(url_for_study('index'))
   user = session['user']
 
   if not sce.is_eligible(user):
@@ -100,18 +105,17 @@ def debrief():
 
     sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
 
-    # return redirect(url_for('complete'))
   study_template = sce.get_user_study_template(user)
   return render_template(study_template + '/debrief.html', user=user, form=form)
 
 @app.route('/ineligible')
 def ineligible():
   if not 'user' in session:
-    return redirect(url_for('index'))
+    return redirect(url_for_study('index'))
   user = session['user']
 
   if sce.is_eligible(user):
-    return redirect(url_for('debrief'))
+    return redirect(url_for_study('debrief'))
 
   sce.record_user_action(user, 'page_view', {'page': 'ineligible', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
@@ -120,12 +124,12 @@ def ineligible():
 @app.route('/login/<platform>')
 def login(platform):
   if is_logged_in():
-    return redirect(url_for('debrief'))
+    return redirect(url_for_study('debrief'))
 
   sce.record_user_action(None, 'login_attempt', None)
 
   if platform == 'reddit':
-    redirect_uri = url_for('oauth_authorized_reddit', _external=True)
+    redirect_uri = url_for('oauth_authorized', platform='reddit', _external=True)
     reddit = praw.Reddit(client_id=reddit_api_keys.REDDIT_CLIENT_ID,
                        client_secret=reddit_api_keys.REDDIT_CLIENT_SECRET,
                        redirect_uri=redirect_uri,
@@ -137,12 +141,12 @@ def login(platform):
     auth_url = reddit.auth.url(['identity'], state_string, 'permanent')
     return redirect(auth_url)
   elif platform == 'twitter':
-    callback_url = url_for('oauth_authorized', _external=True)
+    callback_url = url_for('oauth_authorized', platform='twitter', _external=True)
     auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
     try:
-      redirect_url = auth.get_authorization_url()
+      auth_url = auth.get_authorization_url()
       session['request_token'] = auth.request_token
-      return redirect(redirect_url)
+      return redirect(auth_url)
     except tweepy.TweepError:
       return 'Error! Failed to get request token.'
 
@@ -152,10 +156,43 @@ def logout():
     user = session['user']
     sce.record_user_action(user, 'logout', None)
     del session['user']
-  return redirect(url_for('index'))
+  return redirect(url_for_study('index'))
 
-@app.route('/oauth_authorized')
-def oauth_authorized():
+@app.route('/oauth_authorized', defaults={'platform': 'twitter'})
+@app.route('/oauth_authorized/<platform>')
+def oauth_authorized(platform):
+  if platform == 'reddit':
+    user = authorize_reddit_user()
+  elif platform == 'twitter':
+    user = authorize_twitter_user()
+  if user is None:
+    return redirect(url_for_study('index'))
+
+  if not sce.is_eligible(user):
+    return redirect(url_for('ineligible'))
+
+  study_data = sce.get_user_study_data(user)
+  if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
+    study_data["account_created_at"] = study_data["created_at"]
+    del study_data["created_at"]
+    study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
+    study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
+    study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
+    study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
+    study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
+    study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
+    study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
+    study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
+    session['user'].update(study_data)
+
+  # create user if not exists
+  sce.create_user_if_not_exists(user)
+
+  sce.record_user_action(user, 'login_success', None)
+
+  return redirect(url_for_study('debrief'))
+
+def authorize_twitter_user():
   verifier = request.args.get('oauth_verifier')
 
   auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -183,53 +220,26 @@ def oauth_authorized():
       'account_age': account_age
     }
     user = session['user']
-
-    if not sce.is_eligible(user):
-      return redirect(url_for('ineligible'))
-
-    study_data = sce.get_user_study_data(user)
-    if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
-      study_data["account_created_at"] = study_data["created_at"]
-      del study_data["created_at"]
-      study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
-      study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
-      study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
-      study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
-      study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
-      study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
-      study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
-      study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
-      session['user'].update(study_data)
-
-    # create user if not exists
-    sce.create_user_if_not_exists(user)
-
-    sce.record_user_action(user, 'login_success', None)
-
-    return redirect(url_for('debrief'))
+    return user
   except tweepy.TweepError:
     # return 'Error! Failed to get access token.'
-    return redirect(url_for('index'))
+    return None
 
-@app.route('/oauth_authorized_reddit')
-def oauth_authorized_reddit():
-  print(session)
+def authorize_reddit_user():
   if 'state_string' not in session:
-    return redirect(url_for('index'))
+    return None
 
   error = request.args.get('error')
-  print(error)
   if error == 'access_denied':
-    return redirect(url_for('index'))
+    return None
 
   state = request.args.get('state')
-  print(state)
   sent_state = session['state_string']
   del session['state_string']
   if not sent_state == state:
-    return redirect(url_for('index'))
+    return None
 
-  redirect_uri = url_for('oauth_authorized_reddit', _external=True)
+  redirect_uri = url_for('oauth_authorized', platform='reddit', _external=True)
   reddit = praw.Reddit(client_id=reddit_api_keys.REDDIT_CLIENT_ID,
                      client_secret=reddit_api_keys.REDDIT_CLIENT_SECRET,
                      redirect_uri=redirect_uri,
@@ -251,34 +261,12 @@ def oauth_authorized_reddit():
     'account_age': account_age
   }
   user = session['user']
-
-  print(user)
-
-  if not sce.is_eligible(user):
-    return redirect(url_for('ineligible'))
-
-  study_data = sce.get_user_study_data(user)
-  if study_data is not None:
-    pass
-    # study_data["account_created_at"] = study_data["created_at"]
-#     del study_data["created_at"]
-#     study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
-#     study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
-#     study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
-#     study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
-#     study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
-#     study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
-#     study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
-#     study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
-#     session['user'].update(study_data)
-
-  # create user if not exists
-  sce.create_user_if_not_exists(user)
-
-  sce.record_user_action(user, 'login_success', None)
-
-  return redirect(url_for('debrief'))
+  return user
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return redirect(url_for('index'))
+    return redirect(url_for_study('index'))
+
+def url_for_study(route):
+  study_id = session['study_id'] if 'study_id' in session else None
+  return url_for(route, study_id=study_id)
