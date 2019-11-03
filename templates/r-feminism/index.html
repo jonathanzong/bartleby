@@ -1,0 +1,63 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/index.css') }}">
+{% endblock %}
+{% block content %}
+
+<div class="content-wrap">
+
+<div class="header-wrap">
+  <p class="logos" style="margin: 0; margin-top: 10px;">
+    <a href="https://www.princeton.edu/"><img height="35" src="{{ url_for('static', filename='images/princeton-logo.png') }}" alt="Princeton University"></a>
+  </p>
+  <h1 style="line-height: 1.2">Princeton University Study on Promoting Inclusion and Participation in r/feminism</h1>
+<!--
+  <p style="font-size: 0.8em; margin-top: 0.5em; margin-bottom: 1em">
+    <a href="https://twitter.com/natematias">J. Nathan Matias</a>, <a href="https://www.dal.ca/faculty/law/faculty-staff/our-faculty/jon-penney.html">Jonathon Penney</a>, and <a href="https://twitter.com/ohnobackspace">Jonathan Zong</a>, in collaboration with <a href="http://civilservant.io/">CivilServant</a>, with Ethan Zuckerman as Principal Investigator.
+  </p> -->
+
+</div>
+
+<div class="scroll-wrap">
+  <div>
+
+    <p>
+      Thousands of people receive copyright takedown notices every week on Twitter. Whether or not the content violates copyright law, these notices might have side-effects– a "chilling effect" of reducing a person's perfectly-legal use of their voice online.
+    </p>
+    <p>
+      From January 9, 2019 to March 8, 2019, our team of researchers at MIT and Dalhousie University looked for evidence of a chilling effect from copyright notices on the behavior of Twitter users.
+    </p>
+    <p>
+      This research was conducted by researchers at MIT and the CivilServant project, which works toward a fairer, safer, more understanding internet, working together with the general public on research. This study is based on years of conversations with people affected by copyright law by Dr. Jon Penney, as well as early data analysis that pointed to a possible chilling effect on Twitter.
+    </p>
+    <p>
+      Because we could not predict whose content would be taken down, we could not ask for permission in advance. Yet we also want to respect the wishes and needs of everyone affected by the study.
+    </p>
+    <p>
+      <strong>If you believe you may have been part of this research study, please click the following button to confirm your account, see the data we collected from your account, opt out if you wish, and notify us of any adverse outcomes from participation.</strong>
+    </p>
+    <p>
+     If you do not check in and you were part of the study, we will keep data on your tweets per day in our research analysis. Because we respect your privacy, you are the only person who will be able to view your data. Before we show you this information, we need you to confirm your Twitter account by clicking the button.
+    </p>
+
+    <p>
+      If you have previously accessed this site and wish to change your decision, you may log in any time until December 31, 2019, when this study concludes.
+    </p>
+
+  </div>
+</div>
+
+  <div class="cta-wrap">
+    <div class="btn-twitter-wrap">
+      <a href="{{ url_for('login') }}">
+        <div class="btn-twitter">
+          <img src="{{ url_for('static', filename='images/twitter.png') }}" />
+          Sign in with Twitter
+        </div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+{% endblock %}

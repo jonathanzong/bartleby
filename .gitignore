@@ -1,5 +1,6 @@
 .DS_Store
 twitter_api_keys.py
+reddit_api_keys.py
 paypal_api_keys.py
 twitter_sender_api_keys.py
 pybrake_key.py

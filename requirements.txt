@@ -11,3 +11,4 @@ pyyaml
 paypalrestsdk
 pybrake
 blinker
+praw
