@@ -117,40 +117,34 @@ def ineligible():
 
   return render_template('ineligible.html')
 
-@app.route('/login')
-def login():
+@app.route('/login/<platform>')
+def login(platform):
   if is_logged_in():
     return redirect(url_for('debrief'))
 
   sce.record_user_action(None, 'login_attempt', None)
 
-  callback_url = url_for('oauth_authorized', _external=True)
-  auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
-  try:
-    redirect_url = auth.get_authorization_url()
-    session['request_token'] = auth.request_token
-    return redirect(redirect_url)
-  except tweepy.TweepError:
-    return 'Error! Failed to get request token.'
+  if platform == 'reddit':
+    redirect_uri = url_for('oauth_authorized_reddit', _external=True)
+    reddit = praw.Reddit(client_id=reddit_api_keys.REDDIT_CLIENT_ID,
+                       client_secret=reddit_api_keys.REDDIT_CLIENT_SECRET,
+                       redirect_uri=redirect_uri,
+                       user_agent='debriefing.media.mit.edu')
 
-@app.route('/login_reddit')
-def login_reddit():
-  if is_logged_in():
-    return redirect(url_for('debrief'))
+    state_string = str(uuid.uuid4())
+    session['state_string'] = state_string
 
-  sce.record_user_action(None, 'login_attempt', None)
-
-  redirect_uri = url_for('oauth_authorized_reddit', _external=True)
-  reddit = praw.Reddit(client_id=reddit_api_keys.REDDIT_CLIENT_ID,
-                     client_secret=reddit_api_keys.REDDIT_CLIENT_SECRET,
-                     redirect_uri=redirect_uri,
-                     user_agent='debriefing.media.mit.edu')
-
-  state_string = str(uuid.uuid4())
-  session['state_string'] = state_string
-
-  auth_url = reddit.auth.url(['identity'], state_string, 'permanent')
-  return redirect(auth_url)
+    auth_url = reddit.auth.url(['identity'], state_string, 'permanent')
+    return redirect(auth_url)
+  elif platform == 'twitter':
+    callback_url = url_for('oauth_authorized', _external=True)
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
+    try:
+      redirect_url = auth.get_authorization_url()
+      session['request_token'] = auth.request_token
+      return redirect(redirect_url)
+    except tweepy.TweepError:
+      return 'Error! Failed to get request token.'
 
 @app.route('/logout')
 def logout():
