@@ -36,7 +36,7 @@ def teardown_function(function):
 
 def test_experiment_initialization():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -52,7 +52,7 @@ def test_experiment_initialization():
 
 def test_user_exists():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -75,7 +75,7 @@ def test_user_exists():
 
 def test_create_user_if_not_exists():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -97,7 +97,7 @@ def test_create_user_if_not_exists():
 
 def test_insert_or_update_survey_result():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -128,7 +128,7 @@ def test_insert_or_update_survey_result():
 
 def test_assign_randomization():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -210,7 +210,7 @@ def test_assign_randomization():
 
 def test_get_user_conditions():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -231,7 +231,7 @@ def test_get_user_conditions():
 
 def test_mark_user_completed():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -273,7 +273,7 @@ def test_mark_user_completed():
 @patch('paypalrestsdk.Payout', autospec=True)
 def test_send_paypal_payout(mock_paypal_api):
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -340,7 +340,7 @@ def test_send_paypal_payout(mock_paypal_api):
 
 def test_is_eligible():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -358,7 +358,7 @@ def test_is_eligible():
 
 def test_get_user_compensation_amount():
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )
@@ -376,7 +376,7 @@ def test_get_user_compensation_amount():
 @patch('tweepy.API', autospec=True)
 def test_send_recruitment_tweets(mock_twitter_api):
     sce = TwitterDebriefExperimentController(
-        experiment_name='twitter_dmca_debrief_experiment',
+        study_id='twitter_dmca_debrief_experiment',
         db_session=db_session,
         required_keys=['name', 'randomizations', 'eligible_ids']
       )

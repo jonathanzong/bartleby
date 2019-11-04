@@ -25,7 +25,7 @@ app.config['PYBRAKE'] = dict(
     project_id=1212,
     project_key=pybrake_key.PYBRAKE_KEY,
 )
-app = pybrake.flask.init_app(app)
+# app = pybrake.flask.init_app(app)
 
 consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
 consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
@@ -39,11 +39,13 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 DEFAULT_STUDY = 'dmca'  # set default template for direct link to homepage here
 
 sce = TwitterDebriefExperimentController(
-    experiment_name='twitter_dmca_debrief_experiment',
+    study_id='twitter_dmca_debrief_experiment',
     default_study=DEFAULT_STUDY,
     db_session=db_session,
     required_keys=['name', 'user_data_dir']
   )
+
+R_FEMINISM_STUDY_ID = '77ef689a7e9b-r-feminism'
 
 def is_logged_in():
   return 'user' in session and sce.user_exists(session['user'])
@@ -60,6 +62,8 @@ def index(study_id):
   sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   study_template = request.args.get('t') if request.args.get('t') else DEFAULT_STUDY
+  if study_id == R_FEMINISM_STUDY_ID: # TODO
+    study_template = 'r-feminism'
   extra_data = json.loads(request.args.get('x')) if request.args.get('x') else None
   return render_template(study_template + '/index.html', amount_dollars=amount_dollars, extra_data=extra_data)
 
@@ -106,7 +110,9 @@ def debrief(study_id):
     sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
 
   study_template = sce.get_user_study_template(user)
-  return render_template(study_template + '/debrief.html', user=user, form=form)
+  if study_id == R_FEMINISM_STUDY_ID: # TODO
+    study_template = 'r-feminism'
+  return render_template(study_template + '/debrief.html', user=user, form=form, url_for_study=url_for_study)
 
 @app.route('/ineligible')
 def ineligible():
@@ -261,6 +267,7 @@ def authorize_reddit_user():
     'account_age': account_age
   }
   user = session['user']
+  print(user)
   return user
 
 @app.errorhandler(404)

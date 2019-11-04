@@ -9,7 +9,7 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 DEFAULT_STUDY = 'dmca'  # set default template for direct link to homepage here
 
 sce = TwitterDebriefExperimentController(
-    experiment_name='twitter_dmca_debrief_experiment',
+    study_id='twitter_dmca_debrief_experiment',
     default_study=DEFAULT_STUDY,
     db_session=db_session,
     required_keys=['name', 'user_data_dir']

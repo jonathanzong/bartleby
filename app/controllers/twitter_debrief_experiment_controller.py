@@ -32,15 +32,15 @@ ENV = os.environ['CS_ENV']
 #   'client_secret': paypal_api_keys.PAYPAL_CLIENT_SECRET })
 
 class TwitterDebriefExperimentController:
-  def __init__(self, experiment_name, default_study, db_session, required_keys):
+  def __init__(self, study_id, default_study, db_session, required_keys):
     self.db_session = db_session
 
     self.DEFAULT_STUDY = default_study
 
-    self.load_experiment_config(required_keys, experiment_name)
+    self.load_experiment_config(required_keys, study_id)
 
-  def get_experiment_config(self, required_keys, experiment_name):
-    experiment_file_path = os.path.join(BASE_DIR, "config", "experiments", experiment_name) + ".yml"
+  def get_experiment_config(self, required_keys, study_id):
+    experiment_file_path = os.path.join(BASE_DIR, "config", "experiments", study_id) + ".yml"
     with open(experiment_file_path, 'r') as f:
       try:
         experiment_config_all = yaml.load(f, Loader=yaml.FullLoader)
@@ -61,15 +61,15 @@ class TwitterDebriefExperimentController:
         sys.exit(1)
     return experiment_config
 
-  def load_experiment_config(self, required_keys, experiment_name):
-    experiment_config = self.get_experiment_config(required_keys, experiment_name)
-    experiment = self.db_session.query(Experiment).filter_by(name=experiment_name).first()
+  def load_experiment_config(self, required_keys, study_id):
+    experiment_config = self.get_experiment_config(required_keys, study_id)
+    experiment = self.db_session.query(Experiment).filter_by(name=study_id).first()
 
     if experiment is None:
       condition_keys = []
 
       experiment = Experiment(
-        name = experiment_name,
+        name = study_id,
         controller = self.__class__.__name__,
         settings_json = json.dumps(experiment_config).encode('utf-8')
       )
@@ -95,7 +95,7 @@ class TwitterDebriefExperimentController:
     self.experiment_settings = json.loads(self.experiment.settings_json)
 
 
-    self.experiment_name = experiment_name
+    self.study_id = study_id
 
 
   def row_as_dict(self, obj):
@@ -113,7 +113,7 @@ class TwitterDebriefExperimentController:
       twitter_user = TwitterUser(id=user['id'],
                                  screen_name=user['screen_name'],
                                  created_at=user['created_at'],
-                                 lang=user['lang'])
+                                 lang=user['lang'] if 'lang' in user else None)
       self.db_session.add(twitter_user)
     maybe_twitter_user_metadata = self.db_session.query(TwitterUserMetadata).filter_by(twitter_user_id=user['id']).first()
     if maybe_twitter_user_metadata is None:
