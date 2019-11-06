@@ -173,23 +173,27 @@ def oauth_authorized(platform):
     user = authorize_twitter_user()
   if user is None:
     return redirect(url_for_study('index'))
-
   if not sce.is_eligible(user):
     return redirect(url_for('ineligible'))
 
   study_data = sce.get_user_study_data(user)
   if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
-    study_data["account_created_at"] = study_data["created_at"]
-    del study_data["created_at"]
-    study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
-    study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
-    study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
-    study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
-    study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
-    study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
-    study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
-    study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
+    if platform == 'reddit':
+      pass
+    elif platform == 'twitter':
+      study_data["account_created_at"] = study_data["created_at"]
+      del study_data["created_at"]
+      study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
+      study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
+      study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
+      study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
+      study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
+      study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
+      study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
+      study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
+    old_user = session['user'].copy()
     session['user'].update(study_data)
+    session['user'].update(old_user) # don't let study_data columns overwrite user properties
 
   # create user if not exists
   sce.create_user_if_not_exists(user)
@@ -261,13 +265,12 @@ def authorize_reddit_user():
   account_age = today.year - created.year - ((today.month, today.day) < (created.month, created.day))
 
   session['user'] = {
-    'id': user.id,
+    'id': user.name.casefold(), # reddit usernames cannot be changed. use username normalized to lowercase as id
     'screen_name': user.name,
     'created_at': created.isoformat(),
     'account_age': account_age
   }
   user = session['user']
-  print(user)
   return user
 
 @app.errorhandler(404)

@@ -50,52 +50,54 @@
         <div class="data-table">
           <div class="row">
             <div class="col-sm-6">
-              What is Twitter’s ID number for your account?
+              What is the reddit username you used to comment in r/feminism?
             </div>
             <div class="col-sm-6">
-              {{ user.user_id }}
+              {{ user.screen_name }}
             </div>
           </div>
           <div class="row">
             <div class="col-sm-6">
-              When was your account created?
+              When did you first comment in r/feminism?
             </div>
             <div class="col-sm-6">
-              {{ user.account_created_at }}
+              {{ user.timestamp }}
             </div>
           </div>
           <div class="row">
             <div class="col-sm-6">
-              When was the DMCA notice filed?
+              How many comments did you make on r/feminism in the two weeks after your first comment?
             </div>
             <div class="col-sm-6">
-              {{ user.notice_date }}
+              {{ user.comments_2_weeks }}
             </div>
           </div>
           <div class="row">
             <div class="col-sm-6">
-              What is the ID of the Lumen entry for the notice?
+              For how many days was your account banned on r/feminism in the two weeks after your first comment?
             </div>
             <div class="col-sm-6">
-              {{ user.lumen_notice }}
+              {{ user.ban_days_2_weeks }}
             </div>
           </div>
-          <div class="row">
-            <div class="col-sm-6">
-              How many tweets did you send in the 23 days before receiving the takedown notice?
+          {% if user.completed_survey == 'True' %}
+            <div class="row">
+              <div class="col-sm-6">
+                Did you identify as a feminist at the time you made your first comment in r/feminism?
+              </div>
+              <div class="col-sm-6">
+                {{ user.identify_feminist }}
+              </div>
             </div>
-            <div class="col-sm-6">
-              {{ user.num_tweets_before_notice }}
+            <div class="row">
+              <div class="col-sm-6">
+                In this image, imagine that the circle on the left represents you and the circle on the right represents r/feminism. Select which number, corresponding to the images above, best describes your relationship with r/feminism.
+              </div>
+              <div class="col-sm-6">
+                {{ user.community_closeness }}
+              </div>
             </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-6">
-              How many tweets did you send in the 23 days after receiving the takedown notice?
-            </div>
-            <div class="col-sm-6">
-              {{ user.num_tweets_after_notice }}
-            </div>
-          </div>
+          {% endif %}
         </div>
 
         <h5>Choosing To Opt Out Of This Study</h5>
