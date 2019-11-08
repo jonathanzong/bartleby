@@ -14,33 +14,30 @@
     {{ form.csrf_token }}
     <div class="debrief-interface">
       <div class="content">
-        <h3>Participation in MIT Study on the Chilling Effect from Online Copyright Takedown Notices</h3>
+        <h3>Participation in Princeton University Study on Promoting Inclusion and Participation in r/feminism</h3>
 
         <p>
           Hi {{ user.screen_name }},
         </p>
 
         <p>
-          Thank you for reading about our study and checking to see if your Twitter account was part of our research. We did find your account in our records, which indicate that you were part of the study:
+          Thank you for reading about our study and checking to see if your Reddit account was part of our research. We did find your account in our records, which indicate that you were part of the study:
         </p>
 
         <p>
           <ul>
-            <li>On {{ user.notice_date }}, <a href="https://www.lumendatabase.org/notices/{{ user.lumen_notice }}">record</a> of a copyright takedown notice was posted publicly to <a href="https://www.lumendatabase.org/">lumendatabase.org</a>.</li>
-            <li>We counted the number of tweets you sent per day from {{ user.start_date }} to {{ user.end_date }}.</li>
+            <li>On {{ user.assignment_datetime }}, after you commented for the first time on r/feminism, we included you in the study.</li>
+            <li>We sent you a survey link a few weeks later.</li>
+            <li>We counted the number of comments you made over eight weeks.</li>
           </ul>
         </p>
 
         <p>
-          In our study, we have collected and analyzed public information about how often people tweeted before and after receiving a copyright takedown request. We're interested to see if people tweet less on average after their tweets are taken down. We did this because we want to understand how people are impacted by receiving a copyright takedown notice. Do these notices have a chilling effect on people's free expression?
+          In our study, we collected and analyzed public information about how often people commented. We want to learn if people comment more if they receive a welcome message from the moderators. We also wanted to know if these messages increase newcomers’ sense of closeness to the community?
         </p>
 
         <p>
-          Since your Twitter account was mentioned in the Lumen database, information about how often you tweet is in our records. We respect people's rights to privacy and have created this website for you to review what we collected and manage your privacy.
-        </p>
-
-        <p>
-          Here is what we collected about your public Twitter behavior from {{ user.start_date }} to {{ user.end_date }}. When the study is complete, we plan to publish an anonymized dataset that will make no reference to your Twitter ID and will exclude any information about specific dates or the contents of your tweets so that it cannot be traced back to you. By publishing the data, we can ensure that other researchers can check our conclusions.
+          Here is what we collected about your public Reddit behavior for eight weeks starting on {{ user.assignment_datetime }}. When the study is complete, we plan to publish an anonymized dataset that will make no reference to your Reddit ID and will exclude any information about specific dates or the contents of your tweets so that it cannot be easily traced back to you. By publishing the data, we can ensure that other researchers can check our conclusions.
         </p>
 
         <p>
@@ -50,7 +47,7 @@
         <div class="data-table">
           <div class="row">
             <div class="col-sm-6">
-              What is the reddit username you used to comment in r/feminism?
+              What reddit username did you use to comment in r/feminism?
             </div>
             <div class="col-sm-6">
               {{ user.screen_name }}
@@ -58,26 +55,26 @@
           </div>
           <div class="row">
             <div class="col-sm-6">
-              When did you first comment in r/feminism?
+              When were you added to the study?
             </div>
             <div class="col-sm-6">
-              {{ user.timestamp }}
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-6">
-              How many comments did you make on r/feminism in the two weeks after your first comment?
-            </div>
-            <div class="col-sm-6">
-              {{ user.comments_2_weeks }}
+              {{ user.assignment_datetime }}
             </div>
           </div>
           <div class="row">
             <div class="col-sm-6">
-              For how many days was your account banned on r/feminism in the two weeks after your first comment?
+              How many comments did you make on r/feminism in the eight weeks after your first comment?
             </div>
             <div class="col-sm-6">
-              {{ user.ban_days_2_weeks }}
+              {{ user.comments_8_weeks }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              For how many days was your account banned on r/feminism in the eight weeks after your first comment?
+            </div>
+            <div class="col-sm-6">
+              {{ user.ban_days_8_weeks }}
             </div>
           </div>
           {% if user.completed_survey == 'True' %}
@@ -91,7 +88,9 @@
             </div>
             <div class="row">
               <div class="col-sm-6">
-                In this image, imagine that the circle on the left represents you and the circle on the right represents r/feminism. Select which number, corresponding to the images above, best describes your relationship with r/feminism.
+                In this image, imagine that the circle on the left represents you and the circle on the right represents r/feminism.<br/>
+                <img src="{{ url_for('static', filename='images/community_closeness.png') }}"/> <br/>
+                Which number, corresponding to the images above, best describes your relationship with r/feminism?
               </div>
               <div class="col-sm-6">
                 {{ user.community_closeness }}
@@ -103,7 +102,7 @@
         <h5>Choosing To Opt Out Of This Study</h5>
 
         <p>
-          By allowing us to include the above information in the study, you help us to be confident about the results. If many people choose to opt out, our results may end up skewed. For example, if everyone who was concerned about receiving copyright takedowns were to opt out of the study, we might conclude that everyone is just fine with receiving the takedown notices, and that they have no side effects.
+          By allowing us to include the above information in the study, you help us to be confident about the results. If many people choose to opt out, our results may end up skewed. For example, if everyone who does not feel close to the community were to opt out of the study, we might conclude that everyone feels close to the community.
         </p>
 
         <p>
@@ -114,22 +113,22 @@
           {{ form.opt_out }} {{ form.opt_out.label }}
         </p>
 
-        <p>Following your preference, we will not include your data in our analysis or in the public record. We are retaining the information here until Dec 31, 2019 so you can manage your privacy.</p>
+        <p>Following your preference, we will not include your data in our final analysis or in the public record. We are retaining the information here until Jan 31, 2020 so you can manage your privacy.</p>
 
         <h5>Learning The Study Results When They Are Ready</h5>
 
         <p>
-          By participating in this research, you contributing to public knowledge. Thank you! We know that you might be just as curious as us about the results. To hear the results when we have finished, please follow us on Twitter at <a href="https://twitter.com/civicmit">@CivicMIT</a> or check our website at <a href="https://civilservant.io/">civilservant.io</a>. The results of all our research contribute to public knowledge, and we are always glad when we can share them back with the people who participated.
+          By participating in this research, you are contributing to public knowledge. Thank you! We know that you might be just as curious as us about the results. To hear the results when we have finished, please check our website at <a href="https://civilservant.io/">civilservant.io</a>. The results of all our research contribute to public knowledge, and we are always glad when we can share them back with the people who participated.
         </p>
 
         <h5>Reporting Harms Caused By Participation in This Study</h5>
 
         <p>
-          We designed this study to minimize the risks to you, protecting your data and limiting our activity to a single informational tweet. However, if you believe that our tweet has caused you more substantial relational, financial, or other harms, please let us know. You may reach out to us directly by emailing <a href="mailto:jnmatias@mit.edu">jnmatias@mit.edu</a>, or by contacting the MIT ethics board below.
+          We designed this study to minimize the risks to you, protecting your data and limiting our activity to a single survey request. However, if you believe that our study has caused you more substantial relational, financial, or other harms, please let us know. You may reach out to us directly by contacting J. Nathan Matias (<a href="mailto:jmatias@princeton.edu">jmatias@princeton.edu</a>) (<a href="https://www.reddit.com/user/natematias">u/natematias</a> on Reddit), or by contacting the Princeton ethics board below. Nathan has recently joined Cornell University and can also be reached at <a href="mailto:nathan.matias@cornell.edu">nathan.matias@cornell.edu</a>.
         </p>
 
         <p>
-          If you feel you have been treated unfairly, or you have questions regarding your rights as a research subject, you may contact the Chairman of the Committee on the Use of Humans as Experimental Subjects, M.I.T., Room E25-143b, 77  Massachusetts Ave, Cambridge, MA 02139, phone 1-617-253-6787.
+          If you have questions about your rights as a research participant, or if problems arise which you do not feel you can discuss with us, please contact the Princeton University Institutional Review Board (IRB), Phone: (609) 258-8543, Email: irb@princeton.edu
         </p>
 
       </div>
@@ -140,8 +139,8 @@
           If you would like to help us improve the debriefing process, please take a few minutes to fill out this survey. We plan to use these responses to evaluate the debriefing interface. Please only respond if you are 18 or older.
         </p>
 
-        <div class="form-row {% if form.errors.collection_surprised %}has-error{% endif%}">
-          {{ form.collection_surprised.label }} {{ form.collection_surprised }}
+        <div class="form-row {% if form.errors.collection_surprised_reddit %}has-error{% endif%}">
+          {{ form.collection_surprised_reddit.label }} {{ form.collection_surprised_reddit }}
         </div>
 
         <div class="form-row {% if form.errors.glad_in_study %}has-error{% endif%}">

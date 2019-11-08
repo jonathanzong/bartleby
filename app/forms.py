@@ -9,6 +9,12 @@ class SurveyForm(FlaskForm):
                                              'I knew some data collection was possible, but not this much',
                                              'I expected something like this was possible',
                                              'I expected that even more of my data could be collected']])
+  collection_surprised_reddit = RadioField('How surprised are you that we are able to collect this information about your public Reddit behavior?',
+                                   [validators.Optional()],
+                                    choices=[(x, x) for x in ["I didn't know any of my Reddit information was public",
+                                             'I knew some data collection was possible, but not this much',
+                                             'I expected something like this was possible',
+                                             'I expected that even more of my data could be collected']])
   glad_in_study        = RadioField('Which of the following best describes how you feel about being included in the study?',
                                    [validators.Optional()],
                                     choices=[(x, x) for x in ['I would be glad I was in the study',

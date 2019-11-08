@@ -25,7 +25,7 @@ app.config['PYBRAKE'] = dict(
     project_id=1212,
     project_key=pybrake_key.PYBRAKE_KEY,
 )
-# app = pybrake.flask.init_app(app)
+app = pybrake.flask.init_app(app)
 
 consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
 consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
@@ -179,6 +179,8 @@ def oauth_authorized(platform):
   study_data = sce.get_user_study_data(user)
   if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
     if platform == 'reddit':
+      study_data["assignment_datetime"] = datetime.datetime.strptime(study_data["assignment_datetime"], "%Y-%m-%d %H:%M:%S")
+      study_data["assignment_datetime"] = study_data["assignment_datetime"].strftime("%B %-d, %Y")
       pass
     elif platform == 'twitter':
       study_data["account_created_at"] = study_data["created_at"]
