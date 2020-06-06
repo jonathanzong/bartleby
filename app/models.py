@@ -13,38 +13,60 @@ import socket
 
 Base = declarative_base()
 
-class TwitterUser(Base):
-    __tablename__ = 'twitter_users'
-    id                  = Column(String(64), primary_key = True)
-    screen_name         = Column(String(256), index = True)
-    created_at          = Column(DateTime)
-    lang                = Column(String(32))
-    record_created_at   = Column(DateTime, default=datetime.datetime.utcnow)
-    user_state          = Column(Integer) # utils/common.py
-
-
-class TwitterUserMetadata(Base):
-    __tablename__ = 'twitter_user_metadata'
-    twitter_user_id             = Column(String(64), primary_key = True)
-    received_lumen_notice_at    = Column(DateTime)
-    tweet_removed               = Column(Boolean)
-    lumen_notice_id             = Column(String(64))
-    user_json                   = Column(LargeBinary)
-    assignment_json             = Column(LargeBinary)
+# a record of a study participant in our system (someone who has logged into the debriefing website)
+class ParticipantRecord(Base):
+    __tablename__ = 'participant_record'
+    id                          = Column(Integer, primary_key = True)
     experiment_id               = Column(String(64))
+    participant_user_id         = Column(String(64))
+    user_json                   = Column(LargeBinary)
     initial_login_at            = Column(DateTime, default=datetime.datetime.utcnow)
-    completed_study_at          = Column(DateTime)
-    paypal_sender_batch_id      = Column(String(64))
+    __table_args__              = (UniqueConstraint('experiment_id', 'participant_user_id', name='_experiment_participant_uc'))
 
-class TwitterUserEligibility(Base):
-    __tablename__ = 'twitter_user_eligibility'
-    id = Column(String(64), primary_key = True)
+# a record of an eligible study participant (someone who we want to debrief)
+class ParticipantEligibility(Base):
+    __tablename__ = 'participant_eligibility'
+    id                          = Column(Integer, primary_key = True)
+    experiment_id               = Column(String(64))
+    participant_user_id         = Column(String(64))
     extra_data                  = Column(LargeBinary) # data specific to a study_template, like which academic account followed
     study_data_json             = Column(LargeBinary) # data collected on a user from the main study, to show in debriefing interface
+    __table_args__              = (UniqueConstraint('experiment_id', 'participant_user_id', name='_experiment_participant_uc'))
 
+# a record of a study (each study has a different URL on the site to debrief a different set of participants)
+class Experiment(Base):
+    __tablename__ = 'experiments'
+    name                         = Column(String(64), primary_key = True)
+    url_id                       = Column(String(64), unique = True)
+    settings_json                = Column(LargeBinary)
+
+# a record of an action a user takes on our website (logging in, submitting the form, etc)
+class ExperimentAction(Base):
+    __tablename__ = 'experiment_actions'
+    id                  = Column(Integer, primary_key = True)
+    experiment_id       = Column(String(64))
+    participant_user_id = Column(String(64))
+    action_type         = Column(String(64))
+    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
+    action_data         = Column(LargeBinary)
+
+# a record of a participant's debriefing survey results, including opt-out preference
+class ParticipantSurveyResult(Base):
+    __tablename__ = 'participant_survey_results'
+    id                  = Column(Integer, primary_key = True)
+    experiment_id       = Column(String(64))
+    participant_user_id = Column(String(64))
+    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
+    survey_data         = Column(LargeBinary)
+    __table_args__      = (UniqueConstraint('experiment_id', 'participant_user_id', name='_experiment_participant_uc'))
+
+
+
+
+# TODO this has not been refactored. long term, figure out what to do about twitter recruitment and compensation
 class TwitterUserRecruitmentTweetAttempt(Base):
     __tablename__ = 'twitter_user_recruitment_tweet_attempt'
-    twitter_user_id             = Column(String(64), primary_key = True)
+    participant_user_id         = Column(String(64), primary_key = True)
     attempted_at                = Column(DateTime, default=datetime.datetime.utcnow)
     sent                        = Column(Boolean)
     lang                        = Column(String(32))
@@ -54,27 +76,3 @@ class TwitterUserRecruitmentTweetAttempt(Base):
     study_template              = Column(String(64)) # which study template to render, match the name of folder in templates
     tweet_body                  = Column(String(64))
     extra_data                  = Column(LargeBinary) # data specific to a study_template, like which academic account followed
-
-class Experiment(Base):
-    __tablename__ = 'experiments'
-    id                           = Column(Integer, primary_key = True)
-    name                         = Column(String(64), index = True)
-    controller                   = Column(String(64))
-    settings_json                = Column(LargeBinary)
-
-class ExperimentAction(Base):
-    __tablename__ = 'experiment_actions'
-    id                  = Column(Integer, primary_key = True)
-    experiment_id       = Column(String(64))
-    action_type         = Column(String(64))
-    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
-    twitter_user_id     = Column(String(64))
-    action_data         = Column(LargeBinary)
-
-
-class TwitterUserSurveyResult(Base):
-    __tablename__ = 'twitter_user_survey_results'
-    twitter_user_id     = Column(String(64), primary_key = True)
-    created_at          = Column(DateTime, default=datetime.datetime.utcnow)
-    survey_data         = Column(LargeBinary)
-

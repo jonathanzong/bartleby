@@ -3,7 +3,7 @@ from wtforms import Form, TextAreaField, TextField, RadioField, BooleanField, va
 
 class SurveyForm(FlaskForm):
   opt_out              = BooleanField('Do not include my information in your research', [validators.Optional()])
-  collection_surprised = RadioField('How surprised are you that we are able to collect this information about your public Twitter behavior?',
+  collection_surprised_twitter = RadioField('How surprised are you that we are able to collect this information about your public Twitter behavior?',
                                    [validators.Optional()],
                                     choices=[(x, x) for x in ["I didn't know any of my Twitter information was public",
                                              'I knew some data collection was possible, but not this much',

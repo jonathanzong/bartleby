@@ -1,3 +1,5 @@
+{% set debriefing_end_date = 'Jan 31, 2020' %}
+
 {% extends "layout.html" %}
 {% block head %}
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/index.css') }}">
@@ -8,9 +10,9 @@
 
 <div class="header-wrap">
   <p class="logos" style="margin: 0; margin-top: 10px;">
-    <a href="https://www.princeton.edu/"><img height="35" src="{{ url_for('static', filename='images/princeton-logo.png') }}" alt="Princeton University"></a>
+    <a href="https://www.cornell.edu/"><img height="35" src="{{ url_for('static', filename='images/cornell-logo.png') }}" alt="Cornell University"></a>
   </p>
-  <h1 style="line-height: 1.2">Princeton University Study on Promoting Inclusion and Participation in r/feminism</h1>
+  <h1 style="line-height: 1.2">Cornell University Study on Promoting Inclusion and Participation in r/feminism</h1>
 <!--
   <p style="font-size: 0.8em; margin-top: 0.5em; margin-bottom: 1em">
     <a href="https://twitter.com/natematias">J. Nathan Matias</a>, <a href="https://www.dal.ca/faculty/law/faculty-staff/our-faculty/jon-penney.html">Jonathon Penney</a>, and <a href="https://twitter.com/ohnobackspace">Jonathan Zong</a>, in collaboration with <a href="http://civilservant.io/">CivilServant</a>, with Ethan Zuckerman as Principal Investigator.
@@ -25,10 +27,10 @@
       r/feminism is a community dedicated to “discussing and promoting awareness of issues related to equality for women.” Many users come to the subreddit to discuss current events as well as their personal experiences. Making all participants feel welcome is of the utmost importance to those who moderate this community. However, users sometimes feel unwelcome in r/feminism.
     </p>
     <p>
-      Our team of researchers at Princeton University worked with moderators of r/feminism to learn if they can retain more participants by helping newcomers hold more accurate social norms (newcomers’ beliefs about the community) about the community. To do so, moderators proposed sending welcome messages to first-time commenters: messages that explain the values of the community, tell newcomers that any harassment is a minority view, and offer links to resources if they do experience some kind of harassment. By doing so, moderators hoped to increase newcomers’ sense of closeness to the community and increase the rate of participation in the community.
+      Our team of researchers at Cornell University (originally Princeton) worked with moderators of r/feminism to learn if they can retain more participants by helping newcomers hold more accurate social norms (newcomers’ beliefs about the community) about the community. To do so, moderators proposed sending welcome messages to first-time commenters: messages that explain the values of the community, tell newcomers that any harassment is a minority view, and offer links to resources if they do experience some kind of harassment. By doing so, moderators hoped to increase newcomers’ sense of closeness to the community and increase the rate of participation in the community.
     </p>
     <p>
-      This research was conducted by researchers at Princeton University and the CivilServant project, which works toward a fairer, safer, more understanding internet, working together with the general public on research. This study is based on conversations with moderators of r/feminism, as well as early data analysis on harassment on r/feminism.
+      This research was conducted by researchers at Cornell University and the <a href="https://citizensandtech.org/">Citizens and Technology Lab</a> (CAT Lab), which works toward a fairer, safer, more understanding internet, working together with the general public on research. This study is based on conversations with moderators of r/feminism, as well as early data analysis on harassment on r/feminism.
     </p>
     <p>
       Because we could not predict who would be a newcomer to r/feminism during the study period, we could not ask for permission in advance. Because we want to respect the wishes and needs of everyone affected by the study, we have created this webpage.
@@ -41,7 +43,7 @@
     </p>
 
     <p>
-      If you have previously accessed this site and wish to change your decision, you may log in any time until January 31, 2020, when this study concludes.
+      If you have previously accessed this site and wish to change your decision, you may log in any time until {{debriefing_end_date}}, when this study concludes.
     </p>
 
   </div>

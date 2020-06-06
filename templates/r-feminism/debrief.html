@@ -1,3 +1,5 @@
+{% set debriefing_end_date = 'Jan 31, 2020' %}
+
 {% extends "layout.html" %}
 {% block head %}
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/debrief.css') }}">
@@ -14,7 +16,7 @@
     {{ form.csrf_token }}
     <div class="debrief-interface">
       <div class="content">
-        <h3>Participation in Princeton University Study on Promoting Inclusion and Participation in r/feminism</h3>
+        <h3>Participation in Cornell University Study on Promoting Inclusion and Participation in r/feminism</h3>
 
         <p>
           Hi {{ user.screen_name }},
@@ -37,7 +39,7 @@
         </p>
 
         <p>
-          Here is what we collected about your public Reddit behavior for eight weeks starting on {{ user.assignment_datetime }}. When the study is complete, we plan to publish an anonymized dataset that will make no reference to your Reddit ID and will exclude any information about specific dates or the contents of your tweets so that it cannot be easily traced back to you. By publishing the data, we can ensure that other researchers can check our conclusions.
+          Here is what we collected about your public Reddit behavior for eight weeks starting on {{ user.assignment_datetime }}. When the study is complete, we plan to publish an anonymized dataset that will make no reference to your Reddit ID and will exclude any information about specific dates or the contents of your comments so that it cannot be easily traced back to you. By publishing the data, we can ensure that other researchers can check our conclusions.
         </p>
 
         <p>
@@ -71,7 +73,7 @@
           </div>
           <div class="row">
             <div class="col-sm-6">
-              For how many days was your account banned on r/feminism in the eight weeks after your first comment?
+              If your account was banned by moderators, how many days was your account banned on r/feminism in the eight weeks after your first comment?
             </div>
             <div class="col-sm-6">
               {{ user.ban_days_8_weeks }}
@@ -113,22 +115,22 @@
           {{ form.opt_out }} {{ form.opt_out.label }}
         </p>
 
-        <p>Following your preference, we will not include your data in our final analysis or in the public record. We are retaining the information here until Jan 31, 2020 so you can manage your privacy.</p>
+        <p>Following your preference, we will not include your data in our final analysis or in the public record. We are retaining the information here until {{debriefing_end_date}} so you can manage your privacy.</p>
 
         <h5>Learning The Study Results When They Are Ready</h5>
 
         <p>
-          By participating in this research, you are contributing to public knowledge. Thank you! We know that you might be just as curious as us about the results. To hear the results when we have finished, please check our website at <a href="https://civilservant.io/">civilservant.io</a>. The results of all our research contribute to public knowledge, and we are always glad when we can share them back with the people who participated.
+          By participating in this research, you are contributing to public knowledge. Thank you! We know that you might be just as curious as us about the results. To hear the results when we have finished, please visit our website at <a href="https://citizensandtech.org/">citizensandtech.org</a>. The results of all our research contribute to public knowledge, and we are always glad when we can share them back with the people who participated.
         </p>
 
         <h5>Reporting Harms Caused By Participation in This Study</h5>
 
         <p>
-          We designed this study to minimize the risks to you, protecting your data and limiting our activity to a single survey request. However, if you believe that our study has caused you more substantial relational, financial, or other harms, please let us know. You may reach out to us directly by contacting J. Nathan Matias (<a href="mailto:jmatias@princeton.edu">jmatias@princeton.edu</a>) (<a href="https://www.reddit.com/user/natematias">u/natematias</a> on Reddit), or by contacting the Princeton ethics board below. Nathan has recently joined Cornell University and can also be reached at <a href="mailto:nathan.matias@cornell.edu">nathan.matias@cornell.edu</a>.
+          We designed this study to minimize the risks to you, protecting your data and limiting our activity to a single survey request. However, if you believe that our study has caused you more substantial relational, financial, or other harms, please let us know. You may reach out to us directly by contacting J. Nathan Matias (<a href="mailto:nathan.matias@cornell.edu">nathan.matias@cornell.edu</a>) (<a href="https://www.reddit.com/user/natematias">u/natematias</a> on Reddit), or by contacting the Cornell ethics board below.
         </p>
 
-        <p>
-          If you have questions about your rights as a research participant, or if problems arise which you do not feel you can discuss with us, please contact the Princeton University Institutional Review Board (IRB), Phone: (609) 258-8543, Email: irb@princeton.edu
+        <p style="font-style: italic;">
+          If you have any questions or concerns regarding your rights as a subject in this study, you may contact the Institutional Review Board (IRB) for Human Participants at 607-255-5138 or access their website at http://www.irb.cornell.edu. You may also report your concerns or complaints anonymously through Ethicspoint online at www.hotline.cornell.edu or by calling toll free at 1-866-293-3077. Ethicspoint is an independent organization that serves as a liaison between the University and the person bringing the complaint so that anonymity can be ensured.
         </p>
 
       </div>

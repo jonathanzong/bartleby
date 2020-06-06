@@ -2,13 +2,6 @@ from enum import Enum
 import simplejson as json
 import os
 
-
-class TwitterUserState(Enum):
-    FOUND = 1
-    NOT_FOUND = 2 # deleted (or never existed)
-    SUSPENDED = 3
-    PROTECTED = 4
-
 class DbEngine:
     def __init__(self, config_path):
         self.config_path = config_path

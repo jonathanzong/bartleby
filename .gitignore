@@ -8,6 +8,7 @@ pybrake_key.py
 config/experiments/samples
 config/experiments/debrief_data
 *.sql
+r-feminism*2020.csv
 
 ## APP-SPECIFIC FILES
 config.py
