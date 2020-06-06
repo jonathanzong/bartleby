@@ -1,9 +1,5 @@
 .DS_Store
-twitter_api_keys.py
-reddit_api_keys.py
-paypal_api_keys.py
-twitter_sender_api_keys.py
-pybrake_key.py
+debriefing_api_keys.py
 *.eligible_ids.csv
 config/experiments/samples
 config/experiments/debrief_data
