@@ -47,3 +47,12 @@ alembic downgrade -1
 ## deploy
 
 flask run -h 0.0.0.0 -p 8000 --with-threads &
+
+
+## setting up the system
+
+- copy `_debriefing_api_keys.py` into a new file called `debriefing_api_keys.py`, which is gitignored. fill in the api keys.
+- copy `config/_env.json` into `config/development.json` and `config/production.json`. these are gitingored. fill in database name and mysql user credentials
+
+
+

@@ -1,6 +1,4 @@
-import twitter_api_keys
-import reddit_api_keys
-import pybrake_key
+import debriefing_api_keys
 import tweepy
 import json
 import os
@@ -16,19 +14,16 @@ from app.forms import *
 
 import pybrake.flask
 
-from app.controllers.twitter_debrief_experiment_controller import *
+from app.controllers.debriefing_controller import *
 
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
 app.config['PYBRAKE'] = dict(
-    host=pybrake_key.PYBRAKE_HOST,
+    host=debriefing_api_keys.PYBRAKE_HOST,
     project_id=1212,
-    project_key=pybrake_key.PYBRAKE_KEY,
+    project_key=debriefing_api_keys.PYBRAKE_KEY,
 )
 app = pybrake.flask.init_app(app)
-
-consumer_key = twitter_api_keys.TWITTER_CONSUMER_KEY
-consumer_secret = twitter_api_keys.TWITTER_CONSUMER_SECRET
 
 ENV = os.environ['CS_ENV']
 
@@ -36,110 +31,112 @@ BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
 db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 
-DEFAULT_STUDY = 'dmca'  # set default template for direct link to homepage here
-
-sce = TwitterDebriefExperimentController(
-    study_id='twitter_dmca_debrief_experiment',
-    default_study=DEFAULT_STUDY,
-    db_session=db_session,
-    required_keys=['name', 'user_data_dir']
-  )
-
-R_FEMINISM_STUDY_ID = '77ef689a7e9b-r-feminism'
+sce = DebriefingController(db_session=db_session)
 
 def is_logged_in():
-  return 'user' in session and sce.user_exists(session['user'])
+  return 'user' in session and 'url_id' in session and sce.user_exists(session['user'], session['url_id'])
 
-@app.route('/', defaults={'study_id': None})
-@app.route('/<study_id>')
-def index(study_id):
-  session['study_id'] = study_id
+@app.route('/')
+def no_experiment():
+  if 'url_id' in session:
+    return redirect(url_for_experiment('index'))
+  return render_template('index.html')
+
+@app.route('/<url_id>')
+def index(url_id):
+  if not sce.is_url_id_valid(url_id):
+    return redirect(url_for('no_experiment'))
+
+  session['url_id'] = url_id
   if is_logged_in():
-    return redirect(url_for_study('debrief'))
+    return redirect(url_for_experiment('debrief'))
 
   amount_dollars = int(request.args.get('c')) if request.args.get('c') else 0
 
-  sce.record_user_action(None, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
+  sce.record_user_action(None, url_id, 'page_view', {'page': 'index', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
-  study_template = request.args.get('t') if request.args.get('t') else DEFAULT_STUDY
-  if study_id == R_FEMINISM_STUDY_ID: # TODO
-    study_template = 'r-feminism'
   extra_data = json.loads(request.args.get('x')) if request.args.get('x') else None
+
+  study_template = sce.get_study_template(url_id)
   return render_template(study_template + '/index.html', amount_dollars=amount_dollars, extra_data=extra_data)
 
-@app.route('/debrief', methods=('GET', 'POST'), defaults={'study_id': None})
-@app.route('/debrief/<study_id>', methods=('GET', 'POST'))
-def debrief(study_id):
-  session['study_id'] = study_id
+@app.route('/<url_id>/debrief', methods=('GET', 'POST'))
+def debrief(url_id):
+  if not sce.is_url_id_valid(url_id):
+    return redirect(url_for('no_experiment'))
+
+  session['url_id'] = url_id
   if not is_logged_in():
-    return redirect(url_for_study('index'))
+    return redirect(url_for_experiment('index'))
   user = session['user']
 
-  if not sce.is_eligible(user):
+  if not sce.is_eligible(user, url_id):
     return redirect(url_for('ineligible'))
 
-  sce.record_user_action(user, 'page_view', {'page': 'debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
+  sce.record_user_action(user, url_id, 'page_view', {'page': 'debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   # handle form submission (ajax call)
   form = SurveyForm()
   if request.data:
     results_dict = json.loads(request.data)
-    results_dict['twitter_user_id'] = user['id']
+    results_dict['participant_user_id'] = user['id']
 
     if 'opt_out' in results_dict and results_dict['opt_out']:
       results_dict['opt_out'] = 'true'
     else:
       results_dict['opt_out'] = 'false'
 
-    sce.insert_or_update_survey_result(user, results_dict)
+    sce.insert_or_update_survey_result(user, url_id, results_dict)
 
-    sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
+    sce.record_user_action(user, url_id, 'form_submit', {'page': 'debrief'})
   # handle form submission (submit button)
   if form.validate_on_submit():
     results_dict = request.form.to_dict()
     del results_dict['csrf_token']
-    results_dict['twitter_user_id'] = user['id']
+    results_dict['participant_user_id'] = user['id']
 
     if 'opt_out' in results_dict:
       results_dict['opt_out'] = 'true'
     else:
       results_dict['opt_out'] = 'false'
 
-    sce.insert_or_update_survey_result(user, results_dict)
+    sce.insert_or_update_survey_result(user, url_id, results_dict)
 
-    sce.record_user_action(user, 'form_submit', {'page': 'debrief'})
+    sce.record_user_action(user, url_id, 'form_submit', {'page': 'debrief'})
 
-  study_template = sce.get_user_study_template(user)
-  if study_id == R_FEMINISM_STUDY_ID: # TODO
-    study_template = 'r-feminism'
-  return render_template(study_template + '/debrief.html', user=user, form=form, url_for_study=url_for_study)
+  study_template = sce.get_study_template(url_id)
+  return render_template(study_template + '/debrief.html', user=user, form=form, url_for_experiment=url_for_experiment)
 
-@app.route('/ineligible')
+@app.route('/<url_id>/ineligible')
 def ineligible():
+  if not sce.is_url_id_valid(url_id):
+    return redirect(url_for('no_experiment'))
+
+  session['url_id'] = url_id
   if not 'user' in session:
-    return redirect(url_for_study('index'))
+    return redirect(url_for_experiment('index'))
   user = session['user']
 
-  if sce.is_eligible(user):
-    return redirect(url_for_study('debrief'))
+  if sce.is_eligible(user, url_id):
+    return redirect(url_for_experiment('debrief'))
 
-  sce.record_user_action(user, 'page_view', {'page': 'ineligible', 'user_agent': request.user_agent.string, 'qs': request.query_string})
+  sce.record_user_action(user, url_id, 'page_view', {'page': 'ineligible', 'user_agent': request.user_agent.string, 'qs': request.query_string})
 
   return render_template('ineligible.html')
 
 @app.route('/login/<platform>')
 def login(platform):
   if is_logged_in():
-    return redirect(url_for_study('debrief'))
+    return redirect(url_for_experiment('debrief'))
 
-  sce.record_user_action(None, 'login_attempt', None)
+  sce.record_user_action(None, session['url_id'] if 'url_id' in session else None, 'login_attempt', None)
 
   if platform == 'reddit':
     redirect_uri = url_for('oauth_authorized', platform='reddit', _external=True)
     reddit = praw.Reddit(client_id=reddit_api_keys.REDDIT_CLIENT_ID,
                        client_secret=reddit_api_keys.REDDIT_CLIENT_SECRET,
                        redirect_uri=redirect_uri,
-                       user_agent='debriefing.media.mit.edu')
+                       user_agent='debriefing.media.mit.edu') #TODO maybe not hardcode the debriefing site url in places
 
     state_string = str(uuid.uuid4())
     session['state_string'] = state_string
@@ -148,7 +145,7 @@ def login(platform):
     return redirect(auth_url)
   elif platform == 'twitter':
     callback_url = url_for('oauth_authorized', platform='twitter', _external=True)
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret, callback_url)
+    auth = tweepy.OAuthHandler(debriefing_api_keys.TWITTER_CONSUMER_KEY, debriefing_api_keys.TWITTER_CONSUMER_SECRET, callback_url)
     try:
       auth_url = auth.get_authorization_url()
       session['request_token'] = auth.request_token
@@ -160,23 +157,24 @@ def login(platform):
 def logout():
   if is_logged_in():
     user = session['user']
-    sce.record_user_action(user, 'logout', None)
+    sce.record_user_action(user, session['url_id'] if 'url_id' in session else None, 'logout', None)
     del session['user']
-  return redirect(url_for_study('index'))
+  return redirect(url_for_experiment('index'))
 
 @app.route('/oauth_authorized', defaults={'platform': 'twitter'})
 @app.route('/oauth_authorized/<platform>')
 def oauth_authorized(platform):
+  url_id = session['url_id']
   if platform == 'reddit':
     user = authorize_reddit_user()
   elif platform == 'twitter':
     user = authorize_twitter_user()
   if user is None:
-    return redirect(url_for_study('index'))
-  if not sce.is_eligible(user):
+    return redirect(url_for_experiment('index'))
+  if not sce.is_eligible(user, url_id):
     return redirect(url_for('ineligible'))
 
-  study_data = sce.get_user_study_data(user)
+  study_data = sce.get_user_study_data(user, url_id)
   if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
     if platform == 'reddit':
       study_data["assignment_datetime"] = datetime.datetime.strptime(study_data["assignment_datetime"], "%Y-%m-%d %H:%M:%S")
@@ -198,16 +196,16 @@ def oauth_authorized(platform):
     session['user'].update(old_user) # don't let study_data columns overwrite user properties
 
   # create user if not exists
-  sce.create_user_if_not_exists(user)
+  sce.create_user_if_not_exists(user, url_id)
 
-  sce.record_user_action(user, 'login_success', None)
+  sce.record_user_action(user, url_id, 'login_success', None)
 
-  return redirect(url_for_study('debrief'))
+  return redirect(url_for_experiment('debrief'))
 
 def authorize_twitter_user():
   verifier = request.args.get('oauth_verifier')
 
-  auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+  auth = tweepy.OAuthHandler(debriefing_api_keys.TWITTER_CONSUMER_KEY, debriefing_api_keys.TWITTER_CONSUMER_SECRET)
   token = session['request_token']
   del session['request_token']
   auth.request_token = token
@@ -252,8 +250,8 @@ def authorize_reddit_user():
     return None
 
   redirect_uri = url_for('oauth_authorized', platform='reddit', _external=True)
-  reddit = praw.Reddit(client_id=reddit_api_keys.REDDIT_CLIENT_ID,
-                     client_secret=reddit_api_keys.REDDIT_CLIENT_SECRET,
+  reddit = praw.Reddit(client_id=debriefing_api_keys.REDDIT_CLIENT_ID,
+                     client_secret=debriefing_api_keys.REDDIT_CLIENT_SECRET,
                      redirect_uri=redirect_uri,
                      user_agent='debriefing.media.mit.edu')
 
@@ -277,8 +275,8 @@ def authorize_reddit_user():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return redirect(url_for_study('index'))
+    return redirect(url_for_experiment('index'))
 
-def url_for_study(route):
-  study_id = session['study_id'] if 'study_id' in session else None
-  return url_for(route, study_id=study_id)
+def url_for_experiment(route):
+  url_id = session['url_id'] if 'url_id' in session else None
+  return url_for(route, url_id=url_id)
