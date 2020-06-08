@@ -126,29 +126,6 @@ def ineligible(url_id):
 
   return render_template('ineligible.html')
 
-def populate_user_session(user, url_id):
-  platform = sce.get_experiment_platform(url_id)
-  study_data = sce.get_user_study_data(user, url_id)
-  if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
-    if platform == 'reddit':
-      study_data["assignment_datetime"] = datetime.datetime.strptime(study_data["assignment_datetime"], "%Y-%m-%d %H:%M:%S")
-      study_data["assignment_datetime"] = study_data["assignment_datetime"].strftime("%B %-d, %Y")
-      pass
-    elif platform == 'twitter':
-      study_data["account_created_at"] = study_data["created_at"]
-      del study_data["created_at"]
-      study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
-      study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
-      study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
-      study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
-      study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
-      study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
-      study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
-      study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
-    old_user = session['user'].copy()
-    session['user'].update(study_data)
-    session['user'].update(old_user) # don't let study_data columns overwrite user properties
-
 @app.route('/login/<platform>')
 def login(platform):
   if is_logged_in():
@@ -233,6 +210,7 @@ def authorize_twitter_user():
       'lang': user.lang,
       'account_age': account_age
     }
+    session['auth_user'] = session['user'].copy()
     user = session['user']
     return user
   except tweepy.TweepError:
@@ -274,8 +252,31 @@ def authorize_reddit_user():
     'created_at': created.isoformat(),
     'account_age': account_age
   }
+  session['auth_user'] = session['user'].copy()
   user = session['user']
   return user
+
+def populate_user_session(user, url_id):
+  platform = sce.get_experiment_platform(url_id)
+  study_data = sce.get_user_study_data(user, url_id)
+  if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
+    if platform == 'reddit':
+      study_data["assignment_datetime"] = datetime.datetime.strptime(study_data["assignment_datetime"], "%Y-%m-%d %H:%M:%S")
+      study_data["assignment_datetime"] = study_data["assignment_datetime"].strftime("%B %-d, %Y")
+      pass
+    elif platform == 'twitter':
+      study_data["account_created_at"] = study_data["created_at"]
+      del study_data["created_at"]
+      study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
+      study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
+      study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
+      study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
+      study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
+      study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
+      study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
+      study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
+    session['user'].update(study_data)
+    session['user'].update(session['auth_user']) # don't let study_data columns overwrite user properties
 
 @app.errorhandler(404)
 def page_not_found(e):
