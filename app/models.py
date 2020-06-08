@@ -39,6 +39,7 @@ class Experiment(Base):
     url_id                       = Column(String(64), primary_key = True) ## make sure this uses a nonsequential id so that it can't be guessed
     experiment_name              = Column(String(64), unique = True)
     study_template               = Column(String(64), unique = True) # match the name of folder in `templates` directory
+    platform                     = Column(String(64)) # 'reddit' OR 'twitter'
 
 # a record of an action a user takes on our website (logging in, submitting the form, etc)
 class ExperimentAction(Base):

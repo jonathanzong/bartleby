@@ -32,6 +32,6 @@ class SurveyForm(FlaskForm):
                                              'This study should not happen']])
   improve_debrief      = TextAreaField('If we could make the research debriefing webpage different, what would you change?', [validators.Optional()])
 
-class CompensationForm(FlaskForm):
-  email_address        = TextField('Email address (Paypal account not required)',
-                                    [validators.DataRequired(), validators.Email()])
+# class CompensationForm(FlaskForm):
+#   email_address        = TextField('Email address (Paypal account not required)',
+#                                     [validators.DataRequired(), validators.Email()])

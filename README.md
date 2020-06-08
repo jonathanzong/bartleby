@@ -42,6 +42,8 @@ alembic upgrade +2
 
 alembic downgrade -1
 
+alembic downgrade base
+
 ```
 
 ## deploy
@@ -56,3 +58,4 @@ flask run -h 0.0.0.0 -p 8000 --with-threads &
 - copy `_alembic.ini` into `alembic.ini` (also gitignored) and fill in the username/password and other connection info for the database.
 
 
+- verify that the reddit app's oauth redirect URI is configured for the right production url: https://www.reddit.com/prefs/apps/

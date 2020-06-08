@@ -11,6 +11,10 @@
   }
 }
 
+.debrief-interface h3 {
+  margin-top: 0;
+}
+
 .debrief-interface p:first-child {
   margin-top: 0;
 }

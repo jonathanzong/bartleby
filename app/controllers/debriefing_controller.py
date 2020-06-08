@@ -75,7 +75,7 @@ class DebriefingController:
     if ENV == "production":
       return participant_eligibility is not None
     else:
-      return participant_eligibility is not None or user['id'] == 393724541 or user['id'] == 'jzmit'
+      return participant_eligibility is not None # or user['id'] == 393724541 or user['id'] == 'jzmit'
 
   def get_study_template(self, url_id):
     maybe_experiment = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
@@ -91,6 +91,12 @@ class DebriefingController:
     match = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     if match is not None:
       return match.experiment_name
+    return None
+
+  def get_experiment_platform(self, url_id):
+    maybe_experiment = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
+    if maybe_experiment is not None:
+      return maybe_experiment.platform
     return None
 
   def get_user_study_data(self, user, url_id):

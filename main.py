@@ -18,12 +18,12 @@ from app.controllers.debriefing_controller import *
 
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
-app.config['PYBRAKE'] = dict(
-    host=debriefing_api_keys.PYBRAKE_HOST,
-    project_id=1212,
-    project_key=debriefing_api_keys.PYBRAKE_KEY,
-)
-app = pybrake.flask.init_app(app)
+# app.config['PYBRAKE'] = dict(
+#     host=debriefing_api_keys.PYBRAKE_HOST,
+#     project_id=1212,
+#     project_key=debriefing_api_keys.PYBRAKE_KEY,
+# )
+# app = pybrake.flask.init_app(app)
 
 ENV = os.environ['CS_ENV']
 
@@ -71,9 +71,11 @@ def debrief(url_id):
   user = session['user']
 
   if not sce.is_eligible(user, url_id):
-    return redirect(url_for('ineligible'))
+    return redirect(url_for_experiment('ineligible'))
 
   sce.record_user_action(user, url_id, 'page_view', {'page': 'debrief', 'user_agent': request.user_agent.string, 'qs': request.query_string})
+
+  populate_user_session(user, url_id)
 
   # handle form submission (ajax call)
   form = SurveyForm()
@@ -108,7 +110,7 @@ def debrief(url_id):
   return render_template(study_template + '/debrief.html', user=user, form=form, url_for_experiment=url_for_experiment)
 
 @app.route('/<url_id>/ineligible')
-def ineligible():
+def ineligible(url_id):
   if not sce.is_url_id_valid(url_id):
     return redirect(url_for('no_experiment'))
 
@@ -124,6 +126,29 @@ def ineligible():
 
   return render_template('ineligible.html')
 
+def populate_user_session(user, url_id):
+  platform = sce.get_experiment_platform(url_id)
+  study_data = sce.get_user_study_data(user, url_id)
+  if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
+    if platform == 'reddit':
+      study_data["assignment_datetime"] = datetime.datetime.strptime(study_data["assignment_datetime"], "%Y-%m-%d %H:%M:%S")
+      study_data["assignment_datetime"] = study_data["assignment_datetime"].strftime("%B %-d, %Y")
+      pass
+    elif platform == 'twitter':
+      study_data["account_created_at"] = study_data["created_at"]
+      del study_data["created_at"]
+      study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
+      study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
+      study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
+      study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
+      study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
+      study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
+      study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
+      study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
+    old_user = session['user'].copy()
+    session['user'].update(study_data)
+    session['user'].update(old_user) # don't let study_data columns overwrite user properties
+
 @app.route('/login/<platform>')
 def login(platform):
   if is_logged_in():
@@ -133,8 +158,8 @@ def login(platform):
 
   if platform == 'reddit':
     redirect_uri = url_for('oauth_authorized', platform='reddit', _external=True)
-    reddit = praw.Reddit(client_id=reddit_api_keys.REDDIT_CLIENT_ID,
-                       client_secret=reddit_api_keys.REDDIT_CLIENT_SECRET,
+    reddit = praw.Reddit(client_id=debriefing_api_keys.REDDIT_CLIENT_ID,
+                       client_secret=debriefing_api_keys.REDDIT_CLIENT_SECRET,
                        redirect_uri=redirect_uri,
                        user_agent='debriefing.media.mit.edu') #TODO maybe not hardcode the debriefing site url in places
 
@@ -172,28 +197,7 @@ def oauth_authorized(platform):
   if user is None:
     return redirect(url_for_experiment('index'))
   if not sce.is_eligible(user, url_id):
-    return redirect(url_for('ineligible'))
-
-  study_data = sce.get_user_study_data(user, url_id)
-  if study_data is not None: # TODO: this needs to be generalized somehow to be configurable per study
-    if platform == 'reddit':
-      study_data["assignment_datetime"] = datetime.datetime.strptime(study_data["assignment_datetime"], "%Y-%m-%d %H:%M:%S")
-      study_data["assignment_datetime"] = study_data["assignment_datetime"].strftime("%B %-d, %Y")
-      pass
-    elif platform == 'twitter':
-      study_data["account_created_at"] = study_data["created_at"]
-      del study_data["created_at"]
-      study_data["account_created_at"] = datetime.datetime.strptime(study_data["account_created_at"], "%Y-%m-%d %H:%M:%S")
-      study_data["notice_date"] = datetime.datetime.strptime(study_data["notice_date"], "%Y-%m-%d %H:%M:%S")
-      study_data["start_date"] = study_data["notice_date"] - datetime.timedelta(days=23)
-      study_data["end_date"] = study_data["notice_date"] + datetime.timedelta(days=23)
-      study_data["account_created_at"] = study_data["account_created_at"].strftime("%B %-d, %Y")
-      study_data["notice_date"] = study_data["notice_date"].strftime("%B %-d, %Y")
-      study_data["start_date"] = study_data["start_date"].strftime("%B %-d, %Y")
-      study_data["end_date"] = study_data["end_date"].strftime("%B %-d, %Y")
-    old_user = session['user'].copy()
-    session['user'].update(study_data)
-    session['user'].update(old_user) # don't let study_data columns overwrite user properties
+    return redirect(url_for_experiment('ineligible'))
 
   # create user if not exists
   sce.create_user_if_not_exists(user, url_id)

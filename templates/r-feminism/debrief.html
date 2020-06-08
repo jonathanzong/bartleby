@@ -12,7 +12,7 @@
     {% endif %}
   </div>
 
-  <form method="POST" action="{{ url_for_study('debrief') }}">
+  <form method="POST" action="{{ url_for_experiment('debrief') }}">
     {{ form.csrf_token }}
     <div class="debrief-interface">
       <div class="content">

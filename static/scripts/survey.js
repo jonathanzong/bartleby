@@ -81,7 +81,7 @@ function submit(name, value) {
   data = JSON.stringify(data);
 
   var request = new XMLHttpRequest();
-  request.open('POST', '/debrief', true);
+  request.open('POST', window.location.pathname, true);
   request.setRequestHeader('Content-Type', 'application/json');
   request.setRequestHeader('X-CSRFToken', document.getElementById('csrf_token').value);
   request.send(data);
