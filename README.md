@@ -53,6 +53,6 @@ flask run -h 0.0.0.0 -p 8000 --with-threads &
 
 - copy `_debriefing_api_keys.py` into a new file called `debriefing_api_keys.py`, which is gitignored. fill in the api keys.
 - copy `config/_env.json` into `config/development.json` and `config/production.json`. these are gitingored. fill in database name and mysql user credentials
-
+- copy `_alembic.ini` into `alembic.ini` (also gitignored) and fill in the username/password and other connection info for the database.
 
 

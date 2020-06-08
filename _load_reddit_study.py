@@ -12,9 +12,9 @@ db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
 ## create experiment record
 
 experiment = Experiment(
-  url_id='77ef689a7e9b-r-feminism',
-  experiment_name='r-feminism-june-2020',
-  study_template='r-feminism')
+  url_id='',
+  experiment_name='',
+  study_template='')
 db_session.add(experiment)
 
 ## create participant eligibility records

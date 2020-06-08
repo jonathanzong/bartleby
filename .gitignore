@@ -5,6 +5,8 @@ config/experiments/samples
 config/experiments/debrief_data
 *.sql
 r-feminism*2020.csv
+load_reddit_study.py
+passenger_wsgi.py
 
 ## APP-SPECIFIC FILES
 config.py

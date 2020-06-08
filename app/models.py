@@ -2,7 +2,7 @@ import os
 import sys
 import simplejson as json
 from utils.common import *
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, BigInteger, Index, LargeBinary
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, BigInteger, Index, LargeBinary, UniqueConstraint
 from sqlalchemy.dialects.mysql import MEDIUMTEXT, LONGTEXT
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -21,7 +21,7 @@ class ParticipantRecord(Base):
     participant_user_id         = Column(String(64))
     user_json                   = Column(LargeBinary)
     initial_login_at            = Column(DateTime, default=datetime.datetime.utcnow)
-    __table_args__              = (UniqueConstraint('experiment_name', 'participant_user_id', name='_experiment_participant_uc'))
+    __table_args__              = (UniqueConstraint('experiment_name', 'participant_user_id', name='_experiment_participant_uc'),)
 
 # a record of an eligible study participant (someone who we want to debrief)
 class ParticipantEligibility(Base):
@@ -31,7 +31,7 @@ class ParticipantEligibility(Base):
     participant_user_id         = Column(String(64))
     # extra_data                  = Column(LargeBinary) # data specific to a study_template, like which academic account followed
     study_data_json             = Column(LargeBinary) # data collected on a user from the main study, to show in debriefing interface
-    __table_args__              = (UniqueConstraint('experiment_name', 'participant_user_id', name='_experiment_participant_uc'))
+    __table_args__              = (UniqueConstraint('experiment_name', 'participant_user_id', name='_experiment_participant_uc'),)
 
 # a record of a study (each study has a different URL on the site to debrief a different set of participants)
 class Experiment(Base):
@@ -58,7 +58,7 @@ class ParticipantSurveyResult(Base):
     participant_user_id = Column(String(64))
     created_at          = Column(DateTime, default=datetime.datetime.utcnow)
     survey_data         = Column(LargeBinary)
-    __table_args__      = (UniqueConstraint('experiment_name', 'participant_user_id', name='_experiment_participant_uc'))
+    __table_args__      = (UniqueConstraint('experiment_name', 'participant_user_id', name='_experiment_participant_uc'),)
 
 
 
