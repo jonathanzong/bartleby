@@ -2,6 +2,8 @@
 
 {% extends "layout.html" %}
 {% block head %}
+  <meta property="og:image" content="https://debrief.media.mit.edu{{ url_for('static', filename='images/cornell-logo.png') }}" /> <!-- TODO! -->
+  <meta property="og:description" content="Cornell University Study on Promoting Inclusion and Participation in r/feminism" />
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/index.css') }}">
 {% endblock %}
 {% block content %}
