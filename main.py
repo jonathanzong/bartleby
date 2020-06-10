@@ -18,12 +18,12 @@ from app.controllers.debriefing_controller import *
 
 app = Flask(__name__)
 app.secret_key = 'such secret very key!' # session key
-# app.config['PYBRAKE'] = dict(
-#     host=debriefing_api_keys.PYBRAKE_HOST,
-#     project_id=1212,
-#     project_key=debriefing_api_keys.PYBRAKE_KEY,
-# )
-# app = pybrake.flask.init_app(app)
+app.config['PYBRAKE'] = dict(
+    host=debriefing_api_keys.PYBRAKE_HOST,
+    project_id=1212,
+    project_key=debriefing_api_keys.PYBRAKE_KEY,
+)
+app = pybrake.flask.init_app(app)
 
 ENV = os.environ['CS_ENV']
 
