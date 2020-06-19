@@ -84,6 +84,8 @@ class DebriefingController:
     return None
 
   def is_url_id_valid(self, url_id):
+    if not isinstance(url_id, str):
+      return False
     match = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     return match is not None
 
