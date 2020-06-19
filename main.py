@@ -284,4 +284,7 @@ def page_not_found(e):
 
 def url_for_experiment(route):
   url_id = session['url_id'] if 'url_id' in session else None
-  return url_for(route, url_id=url_id)
+  if url_id is not None:
+    return url_for(route, url_id=url_id)
+  else:
+    return url_for('no_experiment')
