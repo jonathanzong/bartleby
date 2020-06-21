@@ -78,6 +78,8 @@ class DebriefingController:
       return participant_eligibility is not None # or user['id'] == 393724541 or user['id'] == 'jzmit'
 
   def get_study_template(self, url_id):
+    if not isinstance(url_id, str):
+      return False
     maybe_experiment = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     if maybe_experiment is not None:
       return maybe_experiment.study_template
@@ -90,12 +92,16 @@ class DebriefingController:
     return match is not None
 
   def get_experiment_name(self, url_id):
+    if not isinstance(url_id, str):
+      return False
     match = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     if match is not None:
       return match.experiment_name
     return None
 
   def get_experiment_platform(self, url_id):
+    if not isinstance(url_id, str):
+      return False
     maybe_experiment = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     if maybe_experiment is not None:
       return maybe_experiment.platform
