@@ -29,9 +29,9 @@ ENV = os.environ['CS_ENV']
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 CONFIG_DIR = os.path.join(BASE_DIR, "config")
-db_session = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV)).new_session()
+db_engine = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV))
 
-sce = DebriefingController(db_session=db_session)
+sce = DebriefingController(db_engine=db_engine)
 
 def is_logged_in():
   return 'user' in session and 'url_id' in session and sce.user_exists(session['user'], session['url_id'])
