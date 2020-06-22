@@ -79,7 +79,7 @@ class DebriefingController:
 
   def get_study_template(self, url_id):
     if not isinstance(url_id, str):
-      return False
+      return None
     maybe_experiment = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     if maybe_experiment is not None:
       return maybe_experiment.study_template
@@ -93,7 +93,7 @@ class DebriefingController:
 
   def get_experiment_name(self, url_id):
     if not isinstance(url_id, str):
-      return False
+      return None
     match = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     if match is not None:
       return match.experiment_name
@@ -101,7 +101,7 @@ class DebriefingController:
 
   def get_experiment_platform(self, url_id):
     if not isinstance(url_id, str):
-      return False
+      return None
     maybe_experiment = self.db_session.query(Experiment).filter_by(url_id=url_id).first()
     if maybe_experiment is not None:
       return maybe_experiment.platform
