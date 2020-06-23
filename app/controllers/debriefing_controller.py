@@ -143,7 +143,7 @@ class DebriefingController:
         opted_out_users.append(row.participant_user_id)
     return opted_out_users
 
-  def send_debriefing_status_report(self, to_email):
+  def send_debriefing_status_report(self, from_email, to_email):
     db_session = self.db_engine.new_session()
     experiments = db_session.query(Experiment)
     for experiment in experiments:
@@ -155,11 +155,15 @@ class DebriefingController:
       opt_outs = len([data['opt_out'] == "true" for data in results_json])
       freeform_responses = len(['improve_debrief' in data for data in results_json])
 
+      content = f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}<br/>Logins: {login_count}<br/>Form completions: {form_completions}<br/>Opt outs: {opt_outs}<br/>Freeform responses: {freeform_responses}'
+      print(content)
+      print(debriefing_api_keys.SENDGRID_API_KEY)
+
       message = Mail(
-          from_email=to_email,
+          from_email=from_email,
           to_emails=to_email,
           subject=f'Debriefing Status Report: {experiment_name}',
-          html_content=f'Logins: {login_count}\nForm completions: {form_completions}\nOpt outs: {opt_outs}\nFreeform responses: {freeform_responses}')
+          html_content=content)
       try:
           sg = SendGridAPIClient(debriefing_api_keys.SENDGRID_API_KEY)
           response = sg.send(message)

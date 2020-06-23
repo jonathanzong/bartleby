@@ -8,4 +8,4 @@ db_engine = DbEngine(CONFIG_DIR + "/{env}.json".format(env=ENV))
 
 sce = DebriefingController(db_engine=db_engine)
 
-sce.send_debriefing_status_report('example@example.com')
+sce.send_debriefing_status_report('example@example.com', 'example@example.com')
