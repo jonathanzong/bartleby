@@ -1,6 +1,11 @@
 import yaml, csv, os, inspect, tweepy
 import simplejson as json
 
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
+
+import debriefing_api_keys
+
 from time import sleep
 from random import randint
 from datetime import datetime
@@ -9,6 +14,7 @@ import urllib
 
 from sqlalchemy import inspect as sa_inspect
 from sqlalchemy.sql import exists
+from sqlalchemy import func
 
 from app.models import *
 
@@ -137,4 +143,28 @@ class DebriefingController:
         opted_out_users.append(row.participant_user_id)
     return opted_out_users
 
+  def send_debriefing_status_report(self, to_email):
+    db_session = self.db_engine.new_session()
+    experiments = db_session.query(Experiment)
+    for experiment in experiments:
+      experiment_name = experiment.experiment_name
+      login_count = db_session.query(func.count(ParticipantRecord.id)).filter_by(experiment_name=experiment_name).scalar()
+      results = db_session.query(ParticipantSurveyResult).filter_by(experiment_name=experiment_name)
+      results_json = [json.loads(row.survey_data) for row in results]
+      form_completions = len(results_json)
+      opt_outs = len([data['opt_out'] == "true" for data in results_json])
+      freeform_responses = len(['improve_debrief' in data for data in results_json])
 
+      message = Mail(
+          from_email=to_email,
+          to_emails=to_email,
+          subject=f'Debriefing Status Report: {experiment_name}',
+          html_content=f'Logins: {login_count}\nForm completions: {form_completions}\nOpt outs: {opt_outs}\nFreeform responses: {freeform_responses}')
+      try:
+          sg = SendGridAPIClient(debriefing_api_keys.SENDGRID_API_KEY)
+          response = sg.send(message)
+          print(response.status_code)
+          print(response.body)
+          print(response.headers)
+      except Exception as e:
+          print(e.message)

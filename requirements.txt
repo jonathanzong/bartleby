@@ -12,3 +12,4 @@ paypalrestsdk
 pybrake
 blinker
 praw
+sendgrid
