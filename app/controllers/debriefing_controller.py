@@ -163,8 +163,8 @@ class DebriefingController:
       results = db_session.query(ParticipantSurveyResult).filter_by(experiment_name=experiment_name)
       results_json = [json.loads(row.survey_data) for row in results]
       form_completions = len(results_json)
-      opt_outs = len([data['opt_out'] == "true" for data in results_json])
-      freeform_responses = len(['improve_debrief' in data for data in results_json])
+      opt_outs = len([data for data in results_json if data['opt_out'] == "true" ])
+      freeform_responses = len([data for data in results_json if 'improve_debrief' in data])
 
       content = f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}<br/>Logins: {login_count}<br/>Form completions: {form_completions}<br/>Opt outs: {opt_outs}<br/>Freeform responses: {freeform_responses}'
       print(content)
