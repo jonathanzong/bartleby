@@ -30,6 +30,7 @@ class DebriefingController:
     db_session = self.db_engine.new_session()
     experiment_name = self.get_experiment_name(url_id)
     maybe_participant = db_session.query(ParticipantRecord).filter_by(experiment_name=experiment_name, participant_user_id=user['id']).first()
+    db_session.close() 
     return maybe_participant is not None
 
   def create_user_if_not_exists(self, user, url_id):
@@ -42,6 +43,7 @@ class DebriefingController:
                                  user_json=json.dumps(user).encode('utf-8'))
       db_session.add(participant)
       db_session.commit()
+    db_session.close() 
 
   def insert_or_update_survey_result(self, user, url_id, results_dict):
     db_session = self.db_engine.new_session()
@@ -62,6 +64,7 @@ class DebriefingController:
                                     survey_data=json.dumps(results_dict).encode('utf-8'))
       db_session.add(res)
       db_session.commit()
+    db_session.close() 
 
   def record_user_action(self, user, url_id, action_type, action_data_dict=None):
     db_session = self.db_engine.new_session()
@@ -78,11 +81,13 @@ class DebriefingController:
       action.action_data = action_str.encode('utf-8')
     db_session.add(action)
     db_session.commit()
+    db_session.close() 
 
   def is_eligible(self, user, url_id):
     db_session = self.db_engine.new_session()
     experiment_name = self.get_experiment_name(url_id)
     participant_eligibility = db_session.query(ParticipantEligibility).filter_by(experiment_name=experiment_name, participant_user_id=user['id']).first()
+    db_session.close() 
     if ENV == "production":
       return participant_eligibility is not None
     else:
@@ -93,6 +98,7 @@ class DebriefingController:
       return None
     db_session = self.db_engine.new_session()
     maybe_experiment = db_session.query(Experiment).filter_by(url_id=url_id).first()
+    db_session.close() 
     if maybe_experiment is not None:
       return maybe_experiment.study_template
     return None
@@ -102,6 +108,7 @@ class DebriefingController:
       return False
     db_session = self.db_engine.new_session()
     match = db_session.query(Experiment).filter_by(url_id=url_id).first()
+    db_session.close() 
     return match is not None
 
   def get_experiment_name(self, url_id):
@@ -109,6 +116,7 @@ class DebriefingController:
       return None
     db_session = self.db_engine.new_session()
     match = db_session.query(Experiment).filter_by(url_id=url_id).first()
+    db_session.close() 
     if match is not None:
       return match.experiment_name
     return None
@@ -118,6 +126,7 @@ class DebriefingController:
       return None
     db_session = self.db_engine.new_session()
     maybe_experiment = db_session.query(Experiment).filter_by(url_id=url_id).first()
+    db_session.close() 
     if maybe_experiment is not None:
       return maybe_experiment.platform
     return None
@@ -126,6 +135,7 @@ class DebriefingController:
     experiment_name = self.get_experiment_name(url_id)
     db_session = self.db_engine.new_session()
     participant_eligibility = db_session.query(ParticipantEligibility).filter_by(experiment_name=experiment_name, participant_user_id=user['id']).first()
+    db_session.close() 
     if participant_eligibility is not None:
       return json.loads(participant_eligibility.study_data_json) if participant_eligibility.study_data_json is not None else None
     return None
@@ -141,6 +151,7 @@ class DebriefingController:
       data = json.loads(row.survey_data)
       if data['opt_out'] == "true":
         opted_out_users.append(row.participant_user_id)
+    db_session.close() 
     return opted_out_users
 
   def send_debriefing_status_report(self, from_email, to_email):
@@ -172,3 +183,4 @@ class DebriefingController:
           print(response.headers)
       except Exception as e:
           print(e.message)
+    db_session.close() 
