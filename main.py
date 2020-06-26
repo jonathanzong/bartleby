@@ -40,6 +40,7 @@ def is_logged_in():
 def no_experiment():
   if 'url_id' in session:
     return redirect(url_for_experiment('index'))
+  sce.record_user_action(None, None, 'page_view', {'page': 'no_experiment', 'user_agent': request.user_agent.string, 'qs': request.query_string})
   return render_template('index.html')
 
 @app.route('/<url_id>')
@@ -170,7 +171,7 @@ def oauth_authorized(platform):
     url_id = session['url_id']
   else:
     return redirect(url_for('no_experiment'))
-    
+
   if platform == 'reddit':
     user = authorize_reddit_user()
   elif platform == 'twitter':
