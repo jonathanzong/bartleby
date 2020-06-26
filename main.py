@@ -166,7 +166,11 @@ def logout():
 @app.route('/oauth_authorized', defaults={'platform': 'twitter'})
 @app.route('/oauth_authorized/<platform>')
 def oauth_authorized(platform):
-  url_id = session['url_id']
+  if 'url_id' in session:
+    url_id = session['url_id']
+  else:
+    return redirect(url_for('no_experiment'))
+    
   if platform == 'reddit':
     user = authorize_reddit_user()
   elif platform == 'twitter':
