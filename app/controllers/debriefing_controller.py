@@ -164,7 +164,7 @@ class DebriefingController:
       results_json = [json.loads(row.survey_data) for row in results]
       form_completions = len(results_json)
       opt_outs = len([data for data in results_json if data['opt_out'] == "true" ])
-      freeform_responses = len([data for data in results_json if 'improve_debrief' in data])
+      freeform_responses = len([data for data in results_json if 'improve_debrief' in data and data['improve_debrief']])
 
       content = f'{datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")}<br/>Logins: {login_count}<br/>Form completions: {form_completions}<br/>Opt outs: {opt_outs}<br/>Freeform responses: {freeform_responses}'
       print(content)
