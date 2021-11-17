@@ -1,0 +1,172 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/debrief.css') }}">
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/form.css') }}">
+{% endblock %}
+{% block content %}
+  <div class="nav">
+    {% if 'user' in session %}
+      <a href="{{ url_for('logout') }}">Log out</a>
+    {% endif %}
+  </div>
+
+  <form method="POST" action="{{ url_for('debrief') }}">
+    {{ form.csrf_token }}
+    <div class="debrief-interface">
+      <div class="content">
+        <h3>Participation in MIT Study on the Chilling Effect from Online Copyright Takedown Notices</h3>
+
+        <p>
+          Hi {{ user.screen_name }},
+        </p>
+
+        <p>
+          Thank you for reading about our study and checking to see if your Twitter account was part of our research. We did find your account in our records, which indicate that you were part of the study:
+        </p>
+
+        <p>
+          <ul>
+            <li>On {{ user.notice_date }}, <a href="https://www.lumendatabase.org/notices/{{ user.lumen_notice }}">record</a> of a copyright takedown notice was posted publicly to <a href="https://www.lumendatabase.org/">lumendatabase.org</a>.</li>
+            <li>We counted the number of tweets you sent per day from {{ user.start_date }} to {{ user.end_date }}.</li>
+          </ul>
+        </p>
+
+        <p>
+          In our study, we have collected and analyzed public information about how often people tweeted before and after receiving a copyright takedown request. We're interested to see if people tweet less on average after their tweets are taken down. We did this because we want to understand how people are impacted by receiving a copyright takedown notice. Do these notices have a chilling effect on people's free expression?
+        </p>
+
+        <p>
+          Since your Twitter account was mentioned in the Lumen database, information about how often you tweet is in our records. We respect people's rights to privacy and have created this website for you to review what we collected and manage your privacy.
+        </p>
+
+        <p>
+          Here is what we collected about your public Twitter behavior from {{ user.start_date }} to {{ user.end_date }}. When the study is complete, we plan to publish an anonymized dataset that will make no reference to your Twitter ID and will exclude any information about specific dates or the contents of your tweets so that it cannot be traced back to you. By publishing the data, we can ensure that other researchers can check our conclusions.
+        </p>
+
+        <p>
+          Our dataset includes only the following information and no more:
+        </p>
+
+        <div class="data-table">
+          <div class="row">
+            <div class="col-sm-6">
+              What is Twitter’s ID number for your account?
+            </div>
+            <div class="col-sm-6">
+              {{ user.user_id }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              When was your account created?
+            </div>
+            <div class="col-sm-6">
+              {{ user.account_created_at }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              When was the DMCA notice filed?
+            </div>
+            <div class="col-sm-6">
+              {{ user.notice_date }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              What is the ID of the Lumen entry for the notice?
+            </div>
+            <div class="col-sm-6">
+              {{ user.lumen_notice }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              How many tweets did you send in the 23 days before receiving the takedown notice?
+            </div>
+            <div class="col-sm-6">
+              {{ user.num_tweets_before_notice }}
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              How many tweets did you send in the 23 days after receiving the takedown notice?
+            </div>
+            <div class="col-sm-6">
+              {{ user.num_tweets_after_notice }}
+            </div>
+          </div>
+        </div>
+
+        <h5>Choosing To Opt Out Of This Study</h5>
+
+        <p>
+          By allowing us to include the above information in the study, you help us to be confident about the results. If many people choose to opt out, our results may end up skewed. For example, if everyone who was concerned about receiving copyright takedowns were to opt out of the study, we might conclude that everyone is just fine with receiving the takedown notices, and that they have no side effects.
+        </p>
+
+        <p>
+          In our research or public statements, we promise never to name you or to reveal any identifying information about you. Yet you may have other reasons to opt out of this study and ask us to remove your information from our analysis. We respect that.
+        </p>
+
+        <p class="opt-out-checkbox">
+          {{ form.opt_out }} {{ form.opt_out.label }}
+        </p>
+
+        <p>Following your preference, we will not include your data in our analysis or in the public record. We are retaining the information here until Dec 31, 2019 so you can manage your privacy.</p>
+
+        <h5>Learning The Study Results When They Are Ready</h5>
+
+        <p>
+          By participating in this research, you contributing to public knowledge. Thank you! We know that you might be just as curious as us about the results. To hear the results when we have finished, please follow us on Twitter at <a href="https://twitter.com/civicmit">@CivicMIT</a> or check our website at <a href="https://civilservant.io/">civilservant.io</a>. The results of all our research contribute to public knowledge, and we are always glad when we can share them back with the people who participated.
+        </p>
+
+        <h5>Reporting Harms Caused By Participation in This Study</h5>
+
+        <p>
+          We designed this study to minimize the risks to you, protecting your data and limiting our activity to a single informational tweet. However, if you believe that our tweet has caused you more substantial relational, financial, or other harms, please let us know. You may reach out to us directly by emailing <a href="mailto:jnmatias@mit.edu">jnmatias@mit.edu</a>, or by contacting the MIT ethics board below.
+        </p>
+
+        <p>
+          If you feel you have been treated unfairly, or you have questions regarding your rights as a research subject, you may contact the Chairman of the Committee on the Use of Humans as Experimental Subjects, M.I.T., Room E25-143b, 77  Massachusetts Ave, Cambridge, MA 02139, phone 1-617-253-6787.
+        </p>
+
+      </div>
+
+      <h5>Help Us Improve This Debriefing Software</h5>
+
+        <p>
+          If you would like to help us improve the debriefing process, please take a few minutes to fill out this survey. We plan to use these responses to evaluate the debriefing interface. Please only respond if you are 18 or older.
+        </p>
+
+        <div class="form-row {% if form.errors.collection_surprised_twitter %}has-error{% endif%}">
+          {{ form.collection_surprised_twitter.label }} {{ form.collection_surprised_twitter }}
+        </div>
+
+        <div class="form-row {% if form.errors.glad_in_study %}has-error{% endif%}">
+          {{ form.glad_in_study.label }} {{ form.glad_in_study }}
+        </div>
+
+        <div class="form-row {% if form.errors.share_results %}has-error{% endif%}">
+          {{ form.share_results.label }} {{ form.share_results }}
+        </div>
+
+        <div class="form-row {% if form.errors.vote_study %}has-error{% endif%}">
+          {{ form.vote_study.label }} {{ form.vote_study }}
+        </div>
+
+        <div class="{% if form.errors.improve_debrief %}has-error{% endif%}">
+          <div class="form-row">
+            {{ form.improve_debrief.label }}
+          </div>
+          {{ form.improve_debrief }}
+        </div>
+
+        <div>
+          <input type="submit" value="Submit">
+        </div>
+    </div>
+  </form>
+
+
+  <script src="{{ url_for('static', filename='scripts/survey.js') }}"></script>
+{% endblock %}

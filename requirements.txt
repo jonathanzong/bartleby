@@ -9,3 +9,7 @@ mock
 Flask-WTF
 pyyaml
 paypalrestsdk
+pybrake
+blinker
+praw
+sendgrid

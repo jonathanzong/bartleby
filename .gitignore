@@ -1,9 +1,12 @@
 .DS_Store
-twitter_api_keys.py
-paypal_api_keys.py
-twitter_sender_api_keys.py
+debriefing_api_keys.py
 *.eligible_ids.csv
 config/experiments/samples
+config/experiments/debrief_data
+*.sql
+r-feminism*2020.csv
+load_reddit_study.py
+passenger_wsgi.py
 
 ## APP-SPECIFIC FILES
 config.py

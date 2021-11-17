@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block head %}
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/index.css') }}">
+{% endblock %}
+{% block content %}
+
+<div class="content-wrap">
+
+<div class="header-wrap">
+  <h1 style="line-height: 1.2">Research Debriefing Tool</h1>
+</div>
+
+<p>
+  This website hosts debriefing information for online social science research. On this site, participants may manage their privacy preferences and opt out of data collection.
+</p>
+
+<p>
+  If you are a participant in a study, you will receive a more specific link that takes you directly to information about that study.
+</p>
+
+<p>
+  For more information about this tool, see the <a href="https://jonathanzong.com/assets/papers/automated-debriefing-cscw-2018.pdf">demo paper</a> from the 2018 Computer Supported Cooperative Work and Social Computing conference.
+</p>
+
+</div>
+{% endblock %}

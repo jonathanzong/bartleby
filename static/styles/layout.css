@@ -12,11 +12,13 @@ html, body {
   letter-spacing: 0.025em;
   color: #333;
   background: #fcfcfc;
+  margin: 0;
+  padding: 0;
 }
 
 a {
   text-decoration: none;
-  color: #EE7F2D;
+  color: #00aced;
   white-space: nowrap;
 }
 
@@ -52,16 +54,17 @@ h5 {
 
 .nav {
   border-bottom: 1px solid #333;
-  padding-bottom: 0.6em;
+  padding: 0.6em 0;
   margin-bottom: 1.6em;
 }
 
 input[type=submit] {
-    padding:5px 15px;
+    padding:7px 15px;
     background:#777;
     color: white;
     border:0 none;
     cursor:pointer;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {

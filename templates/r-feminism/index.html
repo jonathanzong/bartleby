@@ -1,0 +1,63 @@
+{% set debriefing_end_date = 'July 31, 2020' %}
+
+{% extends "layout.html" %}
+{% block head %}
+  <meta property="og:image" content="https://debrief.media.mit.edu{{ url_for('static', filename='images/cornell-logo.png') }}" /> <!-- TODO! -->
+  <meta property="og:description" content="Cornell University Study on Promoting Inclusion and Participation in r/feminism" />
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles/index.css') }}">
+{% endblock %}
+{% block content %}
+
+<div class="content-wrap">
+
+<div class="header-wrap">
+  <p class="logos" style="margin-bottom: -10px; margin-top: 10px; text-align: center;">
+    <a href="https://www.cornell.edu/"><img height="45" src="{{ url_for('static', filename='images/cornell-logo.png') }}" alt="Cornell University"></a>
+  </p>
+  <h1 style="line-height: 1.2">Cornell University Study on Promoting Inclusion and Participation in r/feminism</h1>
+
+</div>
+
+<div class="scroll-wrap">
+  <div>
+
+    <p>
+      r/feminism is a community dedicated to “discussing and promoting awareness of issues related to equality for women.” Many users come to the subreddit to discuss current events as well as their personal experiences. Making all participants feel welcome is of the utmost importance to those who moderate this community. However, users sometimes feel unwelcome in r/feminism.
+    </p>
+    <p>
+      Our team of researchers at Cornell University (originally Princeton) worked with moderators of r/feminism to learn if they can retain more participants by helping newcomers hold more accurate social norms (newcomers’ beliefs about the community) about the community. To do so, moderators proposed sending welcome messages to first-time commenters: messages that explain the values of the community, tell newcomers that any harassment is a minority view, and offer links to resources if they do experience some kind of harassment. By doing so, moderators hoped to increase newcomers’ sense of closeness to the community and increase the rate of participation in the community.
+    </p>
+    <p>
+      This research was conducted by researchers at Cornell University and the <a href="https://citizensandtech.org/">Citizens and Technology Lab</a> (CAT Lab), which works toward a fairer, safer, more understanding internet, working together with the general public on research. This study is based on conversations with moderators of r/feminism, as well as early data analysis on harassment on r/feminism.
+    </p>
+    <p>
+      Because we could not predict who would be a newcomer to r/feminism during the study period, we could not ask for permission in advance. Because we want to respect the wishes and needs of everyone affected by the study, we have created this webpage.
+    </p>
+    <p>
+      <strong>If you believe you may have been part of this research study, please click the following button to confirm your account, see the data we collected from your account, opt out if you wish, and notify us of any adverse outcomes from participation.</strong>
+    </p>
+    <p>
+      If you do not check in and you were part of the study, we will keep data on your number of comments in your first two weeks on the subreddit in our research analysis. Because we respect your privacy, you are the only person who will be able to view your data. Before we show you this information, we need you to confirm your Reddit account by clicking the button.
+    </p>
+
+    <p>
+      If you have previously accessed this site and wish to change your decision, you may log in any time until {{debriefing_end_date}}, when this study concludes.
+    </p>
+
+  </div>
+</div>
+
+  <div class="cta-wrap">
+    <div class="btn-wrap">
+      <a href="{{ url_for('login', platform='reddit') }}">
+        <div class="btn btn-reddit">
+          <img src="{{ url_for('static', filename='images/reddit.png') }}" />
+          Sign in with Reddit
+        </div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+{% endblock %}
