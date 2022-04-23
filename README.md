@@ -4,7 +4,8 @@ Bartleby is a system that delivers research ethics procedures for large-scale on
 
 The system is named after the titular character in Herman Melville’s short story Bartleby, the Scrivener. Over the course of the story, Bartleby opts out of completing various requests. Instead, he states simply that he “would prefer not to.”
 
-Read the Bartleby research paper here: https://jonathanzong.com/assets/papers/bartleby-sms-2022.pdf
+Read more about the Bartleby project here: https://citizensandtech.org/2022/02/designing-and-evaluating-research-ethics-systems/
+Read the peer-reviewed research paper here: https://journals.sagepub.com/doi/10.1177/20563051221077021
 
 For questions about the Bartleby code, contact Jonathan Zong (jzong@mit.edu).
 
