@@ -15,6 +15,11 @@ For questions about the Bartleby code, contact Jonathan Zong (jzong@mit.edu).
 pip install -r requirements.txt
 ```
 
+## start mysql
+```
+mysql.server start
+```
+
 ## setting up database
 ```
 mysqladmin -u root create debrief_study_test
