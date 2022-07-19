@@ -10,6 +10,11 @@ Read the peer-reviewed research paper here: https://journals.sagepub.com/doi/10.
 
 For questions about the Bartleby code, contact Jonathan Zong (jzong@mit.edu).
 
+## install python dependencies
+```
+pip install -r requirements.txt
+```
+
 ## setting up database
 ```
 mysqladmin -u root create debrief_study_test
@@ -61,7 +66,10 @@ alembic upgrade head
 
 ## running server
 
+`CS_ENV` can be set to `development` or `production`. This controls which env file from `config/` to read.
+
 ```
+export CS_ENV=development
 export FLASK_APP=main.py
 flask run
 ```
