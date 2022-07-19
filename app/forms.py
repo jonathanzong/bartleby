@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import Form, TextAreaField, TextField, RadioField, BooleanField, validators
+from wtforms import TextAreaField, RadioField, BooleanField, validators
 
 class SurveyForm(FlaskForm):
   opt_out              = BooleanField('Do not include my information in your research', [validators.Optional()])
